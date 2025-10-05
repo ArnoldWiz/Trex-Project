@@ -18,7 +18,7 @@ USE `TREX` ;
 -- Table `TREX`.`Empleado`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`Empleado` (
-  `idEmpleado` INT NOT NULL,
+  `idEmpleado` INT NOT NULL AUTO_INCREMENT,
   `Area` VARCHAR(45) NOT NULL,
   `Nombre` VARCHAR(45) NOT NULL,
   `Apellidos` VARCHAR(45) NOT NULL,
@@ -31,7 +31,7 @@ ENGINE = InnoDB;
 -- Table `TREX`.`Maquina`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`Maquina` (
-  `idMaquina` INT NOT NULL,
+  `idMaquina` INT NOT NULL AUTO_INCREMENT,
   `Area` VARCHAR(45) NOT NULL,
   `Numero` INT NOT NULL,
   PRIMARY KEY (`idMaquina`))
@@ -42,7 +42,7 @@ ENGINE = InnoDB;
 -- Table `TREX`.`Modelo`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`Modelo` (
-  `idModelo` INT NOT NULL,
+  `idModelo` INT NOT NULL AUTO_INCREMENT,
   `Folio` VARCHAR(45) NOT NULL,
   `Modelo` VARCHAR(45) NOT NULL,
   `CantidadHilo` INT NOT NULL,
@@ -54,7 +54,7 @@ ENGINE = InnoDB;
 -- Table `TREX`.`OrdenDePedido`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`OrdenDePedido` (
-  `idOrdenDePedido` INT NOT NULL,
+  `idOrdenDePedido` INT NOT NULL AUTO_INCREMENT,
   `FechaInicio` DATETIME NOT NULL,
   `FechaFin` DATETIME NULL,
   PRIMARY KEY (`idOrdenDePedido`))
@@ -65,7 +65,7 @@ ENGINE = InnoDB;
 -- Table `TREX`.`Pedido`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`Pedido` (
-  `idPedido` INT NOT NULL,
+  `idPedido` INT NOT NULL AUTO_INCREMENT,
   `idOrdenPedido` INT NOT NULL,
   `idModelo` INT NOT NULL,
   `Talla` INT NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Pedido` (
     REFERENCES `TREX`.`Modelo` (`idModelo`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `Foreign_Orden`
+  CONSTRAINT `Foreign_OrdenPedido`
     FOREIGN KEY (`idOrdenPedido`)
     REFERENCES `TREX`.`OrdenDePedido` (`idOrdenDePedido`)
     ON DELETE NO ACTION
@@ -96,7 +96,7 @@ ENGINE = InnoDB;
 -- Table `TREX`.`Lote`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`Lote` (
-  `idLote` INT NOT NULL,
+  `idLote` INT NOT NULL AUTO_INCREMENT,
   `idOrden` INT NOT NULL,
   `idEmpTejido` INT NULL,
   `idEmpPlancha` INT NULL,
@@ -159,7 +159,7 @@ ENGINE = InnoDB;
 -- Table `TREX`.`ComentariosMaquinas`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`ComentariosMaquinas` (
-  `idComentariosMaquinas` INT NOT NULL,
+  `idComentariosMaquinas` INT NOT NULL AUTO_INCREMENT,
   `idMaquina` INT NOT NULL,
   `idEmpleado` INT NOT NULL,
   `Comentario` TEXT NOT NULL,
@@ -168,12 +168,12 @@ CREATE TABLE IF NOT EXISTS `TREX`.`ComentariosMaquinas` (
   PRIMARY KEY (`idComentariosMaquinas`),
   INDEX `Foreign_Maquina_idx` (`idMaquina` ASC) VISIBLE,
   INDEX `Foreign_Empleado_idx` (`idEmpleado` ASC) VISIBLE,
-  CONSTRAINT `Foreign_Maquina`
+  CONSTRAINT `Foreign_MaquinaCom`
     FOREIGN KEY (`idMaquina`)
     REFERENCES `TREX`.`Maquina` (`idMaquina`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `Foreign_Empleado`
+  CONSTRAINT `Foreign_EmpleadoCom`
     FOREIGN KEY (`idEmpleado`)
     REFERENCES `TREX`.`Empleado` (`idEmpleado`)
     ON DELETE NO ACTION
