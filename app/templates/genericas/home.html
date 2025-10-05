@@ -1,0 +1,30 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/genericas/home.css' %}" />
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand">TREX</div>
+    <ul class="nav-links">
+      <li><a href="#">Acerca</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="page">
+  <section class="center-area">
+    <div class="stack">
+      <div class="rect">IMAGEN</div>
+      <div class="rect" onclick="location.href='{% url 'login' %}'" id="admin">Administracion</div>
+    </div>
+
+    <div class="menu-row">
+      <div class="menu-item" onclick="location.href='{% url 'tejido' %}'">TEJIDO</div>
+      <div class="menu-item" onclick="location.href='{% url 'plancha' %}'">PLANCHA</div>
+      <div class="menu-item" onclick="location.href='{% url 'corte' %}'">CORTE</div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div>Trex</div>
+</footer>
