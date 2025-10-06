@@ -1,0 +1,26 @@
+<h1>Lista de Empleados</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>Área</th>
+            <th>Estatus</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for empleado in empleados %}
+        <tr>
+            <td>{{ empleado.id }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.apellidos }}</td>
+            <td>{{ empleado.area }}</td>
+            <td>{{ empleado.estatus }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'homeAdmin' %}">Volver al Home</a>
+<a href="{% url 'formEmpleado' %}">Registrar Nuevo Empleado</a>

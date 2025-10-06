@@ -1,0 +1,38 @@
+{% if object %}
+  <h1>Actualizar Empleado</h1>
+{% else %}
+  <h1>Registrar Empleado</h1>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-row">
+        {{ form.nombre.label_tag }}
+        {{ form.nombre }}
+        {{ form.nombre.errors }}
+    </div>
+
+    <div class="form-row">
+        {{ form.apellidos.label_tag }}
+        {{ form.apellidos }}
+        {{ form.apellidos.errors }}
+    </div>
+
+    <div class="form-row">
+        {{ form.area.label_tag }}
+        {{ form.area }}
+        {{ form.area.errors }}
+    </div>
+
+    <div class="form-row">
+        {{ form.estatus.label_tag }}
+        {{ form.estatus }}
+        {{ form.estatus.errors }}
+    </div>
+
+    <button type="submit">Guardar</button>
+</form>
+
+<a href="{% url 'listaEmpleados' %}">Volver a la lista</a>
