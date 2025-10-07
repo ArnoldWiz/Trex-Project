@@ -1,26 +1,59 @@
-<h1>Lista de Empleados</h1>
-<table>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lista de Empleados</title>
+  <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <header>
+    <div class="titulo">
+      <h1><span class="t1">T</span><span class="t2">R</span><span class="t3">E</span><span class="t4">X</span></h1>
+    </div>
+  </header>
+
+  <table>
+    <caption>LISTA DE EMPLEADOS</caption>
     <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellidos</th>
-            <th>Área</th>
-            <th>Estatus</th>
-        </tr>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>Área</th>
+        <th>Estatus</th>
+      </tr>
     </thead>
     <tbody>
-        {% for empleado in empleados %}
-        <tr>
-            <td>{{ empleado.id }}</td>
-            <td>{{ empleado.nombre }}</td>
-            <td>{{ empleado.apellidos }}</td>
-            <td>{{ empleado.area }}</td>
-            <td>{{ empleado.estatus }}</td>
-        </tr>
-        {% endfor %}
+      {% for empleado in empleados %}
+      <tr>
+        <td>{{ empleado.id }}</td>
+        <td>{{ empleado.nombre }}</td>
+        <td>{{ empleado.apellidos }}</td>
+        <td>{{ empleado.area }}</td>
+        <td>{{ empleado.estatus }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No hay empleados registrados</td>
+      </tr>
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 
-<a href="{% url 'homeAdmin' %}">Volver al Home</a>
-<a href="{% url 'formEmpleado' %}">Registrar Nuevo Empleado</a>
+  <div>
+    <button onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar / Modificar</button>
+    <button>KPEI'S</button>
+  </div>
+
+  <div>
+    <a href="{% url 'homeAdmin' %}">Volver al Home</a>
+    <!--<a href="{% url 'formEmpleado' %}">Registrar Nuevo Empleado</a>-->
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% load static %}
+
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestión De Lotes</title>
+  <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <header>
+      <div class="titulo">
+        <h1><span class="t1">T</span><span class="t2">R</span><span class="t3">E</span><span class="t4">X</span></h1>
+      </div>
+  </header>
+  
+    <div class="informacion">
+      <div id="subtitle">Cantidad de lotes: __________</div>
+      <div class="derecha">
+      <div>Fecha de inicio: _______________</div>
+      <div>Fecha de fin: _______________</div>
+      <div>Fecha de estimada: _______________</div>
+      <!--<div>
+        <button ><a href="vista_pedido.html">Información de pedido</a></button>
+        <button><a href="editar_lote.html">Editar Información</a></button>
+      </div>-->
+      </div>
+    </div>
+
+  <div class="distribucion">
+    <div>
+    <div class="areas">
+    </div>
+      <div>
+        Estatus (agregar boton de estatus)
+
+        <div class="barras">
+      <h1>Avance</h1>
+      <div class="contenedor-barras">
+      
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 80%;">80%</div>
+      </div>
+        <span>Tejido</span>
+      </div>
+
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 40%;">40%</div>
+      </div>
+        <span>Plancha</span>
+      </div>
+
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 10%;">10%</div>
+      </div>
+        <span>Corte</span>
+      </div>
+
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 0%;">0%</div>
+      </div>
+        <span>Empaquetado</span>
+      </div>
+
+      <button>Descargar</button>
+      </div> 
+    
+      </div>
+      </div>
+    </div>
+    
+    <div class="barras">
+        <h1>Información del pedido</h1>
+        <hr>Talla<br>Cantidad <br> Color
+        <hr></hr>
+        Folio
+        Modelo
+        Cantidad de hilo (característica)
+    </div>
+    <table>
+      <thead></thead>
+      <tbody><td><button ><a href="{% url 'lotes' %}">Información de pedido</a></button></td></tbody>
+      
+      LOTES DEL PEDIDO
+    </table>
+  </div>
+
+
+  <footer>
+    <small>
+      TREX
+    <br>
+      Aquí iría un logo
+    </small>
+  </footer>
+
+</body>
+</html>

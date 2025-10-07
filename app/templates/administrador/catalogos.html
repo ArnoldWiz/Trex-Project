@@ -1,0 +1,73 @@
+{% load static %}
+
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home Administrador</title>
+  <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="nav">
+  <div class="brand">
+    <span class="letter1">T</span>
+    <span class="letter2">R</span>
+    <span class="letter3">E</span>
+    <span class="letter4">X</span>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+    <li class="menu-item">
+      <a href="#">Menú</a>
+      <ul class="dropdown">
+         <li><a href="{% url 'listaPedidos' %}">Pedidos</a></li>
+         <li><a href="{% url 'login' %}">Reportes</a></li>
+         <li><a href="{% url 'login' %}">Catalogos</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+  <h1>Home Administrador</h1>
+  <main class="page">
+    <section class="center-area">
+      <div class="stack">
+        <div class="rect">LOGO</div>
+      </div>
+
+      <!-- Sección Empleados -->
+      <h2>Empleados</h2>
+      <div class="menu-row">
+        <div class="menu-item" onclick="location.href='{% url 'listaEmpleados' %}'">Lista de Empleados</div>
+        <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Actualizar Empleados</div>
+      </div>
+
+      <!-- Sección Máquinas -->
+      <h2>Máquinas</h2>
+      <div class="menu-row">
+        <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Lista de Máquinas</div>
+        <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Actualizar Máquinas</div>
+      </div>
+
+      <!-- Sección Varios -->
+      <h2>Varios</h2>
+      <div class="menu-row">
+        <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Opción 1</div>
+        <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Opción 2</div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>Trex</div>
+  </footer>
+
+</body>
+</html>

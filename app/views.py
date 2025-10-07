@@ -17,6 +17,15 @@ def homeGenerico(request):
 def login(request):
     return render(request, 'administrador/login.html')
 
+def catalogos(request):
+    return render(request, 'administrador/catalogos.html')
+
+def lotes(request):
+    return render(request, 'administrador/lotes.html')
+
+def listaPedidos(request):
+    return render(request, 'administrador/listaPedidos.html')
+
 def homeAdmin(request):
     return render(request, 'administrador/homeAdmin.html')
 
