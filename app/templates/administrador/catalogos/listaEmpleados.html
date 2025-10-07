@@ -21,7 +21,6 @@
     <caption>LISTA DE EMPLEADOS</caption>
     <thead>
       <tr>
-        <th>ID</th>
         <th>Nombre</th>
         <th>Apellidos</th>
         <th>Área</th>
@@ -31,11 +30,13 @@
     <tbody>
       {% for empleado in empleados %}
       <tr>
-        <td>{{ empleado.id }}</td>
         <td>{{ empleado.nombre }}</td>
         <td>{{ empleado.apellidos }}</td>
         <td>{{ empleado.area }}</td>
         <td>{{ empleado.estatus }}</td>
+        <td>
+          <button onclick="location.href='{% url 'actualizarEmpleado' empleado.idempleado %}'">Editar</button>
+        </td>
       </tr>
       {% empty %}
       <tr>
@@ -46,7 +47,7 @@
   </table>
 
   <div>
-    <button onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar / Modificar</button>
+    <button onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar</button>
     <button>KPEI'S</button>
   </div>
 

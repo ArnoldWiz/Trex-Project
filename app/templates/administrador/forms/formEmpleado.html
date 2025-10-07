@@ -1,0 +1,14 @@
+{% if object %}
+    <h1>Actualizar Empleado</h1>
+{% else %}
+    <h1>Registrar Empleado</h1>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="nombre" id="id_nombre" placeholder="Nombre" value="{{ obj.nombre|default_if_none:'' }}" required>
+    <input type="text" name="apellidos" id="id_apellidos" placeholder="Apellidos" value="{{ obj.apellidos|default_if_none:'' }}" required>
+    <input type="text" name="area" id="id_area" placeholder="Área" value="{{ obj.area|default_if_none:'' }}" required>
+    <input type="text" name="estatus" id="id_estatus" placeholder="Estatus" value="{{ obj.estatus|default_if_none:'' }}" required>
+    <button type="submit">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
+</form>

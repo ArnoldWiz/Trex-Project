@@ -1,0 +1,23 @@
+<h1>Lista de Máquinas</h1>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Área</th>
+                <th>Número</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for maquina in maquinas %}
+            <tr>
+                <td>{{ maquina.area }}</td>
+                <td>{{ maquina.numero }}</td>
+                <td>
+                    <button onclick="location.href='{% url 'actualizarMaquina' maquina.idmaquina %}'">Editar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button onclick="location.href='{% url 'formMaquina' %}'">Agregar Máquina</button>
+</div>

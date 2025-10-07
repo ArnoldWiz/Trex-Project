@@ -11,12 +11,14 @@ urlpatterns = [
     path('administrador/login/', login, name='login'),
     path('administrador/homeAdmin/', homeAdmin, name='homeAdmin'),
     path('administrador/catalogos/', catalogos, name='catalogos'),
-    
-        #CRUD EMPLEADOS
-    path('administrador/formEmpleado/', CrearEmpleado.as_view(), name='formEmpleado'),
-    path('administrador/listarEmpleados/', ListaEmpleados.as_view(), name='listaEmpleados'),
-    path('administrador/actualizarEmpleado/<int:pk>/', ActualizarEmpleado.as_view(), name='actualizarEmpleado'),
-
+    #CRUD EMPLEADOS
+    path('administrador/empleados/', ListaEmpleados.as_view(), name='empleados'),
+    path('administrador/empleados/form', CrearEmpleado.as_view(), name='formEmpleado'),
+    path('administrador/empleados/actualizar/<int:pk>/', ActualizarEmpleado.as_view(), name='actualizarEmpleado'),
+    #CRUD MAQUINAS
+    path('administrador/maquinas/', ListaMaquinas.as_view(), name='maquinas'),
+    path('administrador/maquinas/form', CrearMaquina.as_view(), name='formMaquina'),
+    path('administrador/maquinas/actualizar/<int:pk>/', ActualizarMaquina.as_view(), name='actualizarMaquina'),
     #PEDIDOS LOTES
     path('administrador/listaPedidos/', listaPedidos, name='listaPedidos'),
     path('administrador/lotes/', lotes, name='lotes'),

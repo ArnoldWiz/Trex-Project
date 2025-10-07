@@ -1,0 +1,7 @@
+<h1>{% if object %}Actualizar{% else %}Registrar{% endif %}</h1>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="area" id="id_area" placeholder="Área" value="{{ object.area|default_if_none:'' }}" required>
+    <input type="text" name="numero" id="id_numero" placeholder="Número" value="{{ object.numero|default_if_none:'' }}" required>
+    <button type="submit">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
+</form>
