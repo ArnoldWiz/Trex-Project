@@ -3,8 +3,8 @@
     margin: 0;
     padding: 0;
     font-family: 'Pathway Gothic One', sans-serif;
-  color: #222;
-  letter-spacing: 0.1px;
+    color: #222;
+    letter-spacing: 0.1px;
 }
 
 html,
@@ -90,7 +90,6 @@ body {
     box-shadow: 0 6px 20px rgba(16, 24, 40, 0.04);
 }
 
-
 .menu-row {
     width: 70%;
     display: grid;
@@ -132,7 +131,7 @@ body {
     }
 }
 
-#admin:hover{ 
+#admin:hover{
     background-color: #012;
     color: white;
     transition: .3s;
@@ -146,10 +145,6 @@ body {
     cursor: pointer;
 }
 
-
-
-/*  DESDE AQUÍ  */
-
 *{
   box-sizing: border-box;
 }
@@ -160,7 +155,6 @@ html,body{
   background: #f6f8fa;
   color:#111;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  
 }
 
 header{
@@ -172,8 +166,8 @@ header{
 
 header > div{
   max-width:1100px;
-    margin:0 auto;
-    padding:20px;
+  margin:0 auto;
+  padding:20px;
 }
 
 .titulo h1 {
@@ -191,15 +185,15 @@ header > div{
   max-width: 1100px;
   margin: 0 auto;
   padding: 20px;
-  display: flex;           
+  display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 30px;
 }
 .informacion .derecha {
-  display: flex;          
+  display: flex;
   align-items: center;
-  gap: 20px;  
+  gap: 20px;
 }
 
 #subtitle{
@@ -217,8 +211,6 @@ footer{
   color: red;
   justify-content: center;
 }
-
-/* DISTRIBUCIÓN DE ÁREAS */
 
 .barra-vertical {
   width: 40px;
@@ -242,7 +234,7 @@ footer{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px; 
+  gap: 5px;
 }
 
 .progreso {
@@ -264,47 +256,43 @@ footer{
 }
 
 .distribucion .barras {
-  height: 300px; 
+  height: 300px;
 }
 
 .distribucion .contenido {
   grid-column: span 2;
-  
 }
 
 .distribucion > div {
   background: gray;
-  padding: 0;            
+  padding: 0;
   text-align: center;
   border-radius: 8px;
-  height: 500px;           
+  height: 500px;
   display: flex;
   flex-direction: column;
 }
 
-
 .areas {
   background-color: #BF1E2E;
   height: 50px;
-  width: 100%;          
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  border-radius: 8px 8px 0 0; 
+  border-radius: 8px 8px 0 0;
 }
 
 .contenido {
-  flex: 1;              
+  flex: 1;
   padding: 20px;
 }
 
-
 .distribucion > div > div:not(.barra-vertical):not(.areas):not(.barras):not(.barra-item):not(.contenedor-barras) {
-  margin-top: 20px; 
+  margin-top: 20px;
   padding: 10px;
 }
-
 
 table {
   width: 80%;
@@ -324,14 +312,14 @@ th, td {
   padding: 8px;
   text-align: center;
 }
-  
+
 th {
   background-color: #f2f2f2;
 }
 
 tr:nth-child(even) {
   background-color: #f9f9f9;
-  }
+}
 
 .login-container {
     background: #fff;
@@ -341,7 +329,7 @@ tr:nth-child(even) {
     width: 300px;
     text-align: center;
 }
-    
+
 h2 {
   margin-bottom: 20px;
   color: #333;
@@ -355,54 +343,6 @@ input, select {
   border-radius: 6px;
   font-size: 14px;
 }
-
-
-/*   INFORMACIÓN PARA LA EDICIÓN DE LOTES
-
-.card{
-  background: #ffffff;
-  border:1px solid #e6e9ee;
-  border-radius: 12px;
-  padding:18px;
-  box-shadow: 0 6px 18px rgba(16,24,40,0.03);
-}
-
-.form{display:flex;flex-direction:column;gap:10px}
-.form h3{margin:0 0 6px 0;font-size:1.05rem}
-label{display:flex;flex-direction:column;font-size:0.9rem;color:#111;}
-label input, label select, label textarea{
-  margin-top:6px;padding:10px;border-radius:8px;border:1px solid var(--border);
-  font-size:0.95rem;background:#fff;
-}
-.actions{display:flex;gap:10px;margin-top:8px}
-.btn{
-  padding:8px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);
-  background:white;cursor:pointer;font-weight:600;
-  box-shadow: 0 1px 0 rgba(16,24,40,0.02);
-}
-.btn.primary{
-  background:linear-gradient(180deg,#2563eb, #1e40af); 
-  color:white;border:none;
-}
-.btn:hover{transform:translateY(-1px);transition:all .12s ease}
-
-.table-wrapper{margin-top:12px}
-.table-wrapper h4{margin:0 0 8px 0;font-size:0.98rem}
-table{width:100%;border-collapse:collapse;background:transparent}
-thead th{
-  text-align:left;padding:8px 10px;font-size:0.82rem;color: #ba1d22; 
-  border-bottom:1px solid 18px;
-}
-tbody td{padding:10px;font-size:0.95rem;border-bottom:1px dashed rgba(0,0,0,0.04)}
-tbody tr:hover{background:linear-gradient(90deg, rgba(37,99,235,0.03), transparent)}
-
-
-header > h1{
-  margin:0;font-size:1.5rem
-}
-
-*/
-
 
 * {
     box-sizing: border-box;
@@ -493,7 +433,6 @@ body {
     box-shadow: 0 6px 20px rgba(16, 24, 40, 0.04);
 }
 
-
 .menu-row {
     width: 70%;
     display: grid;
@@ -535,7 +474,7 @@ body {
     }
 }
 
-#admin:hover{ 
+#admin:hover{
     background-color: #012;
     color: white;
     transition: .3s;
@@ -554,18 +493,12 @@ body {
   color: #222;
   font-size: 20px;
   letter-spacing: 0.1px;
-  
 }
 
-
-
-/* RECONSTRUCCIÓN DE ESTILOS */
-
-
 header img {
-    height: 150px;               /* Tamaño más grande */
-    width: auto;                 /* Mantiene proporción */
-    margin-right: 0;             /* Ya no hace falta separación */
+    height: 150px;
+    width: auto;
+    margin-right: 0;
 }
 
 header {
@@ -573,14 +506,12 @@ header {
     justify-content: center;
     align-items: center;
     padding: 20px;
-
-    /* Gradiente horizontal: borde-izq → blanco → borde-der */
     background: linear-gradient(
         to right,
-        #2A388F  0%,       /* color izquierdo */
-        #FAFAFA 30%,        /* inicio de blanco más temprano */
-        #FAFAFA 70%,        /* fin del blanco más tarde */
-        #2A388F  100%      /* color derecho */
+        #2A388F  0%,
+        #FAFAFA 30%,
+        #FAFAFA 70%,
+        #2A388F  100%
     );
 }
 
@@ -589,27 +520,25 @@ header {
 .brand span.letter3 { color: #2A388F; letter-spacing: 5px;font-size: 30px;}
 .brand span.letter4 { color: #FF4D79; letter-spacing: 5px; font-size: 30px;}
 
-
-
 .nav {
     display: flex;
-    justify-content: space-between; /* Logo a un extremo, links al otro */
+    justify-content: space-between;
     align-items: center;
-    padding: 0 50px;               /* Espacio a los lados, no pegados */
-    height: 50px;                  /* Ajusta altura si quieres */
-    background-color: #FAFAFA;  
-    letter-spacing: 5px;   /* Color de fondo opcional */
+    padding: 0 50px;
+    height: 50px;
+    background-color: #FAFAFA;
+    letter-spacing: 5px;
 }
 
 .brand {
     font-weight: bold;
-    display: flex;          
-    letter-spacing: 5px;       /* Para mantener letras en fila */
+    display: flex;
+    letter-spacing: 5px;
 }
 
 .nav-links {
     display: flex;
-    gap: 20px;                     /* Espacio entre links */
+    gap: 20px;
     list-style: none;
     letter-spacing: 5px;
 }
@@ -626,14 +555,11 @@ header {
     color: #FAFAFA;
 }
 
-/**/
-
 .nav-links li a:hover {
     background-color: #FF4D79;
     border-radius: 4px;
 }
 
-/* Menú desplegable */
 .menu-item {
     position: relative;
 }
@@ -658,12 +584,11 @@ header {
     text-decoration: none;
     color: #222;
     font-weight: 500;
-    display: flex;           /* Hace que pueda centrarse verticalmente */
-    align-items: center;     /* Centra el texto dentro del link */
-    padding: 0 10px;         /* Espacio horizontal */
-    height: 10px;            /* Coincide con la altura del nav */
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    height: 10px;
 }
-
 
 .menu-item .dropdown {
     display: none;
@@ -676,17 +601,16 @@ header {
     opacity: 1;
 }
 
-
 .nav-links li a {
-    height: 50px; /* Coincide con el nav */
+    height: 50px;
     display: flex;
     align-items: center;
-    padding: 0 15px; /* más espacio lateral */
+    padding: 0 15px;
 }
 
 .menu-item .dropdown li a {
     display: block;
-    padding: 12px 20px;   /* más alto */
+    padding: 12px 20px;
     color: #FAFAFA;
     text-decoration: none;
 }
@@ -695,7 +619,7 @@ header {
     background-color: #FF4D79;
 }
 .menu-item .dropdown {
-    padding: 15px 0;  /* más espacio vertical */
+    padding: 15px 0;
     min-width: 180px;
 }
 
@@ -703,112 +627,16 @@ header {
   background-color: #FF4D79;
 }
 
-/* === NAV GENERAL === */
 .nav {
   display: flex;
   justify-content: space-between;
-  align-items: center;      /* centra verticalmente todo */
+  align-items: center;
   padding: 0 50px;
-  height: 50px;             /* altura del nav */
-  background-color: #FAFAFA;
-  font-family: 'Pathway Gothic One', sans-serif;
-}
-
-/* === LOGO TREX === */
-.brand {
-  display: flex;
-  font-weight: bold;
-}
-
-.brand span {
-  font-size: 28px;          /* tamaño más equilibrado */
-  letter-spacing: 4px;
-}
-
-.letter1 { color: #BF1E2E; }
-.letter2 { color: #8A2E8D; }
-.letter3 { color: #2A388F; }
-.letter4 { color: #FF4D79; }
-
-/* === LINKS === */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  list-style: none;
-}
-
-.nav-links li a {
-  text-decoration: none;
-  color: #222;
-  font-weight: 500;
-  font-size: 18px;
-  padding: 0 10px;           /* espacio horizontal */
-  height: 50px;              /* igual que el nav */
-  display: flex;
-  align-items: center;       /* centra verticalmente el texto */
-}
-
-.nav-links li a:hover {
-  background-color: #FF4D79;
-  border-radius: 5px;
-}
-
-/* === MENU PRINCIPAL (el que dice MENU) === */
-.menu-item {
-  position: relative;
-}
-
-.menu-item > a {
-  padding: 0 12px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-}
-
-/* === DROPDOWN === */
-.menu-item .dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: #8A2E8D;
-  list-style: none;
-  padding: 12px 0;          /* más alto */
-  border-radius: 6px;
-  min-width: 170px;
-  box-shadow: 0 3px 10px #FF4D79;
-}
-
-.menu-item .dropdown li a {
-  display: block;
-  padding: 10px 20px;       /* espacio interno del submenú */
-  color: #FAFAFA;
-  font-size: 16px;
-}
-
-.menu-item .dropdown li a:hover {
-  background: #FF4D79;
-}
-
-/* Mostrar el menú al pasar el mouse */
-.menu-item:hover .dropdown {
-  display: block;
-}
-
-
-/* === NAV GENERAL === */
-.nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 70px;
   height: 50px;
   background-color: #FAFAFA;
   font-family: 'Pathway Gothic One', sans-serif;
 }
 
-/* === LOGO TREX === */
 .brand {
   display: flex;
   font-weight: bold;
@@ -824,7 +652,6 @@ header {
 .letter3 { color: #2A388F; }
 .letter4 { color: #FF4D79; }
 
-/* === LINKS === */
 .nav-links {
   display: flex;
   align-items: center;
@@ -837,11 +664,10 @@ header {
   color: #222;
   font-weight: 500;
   font-size: 18px;
-  height: 50px;              /* igual que el nav */
+  padding: 0 10px;
+  height: 50px;
   display: flex;
-  align-items: center;       /* centra el texto */
-  justify-content: center;
-  padding: 0 10px;           /* espacio lateral */
+  align-items: center;
 }
 
 .nav-links li a:hover {
@@ -849,23 +675,17 @@ header {
   border-radius: 5px;
 }
 
-/* === MENU PRINCIPAL === */
 .menu-item {
   position: relative;
-  height: 50px;             /* evita que crezca más */
-  display: flex;
-  align-items: center;      /* centra su link */
 }
 
 .menu-item > a {
-  height: 50px;             /* igual que el nav */
+  padding: 0 12px;
+  height: 50px;
   display: flex;
   align-items: center;
-  padding: 0 10px;
-  font-size: 18px;
 }
 
-/* === DROPDOWN === */
 .menu-item .dropdown {
   display: none;
   position: absolute;
@@ -873,16 +693,15 @@ header {
   left: 0;
   background: #8A2E8D;
   list-style: none;
-  padding: 10px 0;          /* altura del contenedor */
+  padding: 12px 0;
   border-radius: 6px;
   min-width: 170px;
   box-shadow: 0 3px 10px #FF4D79;
-  z-index: 10;
 }
 
 .menu-item .dropdown li a {
   display: block;
-  padding: 8px 20px;        /* más alto dentro del submenú */
+  padding: 10px 20px;
   color: #FAFAFA;
   font-size: 16px;
 }
@@ -891,38 +710,123 @@ header {
   background: #FF4D79;
 }
 
-/* Mostrar menú al pasar el mouse */
 .menu-item:hover .dropdown {
   display: block;
 }
 
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 70px;
+  height: 50px;
+  background-color: #FAFAFA;
+  font-family: 'Pathway Gothic One', sans-serif;
+}
+
+.brand {
+  display: flex;
+  font-weight: bold;
+}
+
+.brand span {
+  font-size: 28px;
+  letter-spacing: 4px;
+}
+
+.letter1 { color: #BF1E2E; }
+.letter2 { color: #8A2E8D; }
+.letter3 { color: #2A388F; }
+.letter4 { color: #FF4D79; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  list-style: none;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.nav-links li a:hover {
+  background-color: #FF4D79;
+  border-radius: 5px;
+}
+
+.menu-item {
+  position: relative;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.menu-item > a {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 18px;
+}
+
+.menu-item .dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #8A2E8D;
+  list-style: none;
+  padding: 10px 0;
+  border-radius: 6px;
+  min-width: 170px;
+  box-shadow: 0 3px 10px #FF4D79;
+  z-index: 10;
+}
+
+.menu-item .dropdown li a {
+  display: block;
+  padding: 8px 20px;
+  color: #FAFAFA;
+  font-size: 16px;
+}
+
+.menu-item .dropdown li a:hover {
+  background: #FF4D79;
+}
+
+.menu-item:hover .dropdown {
+  display: block;
+}
 
 .site-footer{
   background-color: #2A388F;
 }
 
-
-/* form*/
-/* === CENTRAR EL FORMULARIO === *//* Centrar el formulario entre nav y footer */
-/* Centrar horizontalmente el formulario */
 .login-container {
-    margin: 0 auto;       /* centra horizontalmente */
+    margin: 0 auto;
 }
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;        /* que ocupe toda la altura de la ventana */
+    min-height: 100vh;
 }
 
 .login-container {
-    margin: auto auto auto auto;   /* centra horizontal y vertical */
-    transform: translateY(-50px);            /* centra horizontal y vertical */
+    margin: auto auto auto auto;
+    transform: translateY(-50px);
 }
 
-/* === ESTILO BOTÓN PRINCIPAL === */
 button {
-  background: linear-gradient(45deg, #BF1E2E, #FAFAFA); /* gradiente morado → rosa */
-  color: black;             /* texto blanco */
+  background: linear-gradient(45deg, #BF1E2E, #FAFAFA);
+  color: black;
   font-weight: 600;
   font-size: 16px;
   padding: 12px 30px;
@@ -934,10 +838,9 @@ button {
   margin-top: 30px;
 }
 
-/* Hover */
 button {
-  background: linear-gradient(45deg, #BF1E2E, #FAFAFA); /* invertir gradiente */
-  transform: translateY(-2px);  /* efecto de "elevación" */
+  background: linear-gradient(45deg, #BF1E2E, #FAFAFA);
+  transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
@@ -947,4 +850,10 @@ input{
 .login-container{
   box-shadow: 0 3px 10px #8A2E8D;
 }
-/* Activo / clic */
+
+*{
+  font-family: 'Pathway Gothic One', sans-serif;
+  color: #222;
+  font-size: 20px;
+  letter-spacing: 0.1px;
+}
