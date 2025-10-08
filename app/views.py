@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_sameorigin
-from app.models import Empleado, Maquina
+from app.models import Empleado, Maquina, Modelo
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from app.forms import *
 
@@ -54,7 +54,7 @@ class ActualizarEmpleado(UpdateView):
         ctx = super().get_context_data(**kwargs)
         return ctx
 
-    #CURD Maquinas
+    #CRUD Maquinas
 class ListaMaquinas(ListView):
     model = Maquina
     template_name = 'administrador/catalogos/listaMaquinas.html'
@@ -71,6 +71,28 @@ class ActualizarMaquina(UpdateView):
     template_name = 'administrador/forms/formMaquina.html'
     form_class = MaquinaForm
     success_url = '/administrador/maquinas/'
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        return ctx
+
+    #CRUD Modelos
+class ListaModelos(ListView):
+    model = Modelo
+    template_name = 'administrador/catalogos/listaModelos.html'
+    context_object_name = 'modelos'
+    
+class CrearModelo(CreateView):
+    model = Modelo
+    template_name = 'administrador/forms/formModelo.html'
+    form_class = ModeloForm
+    success_url = '/administrador/modelos/'
+
+class ActualizarModelo(UpdateView):
+    model = Modelo
+    template_name = 'administrador/forms/formModelo.html'
+    form_class = ModeloForm
+    success_url = '/administrador/modelos/'
     
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

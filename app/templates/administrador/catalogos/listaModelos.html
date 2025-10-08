@@ -1,0 +1,28 @@
+<h1>Lista de Modelos</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Folio</th>
+            <th>Modelo</th>
+            <th>Cantidad de Hilo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for modelo in modelos %}
+        <tr>
+            <td>{{ modelo.id }}</td>
+            <td>{{ modelo.folio }}</td>
+            <td>{{ modelo.modelo }}</td>
+            <td>{{ modelo.cantidadhilo }}</td>
+            <td>
+                <a href="{% url 'actualizarModelo' modelo.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'eliminarModelo' modelo.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<button onclick="location.href='{% url 'formModelo' %}'">Agregar Modelo</button>
+<button onclick="location.href='{% url 'catalogos' %}'">Volver a Catálogos</button>
