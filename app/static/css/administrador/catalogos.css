@@ -1,14 +1,21 @@
 /* Fondo general */
+* {
+  font-family: 'Pathway Gothic One', sans-serif;
+}
+
+li {
+  font-size: 3vh !important; 
+}
+
 body {
-  background: #e7e7e7;
-  font-family: system-ui, Arial, sans-serif;
+  background: #ebebeb;
   margin: 0;
   color: #202124;
 }
 
 /* Contenedor principal */
 .catalogos-wrapper {
-  width: 60%;
+  width: 70%;
   padding: 32px 32px 56px;
   margin: 0 auto;
 }
@@ -35,13 +42,14 @@ body {
   gap: 12px;
   position: relative;
   transition: box-shadow .25s, transform .25s, border-color .25s;
-  height: 30vh;
+  height: 35vh;
 }
 
 .card:hover {
   border-color: #d0d4d9;
   box-shadow: 0 4px 12px rgb(255, 172, 215), 0 2px 4px rgba(0,0,0,0.06);
   transform: translateY(-2px);
+  cursor: pointer;
 }
 
 .card:active {
@@ -49,16 +57,16 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
-.card h3 {
+.card h1 {
   margin: 0 0 4px;
-  font-size: 18px;
+  font-size: 6;
   font-weight: 600;
   letter-spacing: .3px;
 }
 
 .card p {
   margin: 0 0 12px;
-  font-size: 14px;
+  font-size: 3vh;
   line-height: 1.4;
   color: #4d5156;
 }
