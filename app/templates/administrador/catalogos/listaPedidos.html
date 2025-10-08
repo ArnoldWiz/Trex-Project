@@ -7,17 +7,39 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gestión De Lotes</title>
+  <link rel="stylesheet" href="{% static 'css/genericas/general.css' %}">
   <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
 
 </head>
 
 <body>
   <header>
-      <div class="titulo">
-        <h1><span class="t1">T</span><span class="t2">R</span><span class="t3">E</span><span class="t4">X</span></h1>
-      </div>
+    <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
   </header>
+
+  <nav class="nav">
+  <div class="brand">
+    <span class="letter1">T</span>
+    <span class="letter2">R</span>
+    <span class="letter3">E</span>
+    <span class="letter4">X</span>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+    <li class="menu-item">
+      <i class="fa-solid fa-bars"></i>
+      <ul class="dropdown">
+         <li><a href="{% url 'listaPedidos' %}">Pedidos</a></li>
+         <li><a href="{% url 'login' %}">Reportes</a></li>
+         <li><a href="{% url 'login' %}">Catalogos</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
   
     <div class="informacion">
       <div id="subtitle">Cantidad de lotes: __________</div>

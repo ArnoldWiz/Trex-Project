@@ -20,7 +20,7 @@ urlpatterns = [
     path('administrador/maquinas/form', CrearMaquina.as_view(), name='formMaquina'),
     path('administrador/maquinas/actualizar/<int:pk>/', ActualizarMaquina.as_view(), name='actualizarMaquina'),
     #PEDIDOS LOTES
-    path('administrador/listaPedidos/', listaPedidos, name='listaPedidos'),
+    path('administrador/catalogos/listaPedidos/', listaPedidos, name='listaPedidos'),
     path('administrador/lotes/', lotes, name='lotes'),
     #EMPLEADOS
     path('empleados/tejido/', tejido, name='tejido'),

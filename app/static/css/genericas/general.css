@@ -224,3 +224,15 @@ h2 {
     color: #333;
 }
 
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input{
+  background-color: #FAFAFA;
+}
