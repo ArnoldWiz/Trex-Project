@@ -26,6 +26,9 @@ def lotes(request):
 def listaPedidos(request):
     return render(request, 'administrador/catalogos/listaPedidos.html')
 
+def listaEmpleados(request):
+    return render(request, 'administrador/catalogos/listaEmpleados.html')
+
 def homeAdmin(request):
     return render(request, 'administrador/homeAdmin.html')
 

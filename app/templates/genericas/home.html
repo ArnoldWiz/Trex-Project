@@ -1,6 +1,4 @@
 {% load static %}
-
-
 <!doctype html>
 <html lang="es">
 
@@ -14,49 +12,37 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 </head>
-
 <body>
   <header>
     <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
   </header>
 
   <nav class="nav">
-  <div class="brand">
-    <span class="letter1">T</span>
-    <span class="letter2">R</span>
-    <span class="letter3">E</span>
-    <span class="letter4">X</span>
-  </div>
-
-  <ul class="nav-links">
-    <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-  </ul>
-</nav>
-
+    <div class="brand">
+      <span class="letter1">T</span>
+      <span class="letter2">R</span>
+      <span class="letter3">E</span>
+      <span class="letter4">X</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+    </ul>
+  </nav>
 
 <main class="page">
   <section class="center-area">
-    <div class="stack">
-     <!-- <div class="rect">LOGO</div>-->
-      <!--<div class="rect" onclick="location.href='{% url 'login' %}'" id="admin">Administracion</div>-->
-    </div>
-
     <div class="menu-row">
       <div class="menu-opt" onclick="location.href='{% url 'tejido' %}'">TEJIDO</div>
       <div class="menu-opt" onclick="location.href='{% url 'plancha' %}'">PLANCHA</div>
       <div class="menu-opt" onclick="location.href='{% url 'corte' %}'">CORTE</div>
       <div class="menu-opt" onclick="location.href='{% url 'corte' %}'">EMPAQUETADO</div>
     </div>
-  </section>
-
-
-  
+  </section>  
 </main>
 
 <footer class="site-footer">
   <div>Trex</div>
 </footer>
-
 
 </body>
 </html>

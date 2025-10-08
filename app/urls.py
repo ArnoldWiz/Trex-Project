@@ -15,6 +15,7 @@ urlpatterns = [
     path('administrador/empleados/', ListaEmpleados.as_view(), name='empleados'),
     path('administrador/empleados/form', CrearEmpleado.as_view(), name='formEmpleado'),
     path('administrador/empleados/actualizar/<int:pk>/', ActualizarEmpleado.as_view(), name='actualizarEmpleado'),
+    path('administrador/catalogos/listaEmpleados/', listaEmpleados, name='listaEmpleados'),
     #CRUD MAQUINAS
     path('administrador/maquinas/', ListaMaquinas.as_view(), name='maquinas'),
     path('administrador/maquinas/form', CrearMaquina.as_view(), name='formMaquina'),
@@ -22,7 +23,7 @@ urlpatterns = [
     #PEDIDOS LOTES
     path('administrador/catalogos/listaPedidos/', listaPedidos, name='listaPedidos'),
     path('administrador/lotes/', lotes, name='lotes'),
-    #EMPLEADOS
+    #VISTA GENERAL EMPLEADOS
     path('empleados/tejido/', tejido, name='tejido'),
     path('empleados/plancha/', plancha, name='plancha'),
     path('empleados/corte/', corte, name='corte'),
