@@ -15,7 +15,7 @@ body {
 
 /* Contenedor principal */
 .catalogos-wrapper {
-  width: 70%;
+  width: 65%;
   padding: 32px 32px 56px;
   margin: 0 auto;
 }
@@ -42,7 +42,7 @@ body {
   gap: 12px;
   position: relative;
   transition: box-shadow .25s, transform .25s, border-color .25s;
-  height: 35vh;
+  height: 30vh;
 }
 
 .card:hover {
