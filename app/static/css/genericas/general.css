@@ -94,7 +94,8 @@ header img {
 }
 
 .nav-links a:hover {
-    background-color: #BF1E2E;
+    /*background-color: #BF1E2E;*/
+    box-shadow: 0 2px 6px #BF1E2E;
     border-radius: 4px;
 }
 
@@ -111,7 +112,8 @@ header img {
 }
 
 .nav-links li a:hover {
-  background-color: #BF1E2E;
+  /*background-color: #BF1E2E;*/
+  box-shadow: 0 2px 6px #BF1E2E;
   border-radius: 5px;
 }
 

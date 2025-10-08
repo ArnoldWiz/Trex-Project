@@ -278,12 +278,6 @@ input{
     box-shadow: 0 6px 20px rgba(16, 24, 40, 0.04);
 }
 
-.menu-row {
-    width: 70%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
 
 .login-container {
     margin: 0 auto;
@@ -304,4 +298,91 @@ input{
     .menu-row {
         grid-template-columns: 1fr;
     }
-}0
+}
+
+.menu-row {
+    width: 70%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.menu-opt {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.04);
+    position: relative;
+    height: 80px;
+}
+
+.menu-opt:hover{
+    background-color: #012;
+    color: white;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.menu-opt:hover {
+    background-color: #0f0f0f;
+}
+
+.menu-opt > a {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 18px;
+}
+
+.menu-row {
+    width: 80%; /* más ancho */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; /* más espacio entre tarjetas */
+    margin: 0 auto;
+}
+
+.menu-opt {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 30px; /* más espacio interno */
+    display: flex;
+    flex-direction: column; /* apila icono/texto si los hay */
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 20px; /* texto más grande */
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+    position: relative;
+    height: 140px; /* más alto */
+    transition: all 0.3s ease;
+}
+
+.menu-opt i {
+    font-size: 32px; /* iconos grandes */
+    margin-bottom: 10px;
+    color: #2A388F;
+}
+
+.menu-opt a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px; /* texto más grande */
+    color: inherit;
+    text-decoration: none;
+}
+
+.menu-opt:hover {
+    background-color: #2A388F;
+    color: #FAFAFA;
+    transform: scale(1.05); /* ligero zoom */
+    cursor: pointer;
+}
