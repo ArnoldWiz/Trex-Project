@@ -47,6 +47,7 @@ table {
   margin: 20px auto;
   border-collapse: collapse;
   font-family: Arial, sans-serif;
+  background-color: #2A388F;
 }
 
 caption {
@@ -59,14 +60,17 @@ th, td {
   border: 1px solid #333;
   padding: 8px;
   text-align: center;
+  background-color: #2A388F;
 }
 
 th {
   background-color: #f2f2f2;
+  background-color: #2A388F;
 }
 
 tr:nth-child(even) {
   background-color: #f9f9f9;
+  background-color: #2A388F;
 }
 
 /* BOTONES */ 
