@@ -12,7 +12,7 @@
 html, body {
     height: 100%;
     margin: 0;
-    background: #f5f5f5;
+    background: #ebebeb;
     color:#222;
 }
 
@@ -235,4 +235,10 @@ input, select {
 
 input{
   background-color: #FAFAFA;
+}
+
+/* futuros cambios al logo*/
+.logo-trex {
+  width: auto;   
+  height: auto;
 }

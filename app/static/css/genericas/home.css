@@ -1,4 +1,7 @@
 /* CSS PARA VISTA GENERAL *HOME, LOGIN* */
+body{
+  background-color: #ebebeb;
+}
 #admin:hover{
     background-color: #012;
     color: white;

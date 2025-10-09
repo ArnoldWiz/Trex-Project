@@ -16,10 +16,14 @@ urlpatterns = [
     path('administrador/empleados/form', CrearEmpleado.as_view(), name='formEmpleado'),
     path('administrador/empleados/actualizar/<int:pk>/', ActualizarEmpleado.as_view(), name='actualizarEmpleado'),
     path('administrador/catalogos/listaEmpleados/', listaEmpleados, name='listaEmpleados'),
-    #CRUD MAQUINAS
+    #CRUD MÁQUINAS
     path('administrador/maquinas/', ListaMaquinas.as_view(), name='maquinas'),
     path('administrador/maquinas/form', CrearMaquina.as_view(), name='formMaquina'),
     path('administrador/maquinas/actualizar/<int:pk>/', ActualizarMaquina.as_view(), name='actualizarMaquina'),
+    #CRUD MODELOS
+    path('administrador/modelos/', ListaModelos.as_view(), name='modelos'),
+    path('administrador/modelos/form', CrearModelo.as_view(), name='formModelo'),
+    path('administrador/modelos/actualizar/<int:pk>/', ActualizarModelo.as_view(), name='actualizarModelo'),
     #PEDIDOS LOTES
     path('administrador/catalogos/listaPedidos/', listaPedidos, name='listaPedidos'),
     path('administrador/lotes/', lotes, name='lotes'),
