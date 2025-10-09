@@ -237,8 +237,10 @@ input{
   background-color: #FAFAFA;
 }
 
-/* futuros cambios al logo*/
 .logo-trex {
-  width: auto;   
-  height: auto;
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
 }
+
+
