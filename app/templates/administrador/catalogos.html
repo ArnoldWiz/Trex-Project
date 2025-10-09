@@ -40,29 +40,24 @@
   </ul>
 </nav>
 
-
-  <h1>Home Administrador</h1>
   <main class="page">
     <section class="center-area">
-      <div class="stack">
+      <!--<div class="stack">
         <div class="rect">LOGO</div>
-      </div>
+      </div>-->
 
-      <!-- Sección Empleados -->
       <h2>Empleados</h2>
       <div class="menu-row">
         <div class="menu-item" onclick="location.href='{% url 'listaEmpleados' %}'">Lista de Empleados</div>
         <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Actualizar Empleados</div>
       </div>
 
-      <!-- Sección Máquinas -->
       <h2>Máquinas</h2>
       <div class="menu-row">
         <div class="menu-item" onclick="location.href='{% url 'maquinas' %}'">Lista de Máquinas</div>
         <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Actualizar Máquinas</div>
       </div>
 
-      <!-- Sección Varios -->
       <h2>Modelos</h2>
       <div class="menu-row">
         <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Opción 1</div>
@@ -74,7 +69,6 @@
         <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Opción 1</div>
         <div class="menu-item" onclick="location.href='{% url 'lotes' %}'">Opción 2</div>
       </div>
-
 
     </section>
   </main>
