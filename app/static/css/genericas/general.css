@@ -236,3 +236,9 @@ input, select {
 input{
   background-color: #FAFAFA;
 }
+
+/* futuros cambios al logo*/
+.logo-trex {
+  width: auto;   
+  height: auto;
+}
