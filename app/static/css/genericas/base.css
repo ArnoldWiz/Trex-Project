@@ -4,6 +4,115 @@
     padding: 0;
     font-family: 'Pathway Gothic One', sans-serif;
     color: #222;
+    font-size: 20px
+}
+
+/* Fondo y cuerpo */
+html, body {
+    height: 100%;
+    background-color: #cbc7c7;
+    color: #222;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 80px;
+}
+
+.navbar-logo img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    margin: 0;
+}
+
+/* Menu personalizado */
+.menu-item {
+    background: #fff;
+    border: 1px solid #FAFAFA;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    position: relative;
+    height: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #BF1E2E;
+    color: white;
+}
+
+.menu-item .dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #8A2E8D;
+    list-style: none;
+    border-radius: 6px;
+    min-width: 170px;
+    box-shadow: 0 3px 10px #BF1E2E;
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.menu-item:hover .dropdown {
+    display: block;
+}
+
+.menu-item .dropdown li a {
+    display: block;
+    padding: 10px 20px;
+    color: #FAFAFA;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.menu-item .dropdown li a:hover {
+    background-color: #BF1E2E;
+}
+
+/* Footer */
+.site-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4vh;
+    background-color: #2A388F;
+    color: #FAFAFA;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pathway Gothic One', sans-serif;
+    color: #222;
     font-size: 20px;
 }
 
@@ -348,7 +457,7 @@ background-color: rgb(216, 218, 220); /* fondo principal */
 
 }
 .menu-item {
-    border: 0.5px dashed #8A2E8D; /* grosor 2px, línea sólida, color morado */
+    border: 0.5px solid #8A2E8D; /* grosor 2px, línea sólida, color morado */
     border-radius: 8px; /* opcional, mantiene las esquinas redondeadas */
 }
 

@@ -1,7 +1,5 @@
 /* CSS PARA VISTA GENERAL *HOME, LOGIN* */
-body{
-  background-color: #ebebeb;
-}
+
 #admin:hover{
     background-color: #012;
     color: white;
@@ -31,7 +29,7 @@ body{
     width: 70%;
     min-height: 140px;
     background: #fff;
-    border: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -274,3 +272,4 @@ button {
   margin-top: 20px;
   padding: 10px;
 }
+
