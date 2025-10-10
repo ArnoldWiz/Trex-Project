@@ -1,3 +1,4 @@
+/*SOLO FUNCIONA PARA HOME*/
 /* CSS PARA VISTA GENERAL *HOME, LOGIN* */
 
 #admin:hover{
@@ -273,3 +274,379 @@ button {
   padding: 10px;
 }
 
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pathway Gothic One', sans-serif;
+    color: #222;
+    font-size: 20px;
+}
+
+/* Fondo y cuerpo */
+html, body {
+    height: 100%;
+    background-color: rgb(216, 218, 220);
+    color: #222;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 80px;
+}
+
+.navbar-logo img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    margin: 0;
+}
+
+/* Menu personalizado */
+.menu-item {
+    background: #fff;
+    border: 1px solid #FAFAFA;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    position: relative;
+    height: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #BF1E2E;
+    color: white;
+}
+
+.menu-item .dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #8A2E8D;
+    list-style: none;
+    border-radius: 6px;
+    min-width: 170px;
+    box-shadow: 0 3px 10px #BF1E2E;
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.menu-item:hover .dropdown {
+    display: block;
+}
+
+.menu-item .dropdown li a {
+    display: block;
+    padding: 10px 20px;
+    color: #FAFAFA;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.menu-item .dropdown li a:hover {
+    background-color: #BF1E2E;
+}
+
+/* Footer */
+.site-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4vh;
+    background-color: #2A388F;
+    color: #FAFAFA;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Inputs */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #FAFAFA;
+}
+
+
+nav {
+    background-color: #FAFAFA;      /* fondo gris claro */
+    display: flex;                  /* alinea los elementos internos */
+    justify-content: space-between; /* separa logo y menú */
+    align-items: center;            /* centra verticalmente */
+    padding: 0.8rem 2rem;           /* espacio interno */
+    border-bottom: 1px solid #ddd;  /* línea sutil en la parte inferior */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* sombra ligera */
+    position: sticky;               /* se mantiene visible al hacer scroll */
+    top: 0;
+    z-index: 1000;                  /* sobre el contenido */
+}
+
+
+/*/* NAVBAR PRINCIPAL */
+.navbar {
+  background-color: #FAFAFA;
+  display: flex;
+  justify-content: space-between; /* logo izq, menú der */
+  align-items: center;
+  padding: 0.8rem 2rem;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* LOGO */
+.navbar-logo img {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* MENÚ */
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* ELEMENTO PRINCIPAL DEL MENÚ */
+.menu-item {
+  position: relative;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  background-color: #BF1E2E;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* SUBMENÚ */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 110%;
+  right: 0; /* menú alineado a la derecha del icono */
+  background: #FAFAFA;
+  list-style: none;
+  border-radius: 6px;
+  min-width: 170px;
+  padding: 10px 0;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Mostrar submenú al pasar el mouse */
+.menu-item:hover .dropdown {
+  display: block;
+}
+
+/* LINKS DEL SUBMENÚ */
+.dropdown li a {
+  display: block;
+  padding: 10px 20px;
+  color: #FAFAFA;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.dropdown li a:hover {
+  background-color: #BF1E2E;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .dropdown {
+    position: static;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .dropdown li a {
+    padding: 0.5rem 0;
+  }
+}
+
+
+/* === NAV PRINCIPAL === */
+.navbar {
+  background-color: #FAFAFA;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+/* Contenedor interno */
+.navbar-container {
+  display: flex;
+  justify-content: space-between; /* logo izq / menú der */
+  align-items: center;
+  padding: 0.01rem 2rem; /* default */
+  width: 100%;
+}
+
+/* Logo */
+.navbar-logo img {
+  height: 50px; /* default */
+  width: auto;
+}
+
+/* Menu */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.nav-links {
+  margin-right: 48px; /* ajusta a tu gusto */
+}
+
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0.3rem 1rem; /* reduce padding en pantallas pequeñas */
+  }
+
+  .navbar-logo img {
+    height: 40px; /* reduce el logo */
+  }
+
+  .nav-links {
+    gap: 1rem; /* reduce espacio entre items del menú */
+    font-size: 14px; /* opcional: reduce tamaño de texto */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .navbar-logo img {
+    height: 35px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .menu-item .dropdown {
+    position: static;
+    width: 100%;
+  }
+}
+
+.dropdown li a {
+  display: block;
+  padding: 10px 20px;
+  color: #FAFAFA;
+  text-decoration: none;
+  font-size: 100px; /* tamaño más grande */
+  font-weight: 600; /* opcional: más visible */
+}
+
+@media (max-width: 768px) {
+  .dropdown li a {
+    font-size: 18px; /* un poco más pequeño en pantallas chicas */
+  }
+}
+
+.menu-item .dropdown li a {
+  font-size: 26px;
+}
+
+
+
+.menu-item .dropdown {
+background-color: rgb(216, 218, 220); /* fondo principal */
+  
+
+}
+.menu-item {
+    border: 0.5px dashed #8A2E8D; /* grosor 2px, línea sólida, color morado */
+    border-radius: 8px; /* opcional, mantiene las esquinas redondeadas */
+}
+
+.menu-item .dropdown li a {
+color: #000000;
+}
+
+
+.site-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4vh;
+    background: linear-gradient(90deg, #0B1F6A, rgb(216, 218, 220)); /* azul fuerte a casi blanco */
+    color: #FAFAFA !important; /* texto blanco */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    letter-spacing: 2px;
+  /*  z-index: 1000;*/
+}

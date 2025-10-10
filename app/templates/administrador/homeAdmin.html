@@ -1,48 +1,56 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Inicio Encargado{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/homeAdmin.css' %}">
+{% endblock %}
 
 {% block content %}
 <main class="page">
   <section class="center-area">
-    <div class="stack">
-      <div class="rect">
-        <div class="contenedor">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="left-panel">
+      <div class="contenedor">
         <table class="table table-striped table-bordered text-center">
-      <thead class="table-dark">
-        <tr>
-          <th>A</th>
-          <th>B</th>
-          <th>C</th>
-          <th>D</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>10</td>
-          <td>20</td>
-          <td>30</td>
-          <td>40</td>
-        </tr>
-        <tr>
-          <td>15</td>
-          <td>25</td>
-          <td>35</td>
-          <td>45</td>
-        </tr>
-      </tbody>
-    </table>
-      </div>
+          <thead class="table-dark">
+            <tr>
+              <th>A</th>
+              <th>B</th>
+              <th>C</th>
+              <th>D</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>10</td>
+              <td>20</td>
+              <td>30</td>
+              <td>40</td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td>25</td>
+              <td>35</td>
+              <td>45</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="menu-row">
-      <div class="menu-opt" onclick="location.href='{% url 'listaPedidos' %}'">LISTA DE PEDIDOS</div>
-      <div class="menu-opt" >REGISTRAR PEDIDOS</div>
-      <div class="menu-opt" >REPORTES</div>
-      <div class="menu-opt" onclick="location.href='{% url 'catalogos' %}'">CATÁLOGOS</div>
+    <!-- COLUMNA DERECHA -->
+    <div class="right-panel">
+      <div class="menu-row">
+        <div class="menu-opt" onclick="location.href='{% url 'listaPedidos' %}'">LISTA DE PEDIDOS</div>
+        <div class="menu-opt">REGISTRAR PEDIDOS</div>
+        <div class="menu-opt">REPORTES</div>
+        <div class="menu-opt" onclick="location.href='{% url 'catalogos' %}'">CATÁLOGOS</div>
+      </div>
     </div>
+
   </section>
 </main>
-
 {% endblock %}

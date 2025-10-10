@@ -1,0 +1,87 @@
+/* Estructura general */
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+/* Contenedor de dos columnas */
+.center-area {
+  display: flex;
+  flex-direction: row; /* asegura columnas lado a lado */
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  width: 90%;
+  max-width: 1200px;
+}
+
+/* Columna izquierda (tabla) */
+.left-panel {
+  flex: 2; /* más ancha */
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Columna derecha (cards/menu) */
+.right-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Menú de opciones */
+.menu-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.menu-opt {
+  background: linear-gradient(135deg, #004aad, #00b4d8);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.menu-opt:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #0077b6, #90e0ef);
+}
+
+/* Tabla */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border: 1px solid #ccc;
+}
+
+.table-dark {
+  background: #222;
+  color: white;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .center-area {
+    flex-direction: column;
+  }
+}
+

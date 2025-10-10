@@ -1,19 +1,4 @@
-/* Fondo general */
-* {
-  font-family: 'Pathway Gothic One', sans-serif;
-}
-
-li {
-  font-size: 3vh !important; 
-}
-
-body {
-  background: #ebebeb;
-  margin: 0;
-  color: #202124;
-}
-
-/* Contenedor principal */
+/* Fuente global */
 .catalogos-wrapper {
   width: 65%;
   padding: 32px 32px 56px;
@@ -36,7 +21,7 @@ body {
   border: 1px solid #e2e5e9;
   border-radius: 18px;
   padding: 26px 28px 32px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 2px rgba(201, 9, 9, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -59,7 +44,7 @@ body {
 
 .card h1 {
   margin: 0 0 4px;
-  font-size: 6;
+  font-size: 6vh;
   font-weight: 600;
   letter-spacing: .3px;
 }
@@ -99,4 +84,27 @@ body {
   .card {
     padding: 22px 22px 28px;
   }
+}
+
+
+.card {
+  min-height: 180px;
+}
+.card {
+  background: #fff !important;
+  border: 1px solid #e2e5e9 !important;
+  border-radius: 18px !important;
+  padding: 26px 28px 32px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  transition: box-shadow .25s, transform .25s, border-color .25s !important;
+  min-height: 180px !important;
+}
+.page {
+  padding: 40px 16px 120px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
 }

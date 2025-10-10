@@ -1,40 +1,41 @@
 {% load static %}
-<!-- Contiene la plantilla base con la barra de navegación, el menú y el pie de página
-      Indica la tipografía y los enlaces a las páginas de estilos que se usarán -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>{% block title %}TREX{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
-  <link rel="stylesheet" href="{% static 'css/genericas/general.css' %}">
-  <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}">
 
+  <!-- CSS global -->
+  <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/administrador/catalogos.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <!-- CSS específico por página -->
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
 
   <nav class="navbar">
-  <div class="navbar-container">
-    <div class="navbar-logo">
-      <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+      </div>
+
+      <ul class="nav-links">
+        <li class="menu-item">
+          <i class="fa-solid fa-bars"></i>
+          <ul class="dropdown">
+            <li><a href="{% url 'listaPedidos' %}">Pedidos</a></li>
+            <li><a href="{% url 'login' %}">Reportes</a></li>
+            <li><a href="{% url 'catalogos' %}">Catálogos</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
+  </nav>
 
-    <ul class="nav-links">
-      <li class="menu-item">
-        <i class="fa-solid fa-bars"></i>
-        <ul class="dropdown">
-          <li><a href="{% url 'listaPedidos' %}">Pedidos</a></li>
-          <li><a href="{% url 'login' %}">Reportes</a></li>
-          <li><a href="{% url 'catalogos' %}">Catálogos</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-  <main class="container">
+  <main class="page">
     {% block content %}{% endblock %}
   </main>
 
