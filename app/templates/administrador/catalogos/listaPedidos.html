@@ -1,45 +1,10 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!doctype html>
-<html lang="es">
+{% block title %}Inicio Encargado{% endblock %}
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gestión De Lotes</title>
-  <link rel="stylesheet" href="{% static 'css/genericas/general.css' %}">
-  <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+{% block content %}
 
-
-</head>
-
-<body>
-  <header>
-    <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
-  </header>
-
-  <nav class="nav">
-  <div class="brand">
-    <span class="letter1">T</span>
-    <span class="letter2">R</span>
-    <span class="letter3">E</span>
-    <span class="letter4">X</span>
-  </div>
-
-  <ul class="nav-links">
-    <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-    <li class="menu-item">
-      <i class="fa-solid fa-bars"></i>
-      <ul class="dropdown">
-         <li><a href="{% url 'listaPedidos' %}">Pedidos</a></li>
-         <li><a href="{% url 'login' %}">Reportes</a></li>
-         <li><a href="{% url 'login' %}">Catálogos</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+<main class="page">
   
     <div class="informacion">
       <div id="subtitle">Cantidad de lotes: __________</div>
@@ -116,14 +81,6 @@
     </table>
   </div>
 
+</main>
 
-  <footer>
-    <small>
-      TREX
-    <br>
-      Aquí iría un logo
-    </small>
-  </footer>
-
-</body>
-</html>
+{% endblock %}
