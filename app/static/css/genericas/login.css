@@ -372,3 +372,26 @@ color: #000000;
     letter-spacing: 2px;
   /*  z-index: 1000;*/
 }
+
+
+/* LOGIN */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #FAFAFA;
+}
+
+.login-container {
+    margin: auto auto auto auto;
+    transform: translateY(-50px);
+    box-shadow: 0 3px 10px #8A2E8D;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}

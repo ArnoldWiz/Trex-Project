@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Lista de Pedidos{% endblock %}
+{% block title %}Inicio Encargado{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/total.css' %}">
+{% endblock %}
 
 {% block content %}
-<!--PEDIDOS TOTALES-->
 <main class="page">
   
     <div class="informacion">

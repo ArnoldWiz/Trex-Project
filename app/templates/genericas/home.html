@@ -4,35 +4,24 @@
   <head>
     <meta charset="UTF-8" />
     <title>Inicio</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}" />
     <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-    
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm mb-4">
-  <div class="container-fluid navbar-container">
-    <!-- Logo a la izquierda -->
+
+  <nav class="navbar">
+    <div class="navbar-container">
     <div class="navbar-logo">
-      <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo" />
+      <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
     </div>
 
-    <!-- Botón responsive -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Enlaces a la derecha -->
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="nav-links ms-auto">
+    <div class="login-nav">
+      <ul>
         <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
       </ul>
     </div>
-  </div>
-</nav>
-
+    </div>
+  </nav>
 
 <main class="page">
   <section class="center-area">
@@ -45,9 +34,7 @@
   </section>  
 </main>
 
-<footer class="site-footer">
-  <div>Trex</div>
-</footer>
+<footer class="site-footer">Trex</footer>
 
 </body>
 </html>
