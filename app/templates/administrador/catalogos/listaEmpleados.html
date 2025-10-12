@@ -1,34 +1,27 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lista de Empleados</title>
-  <link rel="stylesheet" href="{% static 'css/genericas/home.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
 
-</head>
+{% block title %}Lista de Empleados{% endblock %}
 
-<body>
-  <header>
-    <div class="titulo">
-      <h1><span class="t1">T</span><span class="t2">R</span><span class="t3">E</span><span class="t4">X</span></h1>
-    </div>
-  </header>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
 
-  <table>
-    <caption>LISTA DE EMPLEADOS</caption>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Área</th>
-        <th>Estatus</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for empleado in empleados %}
+{% block content %}
+  <div id="subtitle">Lista De Empleados</div>
+  <section class="center-area">
+      <div class="contenedor">
+        <!-- Contenido temporal de la base de datos -->
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Área</th>
+              <th>Estatus</th>
+            </tr>
+          </thead>
+          <tbody>      {% for empleado in empleados %}
       <tr>
         <td>{{ empleado.nombre }}</td>
         <td>{{ empleado.apellidos }}</td>
@@ -43,18 +36,18 @@
         <td colspan="5">No hay empleados registrados</td>
       </tr>
       {% endfor %}
-    </tbody>
-  </table>
 
-  <div>
-    <button onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar</button>
-    <button>KPEI'S</button>
-  </div>
+          </tbody>
+        </table>
+    </div>
 
-  <div>
-    <a href="{% url 'homeAdmin' %}">Volver al Home</a>
-    <!--<a href="{% url 'formEmpleado' %}">Registrar Nuevo Empleado</a>-->
-  </div>
+  </section>
 
-</body>
-</html>
+  <div class="login-nav" onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar</div>
+  <div class="login-nav" onclick="window.location.href='{% url 'formEmpleado' %}'">Reportes</div>
+
+  
+  {% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
+{% endblock %}
+{% endblock %}

@@ -6,7 +6,6 @@
   <title>{% block title %}TREX{% endblock %}</title>
   
   <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}">
-  <link rel="stylesheet" href="{% static 'css/administrador/catalogos.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
@@ -19,6 +18,20 @@
       <div class="navbar-logo">
         <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
       </div>
+
+      <div class="juntar">
+  <div class="login-nav">
+    <ul>
+      <li><a href="{% url 'home' %}">Inicio</a></li>
+    </ul>
+  </div>
+
+  <div class="login-nav">
+    <ul>
+      <li><a href="{% url 'homeAdmin' %}">Inicio Encargado</a></li>
+    </ul>
+  </div>
+</div>
 
       <ul class="nav-links">
         <li class="menu-item">
@@ -37,7 +50,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <div class="opcion" onclick="history.back()">Regresar</div>
+  {% block regresar %}{% endblock %}
   <footer class="site-footer">Trex</footer>
 </body>
 </html>

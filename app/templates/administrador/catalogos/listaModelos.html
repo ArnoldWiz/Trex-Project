@@ -1,17 +1,30 @@
-<h1>Lista de Modelos</h1>
-<div>Opción de activar o desactivar dependiendo la existencia de los modelos que ocupen.</div>
-<table class="table table-striped">
-    <thead>
-        <tr>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Modelos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div id="subtitle">Lista De Modelos</div> <!--Opción de activar o desactivar dependiendo la existencia de los modelos que ocupen.-->
+  <section class="center-area">
+      <div class="contenedor">
+        <!-- Contenido temporal de la base de datos -->
+        <table class="custom-table">
+          <thead>
+             <tr>
             <th>ID</th>
             <th>Folio</th>
             <th>Modelo</th>
             <th>Cantidad de Hilo</th>
             <th>Acciones</th>
+            <th>Estatus</th>
         </tr>
-    </thead>
-    <tbody>
-        {% for modelo in modelos %}
+          </thead>
+          <tbody>
+             {% for modelo in modelos %}
         <tr>
             <td>{{ modelo.id }}</td>
             <td>{{ modelo.folio }}</td>
@@ -23,7 +36,15 @@
             </td>
         </tr>
         {% endfor %}
-    </tbody>
-</table>
-<button onclick="location.href='{% url 'formModelo' %}'">Agregar Modelo</button>
-<button onclick="location.href='{% url 'catalogos' %}'">Volver a Catálogos</button>
+          </tbody>
+        </table>
+    </div>
+
+  </section>
+
+  <div class="login-nav" onclick="location.href='{% url 'formModelo' %}'">Agregar Modelo</div>
+  
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
+{% endblock %}
+{% endblock %}

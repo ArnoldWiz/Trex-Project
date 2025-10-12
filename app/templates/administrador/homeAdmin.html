@@ -51,5 +51,7 @@
       </div>
     </div>
   </section>
-
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'login' %}'">Regresar</div>
+{% endblock %}
 {% endblock %}
