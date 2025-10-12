@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Pedidos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="informacion">
+    <h2>Cantidad de lotes:</h2>
+  <div class="login-nav"></div>
+    <h2>Fecha de inicio:</h2>
+  <div class="login-nav"></div>
+    <h2>Fecha de fin:</h2>
+  <div class="login-nav"></div>
+    <h2>Fecha estimada:</h2>
+  <div class="login-nav"></div>
+  </div>
+
+  <div class="distribucion">
+    <div>
+    <div class="areas">
+    </div>
+      <div>
+        Estatus (agregar boton de estatus)
+
+        <div class="barras">
+      <h1>Avance</h1>
+      <div class="contenedor-barras">
+      
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 80%;">80%</div>
+      </div>
+        <span>Tejido</span>
+      </div>
+
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 40%;">40%</div>
+      </div>
+        <span>Plancha</span>
+      </div>
+
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 10%;">10%</div>
+      </div>
+        <span>Corte</span>
+      </div>
+
+      <div class="barra-item">
+        <div class="barra-vertical">
+        <div class="progreso" style="height: 0%;">0%</div>
+      </div>
+        <span>Empaquetado</span>
+      </div>
+
+      <button>Descargar</button>
+      </div> 
+    
+      </div>
+      </div>
+    </div>
+    
+    <div class="barras">
+        <h1>Información del pedido</h1>
+        <hr>Talla<br>Cantidad <br> Color
+        <hr></hr>
+        Folio
+        Modelo
+        Cantidad de hilo (característica)
+    </div>
+    <table>
+      <thead></thead>
+      <tbody><td><button ><a href="{% url 'lotes' %}">Lotes</a></button></td></tbody>
+      
+      LOTES DEL PEDIDO
+    </table>
+  </div>
+
+{% endblock %}

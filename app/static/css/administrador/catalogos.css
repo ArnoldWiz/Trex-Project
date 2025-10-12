@@ -27,12 +27,14 @@
   gap: 12px;
   position: relative;
   transition: box-shadow .25s, transform .25s, border-color .25s;
+  box-shadow: 0 3px 10px #BF1E2E;
   height: 30vh;
 }
 
 .card:hover {
   border-color: #d0d4d9;
   box-shadow: 0 4px 12px rgb(255, 172, 215), 0 2px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 3px 10px #BF1E2E;
   transform: translateY(-2px);
   cursor: pointer;
 }

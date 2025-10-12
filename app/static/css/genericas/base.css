@@ -223,7 +223,7 @@ nav{
 
 /* Secciones */
 .center-area{
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 24px auto;
   display: flex;
   flex-direction: column;
@@ -276,6 +276,17 @@ nav{
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute; 
+  top: 100px;          
+  left: 40px;   
+}
+
+#subtitle{
+  color: #2A388F;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px; 
+  font-weight: bold;
+  font-size: 40px;
 }
 
 /* Tarjetas de selección */

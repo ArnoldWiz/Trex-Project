@@ -1,90 +1,59 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inicio Encargado{% endblock %}
+{% block title %}Lista de Pedidos{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/administrador/total.css' %}">
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
 {% endblock %}
 
 {% block content %}
-<main class="page">
+  <div id="subtitle">Lista De Pedidos</div>
+  <section class="center-area">
+      <div class="contenedor">
+        <!-- Contenido temporal de la base de datos -->
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID Pedido</th>
+              <th>Pedido</th>
+              <th>Cliente</th>
+              <th>Avance</th>
+              <th>Otro</th>
+              <th>Informacion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>100000000000000</td>
+              <td>20100000000000000</td>
+              <td>30100000000000000</td>
+              <td>40100000000000000</td>
+            </tr>
+            <tr>
+              <td>Progression Bar</td>
+              <td>20100000000000000</td>
+              <td>30100000000000000</td>
+              <td>40100000000000000</td>
+            </tr>
+            <tr>
+              <td>100000000000000</td>
+              <td>20100000000000000</td>
+              <td>30100000000000000</td>
+              <td>40100000000000000</td>
+            </tr>
+            <tr>
+              <td>Progression Bar</td>
+              <td>20100000000000000</td>
+              <td>30100000000000000</td>
+              <td><a href="{% url 'pedidoEspecifico' %}">Información de pedido</a></td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+
+  </section>
+
+  <div class="login-nav">Pedidos Terminados</div>
   
-    <div class="informacion">
-      <div id="subtitle">Cantidad de lotes: __________</div>
-      <div class="derecha">
-      <div>Fecha de inicio: _______________</div>
-      <div>Fecha de fin: _______________</div>
-      <div>Fecha de estimada: _______________</div>
-      <!--<div>
-        <button ><a href="vista_pedido.html">Información de pedido</a></button>
-        <button><a href="editar_lote.html">Editar Información</a></button>
-      </div>-->
-      </div>
-    </div>
-
-  <div class="distribucion">
-    <div>
-    <div class="areas">
-    </div>
-      <div>
-        Estatus (agregar boton de estatus)
-
-        <div class="barras">
-      <h1>Avance</h1>
-      <div class="contenedor-barras">
-      
-      <div class="barra-item">
-        <div class="barra-vertical">
-        <div class="progreso" style="height: 80%;">80%</div>
-      </div>
-        <span>Tejido</span>
-      </div>
-
-      <div class="barra-item">
-        <div class="barra-vertical">
-        <div class="progreso" style="height: 40%;">40%</div>
-      </div>
-        <span>Plancha</span>
-      </div>
-
-      <div class="barra-item">
-        <div class="barra-vertical">
-        <div class="progreso" style="height: 10%;">10%</div>
-      </div>
-        <span>Corte</span>
-      </div>
-
-      <div class="barra-item">
-        <div class="barra-vertical">
-        <div class="progreso" style="height: 0%;">0%</div>
-      </div>
-        <span>Empaquetado</span>
-      </div>
-
-      <button>Descargar</button>
-      </div> 
-    
-      </div>
-      </div>
-    </div>
-    
-    <div class="barras">
-        <h1>Información del pedido</h1>
-        <hr>Talla<br>Cantidad <br> Color
-        <hr></hr>
-        Folio
-        Modelo
-        Cantidad de hilo (característica)
-    </div>
-    <table>
-      <thead></thead>
-      <tbody><td><button ><a href="{% url 'lotes' %}">Información de pedido</a></button></td></tbody>
-      
-      LOTES DEL PEDIDO
-    </table>
-  </div>
-
-</main>
-
 {% endblock %}

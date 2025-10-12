@@ -26,6 +26,7 @@ urlpatterns = [
     path('administrador/modelos/actualizar/<int:pk>/', ActualizarModelo.as_view(), name='actualizarModelo'),
     #PEDIDOS LOTES
     path('administrador/catalogos/listaPedidos/', listaPedidos, name='listaPedidos'),
+    path('administrador/catalogos/pedidoEspecifico/', pedidoEspecifico, name='pedidoEspecifico'),
     path('administrador/lotes/', lotes, name='lotes'),
     #VISTA GENERAL EMPLEADOS
     path('empleados/tejido/', tejido, name='tejido'),

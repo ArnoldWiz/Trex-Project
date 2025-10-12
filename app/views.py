@@ -32,6 +32,9 @@ def listaEmpleados(request):
 def homeAdmin(request):
     return render(request, 'administrador/homeAdmin.html')
 
+def pedidoEspecifico(request):
+    return render(request, 'administrador/catalogos/pedidoEspecifico.html')
+
     #CRUD EMPLEADOS
 class ListaEmpleados(ListView):
     model = Empleado
