@@ -1,0 +1,23 @@
+<h1>Lista de Clientes</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Contacto</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente in clientes %}
+        <tr>
+            <td>{{ cliente.idcliente }}</td>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.contacto }}</td>
+            <td>
+                <a href="{% url 'actualizarCliente' cliente.idcliente %}">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<button onclick="location.href='{% url 'formCliente' %}'">Agregar Cliente</button>

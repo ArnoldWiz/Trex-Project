@@ -12,12 +12,12 @@
     <div class="left-panel">
       <div class="contenedor">
         <!-- Contenido temporal de la base de datos -->
-         <div id="subtitle">Pedidos Prioritarios</div>
+         <div id="subtitle">Ordenes Prioritarias</div>
         <table class="custom-table">
           <thead>
             <tr>
-              <th>ID Pedido</th>
-              <th>Pedido</th>
+              <th>ID Orden</th>
+              <th>Orden</th>
               <th>Cliente</th>
               <th>Avance</th>
               <th>Otro</th>
@@ -44,8 +44,8 @@
 
     <div class="right-panel">
       <div class="menu-row">
-        <div class="menu-opt" onclick="location.href='{% url 'listaPedidos' %}'">LISTA DE PEDIDOS</div>
-        <div class="menu-opt">REGISTRAR PEDIDOS</div>
+        <div class="menu-opt" onclick="location.href='{% url 'listaOrdenes' %}'">LISTA DE ORDENES</div>
+        <div class="menu-opt" onclick="location.href='{% url 'crearOrden' %}'">REGISTRAR ORDEN</div>
         <div class="menu-opt">REPORTES</div>
         <div class="menu-opt" onclick="location.href='{% url 'catalogos' %}'">CATÁLOGOS</div>
       </div>

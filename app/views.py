@@ -1,9 +1,7 @@
 from django.shortcuts import render
-from django.contrib import admin
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponse
 from django.views.decorators.clickjacking import xframe_options_sameorigin
-from app.models import Empleado, Maquina, Modelo
+from app.models import *
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from app.forms import *
 
@@ -20,20 +18,61 @@ def login(request):
 def catalogos(request):
     return render(request, 'administrador/catalogos.html')
 
-def lotes(request):
-    return render(request, 'administrador/lotes.html')
-
-def listaPedidos(request):
-    return render(request, 'administrador/catalogos/listaPedidos.html')
-
-def listaEmpleados(request):
-    return render(request, 'administrador/catalogos/listaEmpleados.html')
-
 def homeAdmin(request):
     return render(request, 'administrador/homeAdmin.html')
 
+#TEMPORALES
 def pedidoEspecifico(request):
     return render(request, 'administrador/catalogos/pedidoEspecifico.html')
+def lotes(request):
+    return render(request, 'administrador/lotes.html')
+
+    #CRUD ORDENES
+class ListaOrdenes(ListView):
+    model = Ordendepedido
+    template_name = 'administrador/catalogos/listaOrdenes.html'
+    context_object_name = 'ordenes'
+
+class CrearOrden(CreateView):
+    model = Ordendepedido
+    template_name = 'administrador/forms/formOrden.html'
+    form_class = OrdenForm
+    success_url = '/administrador/ordenes'
+
+class ActualizarOrden(UpdateView):
+    model = Ordendepedido
+    template_name = 'administrador/forms/formOrden.html'
+    form_class = OrdenForm
+    success_url = '/administrador/ordenes'
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        return ctx
+
+    #CRUD PEDIDOS
+class ListaPedidos(ListView):
+    model = Pedido
+    template_name = 'administrador/catalogos/listaPedidos.html'
+    context_object_name = 'pedidos'
+    
+class CrearPedido(CreateView):
+    model = Pedido
+    template_name = 'administrador/forms/formPedido.html'
+    form_class = PedidoForm
+    success_url = '/administrador/pedidos/'
+    
+class ActualizarPedido(UpdateView):
+    model = Pedido
+    template_name = 'administrador/forms/formPedido.html'
+    form_class = PedidoForm
+    success_url = '/administrador/pedidos/'
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        return ctx
+    
+class ListaLotes(ListView):
+    model = Lote
+    template_name = 'administrador/catalogos/listaLotes.html'
+    context_object_name = 'lotes'
 
     #CRUD EMPLEADOS
 class ListaEmpleados(ListView):
@@ -57,7 +96,7 @@ class ActualizarEmpleado(UpdateView):
         ctx = super().get_context_data(**kwargs)
         return ctx
 
-    #CRUD Maquinas
+    #CRUD MAQUINAS
 class ListaMaquinas(ListView):
     model = Maquina
     template_name = 'administrador/catalogos/listaMaquinas.html'
@@ -79,7 +118,7 @@ class ActualizarMaquina(UpdateView):
         ctx = super().get_context_data(**kwargs)
         return ctx
 
-    #CRUD Modelos
+    #CRUD MODELOS
 class ListaModelos(ListView):
     model = Modelo
     template_name = 'administrador/catalogos/listaModelos.html'
@@ -96,6 +135,29 @@ class ActualizarModelo(UpdateView):
     template_name = 'administrador/forms/formModelo.html'
     form_class = ModeloForm
     success_url = '/administrador/modelos/'
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        return ctx
+    
+    #CRUD CLIENTES
+    
+class ListaClientes(ListView):
+    model = Cliente
+    template_name = 'administrador/catalogos/listaClientes.html'
+    context_object_name = 'clientes'
+    
+class CrearCliente(CreateView):
+    model = Cliente
+    template_name = 'administrador/forms/formCliente.html'
+    form_class = ClienteForm
+    success_url = '/administrador/clientes/'
+
+class ActualizarCliente(UpdateView):
+    model = Cliente
+    template_name = 'administrador/forms/formCliente.html'
+    form_class = ClienteForm
+    success_url = '/administrador/clientes/'
     
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

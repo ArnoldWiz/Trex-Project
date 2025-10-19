@@ -1,0 +1,11 @@
+<h1>Registrar Orden</h1>
+<form action="">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+    {% endfor %}
+    <button type="submit">Guardar</button>
+</form>
