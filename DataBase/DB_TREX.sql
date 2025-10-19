@@ -51,13 +51,31 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `TREX`.`Cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `TREX`.`Cliente` (
+  `idCliente` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `Contacto` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idCliente`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `TREX`.`OrdenDePedido`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`OrdenDePedido` (
   `idOrdenDePedido` INT NOT NULL AUTO_INCREMENT,
+  `idCliente` INT NOT NULL,
   `FechaInicio` DATETIME NOT NULL,
   `FechaFin` DATETIME NULL,
-  PRIMARY KEY (`idOrdenDePedido`))
+  PRIMARY KEY (`idOrdenDePedido`),
+  INDEX `foreign_ordenes_clientes_idx` (`idCliente` ASC) VISIBLE,
+  CONSTRAINT `foreign_ordenes_clientes`
+    FOREIGN KEY (`idCliente`)
+    REFERENCES `TREX`.`Cliente` (`idCliente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
