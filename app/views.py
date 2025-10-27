@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.forms import inlineformset_factory
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from app.models import *
+from django.db.models import Count
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from app.forms import *
 
@@ -33,12 +35,62 @@ class ListaOrdenes(ListView):
     model = Ordendepedido
     template_name = 'administrador/catalogos/listaOrdenes.html'
     context_object_name = 'ordenes'
+    
+    def get_queryset(self):
+        return Ordendepedido.objects.select_related('idcliente').annotate(pedidos_count=Count('pedido'))
 
 class CrearOrden(CreateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'
     form_class = OrdenForm
     success_url = '/administrador/ordenes'
+
+def crear_orden_con_pedidos(request):
+    PedidoFormSet = inlineformset_factory(Ordendepedido, Pedido, form=PedidoForm, extra=1, can_delete=True)
+    if request.method == 'POST':
+        if orden_form.is_valid():
+            orden = orden_form.save(commit=False)
+            formset = PedidoFormSet(request.POST, instance=orden)
+            if formset.is_valid():
+                orden.save()
+                formset.save()
+                if 'save_add_more' in request.POST:
+                    return redirect('actualizarOrden', pk=orden.pk)
+                return redirect('listaOrdenes')
+        else:
+            formset = PedidoFormSet(request.POST)
+    else:
+        orden_form = OrdenForm()
+        formset = PedidoFormSet()
+
+    return render(request, 'administrador/forms/formOrden.html', {
+        'form': orden_form,
+        'formset': formset,
+        'orden': None,
+    })
+
+
+def actualizar_orden_con_pedidos(request, pk):
+    orden = Ordendepedido.objects.get(pk=pk)
+    PedidoFormSet = inlineformset_factory(Ordendepedido, Pedido, form=PedidoForm, extra=1, can_delete=True)
+    if request.method == 'POST':
+        orden_form = OrdenForm(request.POST, instance=orden)
+        formset = PedidoFormSet(request.POST, instance=orden)
+        if orden_form.is_valid() and formset.is_valid():
+            orden_form.save()
+            formset.save()
+            if 'save_add_more' in request.POST:
+                return redirect('actualizarOrden', pk=orden.pk)
+            return redirect('listaOrdenes')
+    else:
+        orden_form = OrdenForm(instance=orden)
+        formset = PedidoFormSet(instance=orden)
+
+    return render(request, 'administrador/forms/formOrden.html', {
+        'form': orden_form,
+        'formset': formset,
+        'orden': orden,
+    })
 
 class ActualizarOrden(UpdateView):
     model = Ordendepedido
@@ -54,6 +106,24 @@ class ListaPedidos(ListView):
     model = Pedido
     template_name = 'administrador/catalogos/listaPedidos.html'
     context_object_name = 'pedidos'
+
+    def get_queryset(self):
+        orden_pk = self.kwargs.get('orden_pk')
+        if orden_pk:
+            return Pedido.objects.filter(idordenpedido_id=orden_pk)
+        return Pedido.objects.none()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        orden_pk = self.kwargs.get('orden_pk')
+        orden = None
+        if orden_pk:
+            try:
+                orden = Ordendepedido.objects.get(pk=orden_pk)
+            except Ordendepedido.DoesNotExist:
+                orden = None
+        ctx['orden'] = orden
+        return ctx
     
 class CrearPedido(CreateView):
     model = Pedido

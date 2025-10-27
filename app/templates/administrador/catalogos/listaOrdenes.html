@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Lista de Pedidos{% endblock %}
+{% block title %}Lista de Ordenes{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
@@ -16,39 +16,35 @@
         <table class="custom-table">
           <thead>
             <tr>
-              <th>ID Orden</th>
-              <th>Orden</th>
+              <th>Numero de Orden</th>
               <th>Cliente</th>
               <th>Avance</th>
-              <th>Otro</th>
-              <th>Informacion</th>
+              <th>Pedidos</th>
+              <th>Detalles</th>
+              <th>Editar</th>
             </tr>
           </thead>
           <tbody>
+            {% for orden in ordenes %}
             <tr>
-              <td>100000000000000</td>
-              <td>20100000000000000</td>
-              <td>30100000000000000</td>
-              <td>40100000000000000</td>
+              <td>{{ orden.numeroorden }}</td>
+              <td>{{ orden.idcliente.nombre }}</td>
+              <td>%</td>
+              <td>
+                {{ orden.pedidos_count }}
+              </td>
+              <td>
+                <a href="{% url 'listaPedidos' orden_pk=orden.pk %}">Ver Detalles</a>
+              </td>
+              <td>
+                <a href="{% url 'actualizarOrden' orden_pk=orden.pk %}">Editar</a>
+              </td>
             </tr>
+            {% empty %}
             <tr>
-              <td>Progression Bar</td>
-              <td>20100000000000000</td>
-              <td>30100000000000000</td>
-              <td>40100000000000000</td>
+              <td colspan="6">No hay órdenes disponibles.</td>
             </tr>
-            <tr>
-              <td>100000000000000</td>
-              <td>20100000000000000</td>
-              <td>30100000000000000</td>
-              <td>40100000000000000</td>
-            </tr>
-            <tr>
-              <td>Progression Bar</td>
-              <td>20100000000000000</td>
-              <td>30100000000000000</td>
-              <td><a href="{% url 'pedidoEspecifico' %}">Información de pedido</a></td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
     </div>

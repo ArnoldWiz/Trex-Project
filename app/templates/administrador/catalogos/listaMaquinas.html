@@ -5,6 +5,7 @@
             <tr>
                 <th>Área</th>
                 <th>Número</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -13,12 +14,11 @@
                 <td>{{ maquina.area }}</td>
                 <td>{{ maquina.numero }}</td>
                 <td>
-                    <button onclick="location.href='{% url 'actualizarMaquina' maquina.idmaquina %}'">Editar</button>
+                    <a href="{% url 'actualizarMaquina' maquina.idmaquina %}">Editar</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <div>Agregar comentarios | Feedback y notas</div>
     <button onclick="location.href='{% url 'formMaquina' %}'">Agregar Máquina</button>
 </div>

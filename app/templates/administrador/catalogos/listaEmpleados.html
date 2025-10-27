@@ -18,7 +18,7 @@
               <th>Nombre</th>
               <th>Apellido</th>
               <th>Área</th>
-              <th>Estatus</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>      {% for empleado in empleados %}
@@ -26,9 +26,8 @@
         <td>{{ empleado.nombre }}</td>
         <td>{{ empleado.apellidos }}</td>
         <td>{{ empleado.area }}</td>
-        <td>{{ empleado.estatus }}</td>
         <td>
-          <button onclick="location.href='{% url 'actualizarEmpleado' empleado.idempleado %}'">Editar</button>
+          <a href="{% url 'actualizarEmpleado' empleado.idempleado %}">Editar</a>
         </td>
       </tr>
       {% empty %}
@@ -44,7 +43,6 @@
   </section>
 
   <div class="login-nav" onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar</div>
-  <div class="login-nav" onclick="window.location.href='{% url 'formEmpleado' %}'">Reportes</div>
 
   
   {% block regresar %}

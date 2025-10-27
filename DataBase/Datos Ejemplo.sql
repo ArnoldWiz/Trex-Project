@@ -8,37 +8,37 @@ VALUES
 ('Empaque', 'Javier', 'Flores Castillo', 1),
 ('Tejido', 'Sofia', 'Mendez Ruiz', 0);
 
-INSERT INTO `TREX`.`Maquina` (`Area`, `Numero`)
+INSERT INTO `TREX`.`Maquina` (`Area`, `Numero`, `Estatus`)
 VALUES
-('Tejido', 1),
-('Tejido', 2),
-('Plancha', 1),
-('Corte', 1),
-('Corte', 2);
+('Tejido', 1,1),
+('Tejido', 2,1),
+('Plancha', 1,1),
+('Corte', 1,1),
+('Corte', 2,1);
 
-INSERT INTO `TREX`.`Modelo` (`Folio`, `Modelo`, `CantidadHilo`)
+INSERT INTO `TREX`.`Modelo` (`Folio`, `Modelo`, `CantidadHilo`, `Estatus`)
 VALUES
-('A-001', 'Camiseta Basica', 150),
-('B-002', 'Sudadera Deportiva', 350),
-('C-003', 'Pantalón Casual', 280),
-('D-004', 'Chamarra Ligera', 500),
-('E-005', 'Vestido de Verano', 200);
+('A-001', 'Camiseta Basica', 150,1),
+('B-002', 'Sudadera Deportiva', 350,1),
+('C-003', 'Pantalón Casual', 280,1),
+('D-004', 'Chamarra Ligera', 500,1),
+('E-005', 'Vestido de Verano', 200,1);
 
-INSERT INTO `TREX`.`Cliente` (`Nombre`, `Contacto`)
+INSERT INTO `TREX`.`Cliente` (`Nombre`, `Contacto`, `Estatus`)
 VALUES
-('Modas Express S.A. de C.V.', 'Carlos Garcia (CEO)'),
-('Textiles del Sur', 'Elena Ramirez (Jefa de Compras)'),
-('Ropa Infantil Feliz', 'Laura Montes (Dueña)'),
-('Distribuidora Norte', 'Pedro Vazquez (Gerente)'),
-('Tienda La Moda', 'Ana Torres (Contacto Comercial)');
+('Modas Express S.A. de C.V.', 'Carlos Garcia (CEO)',1),
+('Textiles del Sur', 'Elena Ramirez (Jefa de Compras)',1),
+('Ropa Infantil Feliz', 'Laura Montes (Dueña)',1),
+('Distribuidora Norte', 'Pedro Vazquez (Gerente)',1),
+('Tienda La Moda', 'Ana Torres (Contacto Comercial)',1);
 
-INSERT INTO `TREX`.`OrdenDePedido` (`idCliente`, `FechaInicio`, `FechaFin`)
+INSERT INTO `TREX`.`OrdenDePedido` (`idCliente`, `NumeroOrden`, `FechaInicio`, `FechaFin`)
 VALUES
-(1, '2025-10-20 09:00:00', NULL), 
-(2, '2025-10-21 14:30:00', NULL), 
-(3, '2025-10-22 10:00:00', '2025-11-15 17:00:00'), 
-(4, '2025-10-23 08:00:00', NULL), 
-(1, '2025-10-24 11:15:00', NULL);
+(1, 'N1', '2025-10-20 09:00:00', NULL), 
+(2, 'N2', '2025-10-21 14:30:00', NULL), 
+(3, 'N3', '2025-10-22 10:00:00', '2025-11-15 17:00:00'), 
+(4, 'N4', '2025-10-23 08:00:00', NULL), 
+(1, 'N5', '2025-10-24 11:15:00', NULL);
 
 INSERT INTO `TREX`.`Pedido` (`idOrdenPedido`, `idModelo`, `Talla`, `Cantidad`, `Color`, `TotalLotes`, `LoteTerminado`, `FechaInicio`, `FechaFin`, `FechaPrevista`)
 VALUES

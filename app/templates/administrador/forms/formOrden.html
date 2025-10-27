@@ -1,11 +1,62 @@
 <h1>Registrar Orden</h1>
-<form action="">
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="form-group">
-            {{ field.label_tag }}
-            {{ field }}
-        </div>
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="form-group">
+    {{ form.idcliente.label_tag }}{{ form.idcliente }}
+  </div>
+  <div class="form-group">
+    {{ form.fechainicio.label_tag }}{{ form.fechainicio }}
+  </div>
+  <div class="form-group">
+    {{ form.fechafin.label_tag }}{{ form.fechafin }}
+  </div>
+
+  <h3>Pedidos</h3>
+  <div id="pedidos-formset">
+    {{ formset.management_form }}
+    {% for f in formset.forms %}
+      <div class="pedido-form">
+        {# Show edit link for existing pedidos when orden exists #}
+        {% if f.instance.pk and orden %}
+          <p>Pedido #{{ f.instance.pk }} - <a href="{% url 'actualizarPedido' orden_pk=orden.pk pk=f.instance.pk %}">Editar</a></p>
+        {% endif %}
+        {% for field in f.visible_fields %}
+          <div class="form-group">
+            {{ field.label_tag }}{{ field }}
+            {{ field.errors }}
+          </div>
+        {% endfor %}
+        {% if formset.can_delete %}
+          <div class="form-group">
+            <label>Eliminar&nbsp;{{ f.DELETE }}</label>
+          </div>
+        {% endif %}
+      </div>
     {% endfor %}
-    <button type="submit">Guardar</button>
+  </div>
+
+  <button type="button" id="add-pedido">Agregar pedido</button>
+  <button type="submit" name="save">Guardar</button>
+  <button type="submit" name="save_add_more">Guardar y agregar más pedidos</button>
 </form>
+
+<script>
+(function(){
+  const formsetPrefix = '{{ formset.prefix }}';
+  const totalForms = document.querySelector(`#id_${formsetPrefix}-TOTAL_FORMS`);
+  const container = document.getElementById('pedidos-formset');
+  // render empty form HTML on server side for cloning
+  const emptyHtml = `{{ formset.empty_form.as_p|escapejs }}`;
+
+  document.getElementById('add-pedido').addEventListener('click', function(){
+    const index = parseInt(totalForms.value, 10);
+    let newHtml = emptyHtml.replace(/__prefix__/g, index);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pedido-form';
+    wrapper.innerHTML = newHtml;
+    container.appendChild(wrapper);
+    totalForms.value = index + 1;
+  });
+})();
+</script>

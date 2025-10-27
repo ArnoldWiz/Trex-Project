@@ -1,13 +1,11 @@
-<h1>Formulario de Cliente</h1>
+<h1>{% if object %}Actualizar{% else %}Registrar{% endif %} Cliente</h1>
 <form method="post">
     {% csrf_token %}
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" value="{{ cliente.nombre|default_if_none:'' }}" required>
-    <br>
-    <br>
-    <label for="contacto">Contacto:</label>
-    <input type="text" id="contacto" name="contacto" value="{{ cliente.contacto|default_if_none:'' }}" required>
-    <br>
-    <br>
-    <button type="submit">Guardar</button>
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+    {% endfor %}
+    <button type="submit">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
 </form>

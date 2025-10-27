@@ -12,10 +12,14 @@ class Cliente(models.Model):
     idcliente = models.AutoField(db_column='idCliente', primary_key=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=45)  # Field name made lowercase.
     contacto = models.CharField(db_column='Contacto', max_length=45)  # Field name made lowercase.
+    estatus = models.IntegerField(db_column='Estatus')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'cliente'
+        
+    def __str__(self):
+        return self.nombre
 
 
 class Comentariosmaquinas(models.Model):
@@ -67,6 +71,7 @@ class Maquina(models.Model):
     idmaquina = models.AutoField(db_column='idMaquina', primary_key=True)  # Field name made lowercase.
     area = models.CharField(db_column='Area', max_length=45)  # Field name made lowercase.
     numero = models.IntegerField(db_column='Numero')  # Field name made lowercase.
+    estatus = models.IntegerField(db_column='Estatus')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -78,6 +83,7 @@ class Modelo(models.Model):
     folio = models.CharField(db_column='Folio', max_length=45)  # Field name made lowercase.
     modelo = models.CharField(db_column='Modelo', max_length=45)  # Field name made lowercase.
     cantidadhilo = models.IntegerField(db_column='CantidadHilo')  # Field name made lowercase.
+    estatus = models.IntegerField(db_column='Estatus')  # Field name made lowercase.
 
     class Meta:
         managed = False

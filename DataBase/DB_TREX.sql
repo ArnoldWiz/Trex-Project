@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Maquina` (
   `idMaquina` INT NOT NULL AUTO_INCREMENT,
   `Area` VARCHAR(45) NOT NULL,
   `Numero` INT NOT NULL,
+  `Estatus` TINYINT NOT NULL,
   PRIMARY KEY (`idMaquina`))
 ENGINE = InnoDB;
 
@@ -46,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Modelo` (
   `Folio` VARCHAR(45) NOT NULL,
   `Modelo` VARCHAR(45) NOT NULL,
   `CantidadHilo` INT NOT NULL,
+  `Estatus` TINYINT NOT NULL,
   PRIMARY KEY (`idModelo`))
 ENGINE = InnoDB;
 
@@ -57,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Cliente` (
   `idCliente` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
   `Contacto` VARCHAR(45) NOT NULL,
+  `Estatus` TINYINT NOT NULL,
   PRIMARY KEY (`idCliente`))
 ENGINE = InnoDB;
 

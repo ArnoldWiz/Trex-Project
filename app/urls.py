@@ -28,8 +28,8 @@ urlpatterns = [
     path('administrador/clientes/actualizar/<int:pk>/', ActualizarCliente.as_view(), name='actualizarCliente'),
         #CRUD ORDENES DE PEDIDO
     path('administrador/ordenes', ListaOrdenes.as_view(), name='listaOrdenes'),
-    path('administrador/ordenes/form/', CrearOrden.as_view(), name='crearOrden'),
-    path('administrador/ordenes/actualizar/<int:pk>/', ActualizarOrden.as_view(), name='actualizarOrden'),
+    path('administrador/ordenes/form/', crear_orden_con_pedidos, name='crearOrden'),
+    path('administrador/ordenes/actualizar/<int:orden_pk>/', actualizar_orden_con_pedidos, name='actualizarOrden'),
         #CRUD PEDIDOS
     path('administrador/ordenes/<int:orden_pk>/pedidos/', ListaPedidos.as_view(), name='listaPedidos'),
     path('administrador/ordenes/<int:orden_pk>/pedidos/form/', CrearPedido.as_view(), name='crearPedido'),
@@ -38,7 +38,6 @@ urlpatterns = [
     path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pk>/lotes/", ListaLotes.as_view(), name="listaLotes"),
 
     #TEMPORALES
-    path('administrador/catalogos/pedidoEspecifico/', pedidoEspecifico, name='pedidoEspecifico'),
     path('administrador/lotes/', lotes, name='lotes'),
     
     
@@ -47,5 +46,5 @@ urlpatterns = [
     path('empleados/tejido/', tejido, name='tejido'),
     path('empleados/plancha/', plancha, name='plancha'),
     path('empleados/corte/', corte, name='corte'),
-
+    path('empleados/empaquetado/', empaquetado, name='empaquetado'),
 ]
