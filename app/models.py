@@ -86,6 +86,7 @@ class Modelo(models.Model):
 
 class Ordendepedido(models.Model):
     idordendepedido = models.AutoField(db_column='idOrdenDePedido', primary_key=True)  # Field name made lowercase.
+    numeroorden = models.CharField(db_column='NumeroOrden', max_length=45)  # Field name made lowercase.
     idcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='idCliente')  # Field name made lowercase.
     fechainicio = models.DateTimeField(db_column='FechaInicio')  # Field name made lowercase.
     fechafin = models.DateTimeField(db_column='FechaFin', blank=True, null=True)  # Field name made lowercase.

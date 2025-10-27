@@ -19,7 +19,8 @@ def catalogos(request):
     return render(request, 'administrador/catalogos.html')
 
 def homeAdmin(request):
-    return render(request, 'administrador/homeAdmin.html')
+    ordenes_prioritarias = Ordendepedido.objects.select_related('idcliente')
+    return render(request, 'administrador/homeAdmin.html', {'ordenes_prioritarias': ordenes_prioritarias})
 
 #TEMPORALES
 def pedidoEspecifico(request):

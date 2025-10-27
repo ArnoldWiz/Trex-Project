@@ -66,6 +66,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`OrdenDePedido` (
   `idOrdenDePedido` INT NOT NULL AUTO_INCREMENT,
+  `NumeroOrden` VARCHAR(45) NOT NULL,
   `idCliente` INT NOT NULL,
   `FechaInicio` DATETIME NOT NULL,
   `FechaFin` DATETIME NULL,
