@@ -33,9 +33,14 @@ urlpatterns = [
         #CRUD PEDIDOS
     path('administrador/ordenes/<int:pk>/pedidos/', ListaPedidos.as_view(), name='listaPedidos'),
     path('administrador/ordenes/<int:pk>/pedidos/form/', CrearPedido.as_view(), name='crearPedido'),
-    path('administrador/ordenes/<int:pk>/pedidos/actualizar/<int:pk>/', ActualizarPedido.as_view(), name='actualizarPedido'),
+    #path('administrador/ordenes/<int:pk>/pedidos/actualizar/<int:pk>/', ActualizarPedido.as_view(), name='actualizarPedido'),
+
+    path('administrador/ordenes/<int:orden_pk>/pedidos/actualizar/<int:pedido_pk>/', ActualizarPedido.as_view(), name='actualizarPedido'),
+
+    path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pedido_pk>/lotes/", ListaLotes.as_view(), name="listaLotes"),
+
         #LOTES
-    path("administrador/ordenes/<int:pk>/pedidos/<int:pk>/lotes/", ListaLotes.as_view(), name="listaLotes"),
+    #path("administrador/ordenes/<int:pk>/pedidos/<int:pk>/lotes/", ListaLotes.as_view(), name="listaLotes"),
     
     #TEMPORALES
     path('administrador/catalogos/pedidoEspecifico/', pedidoEspecifico, name='pedidoEspecifico'),
@@ -47,5 +52,7 @@ urlpatterns = [
     path('empleados/tejido/', tejido, name='tejido'),
     path('empleados/plancha/', plancha, name='plancha'),
     path('empleados/corte/', corte, name='corte'),
+    
+    path('empleados/empaquetado/', corte, name='empaquetado'),
 
 ]
