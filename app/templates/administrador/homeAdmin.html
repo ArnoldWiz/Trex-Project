@@ -10,42 +10,32 @@
 {% block content %}
   <section class="center-area">
     <div class="left-panel">
-      <div class="contenedor">
         <!-- Contenido temporal de la base de datos -->
          <div id="subtitle">Ordenes Prioritarias</div>
         <table class="custom-table">
           <thead>
             <tr>
-              <th>Numero Orden</th>
-              <th>Cliente</th>
-              <th>Fecha Inicio</th>
-              <th>Fecha Fin</th>
+              <th>ID Orden</th>
+              <th>Orden</th>
+              <th>Otro</th>
               <th>Avance</th>
             </tr>
           </thead>
           <tbody>
-            {% for orden in ordenes_prioritarias %}
             <tr>
-              <td>{{ orden.numeroorden }}</td>
-              <td>{{ orden.idcliente.nombre }}</td>
-              <td>{{ orden.fechainicio|date:"d/m/Y H:i" }}</td>
-              <td>
-                {% if orden.fechafin %}
-                  {{ orden.fechafin|date:"d/m/Y H:i" }}
-                {% else %}
-                  N/A
-                {% endif %}
-              </td>
-              <td>{{ orden.avance }}%</td>
+              <td>100000000000000</td>
+              <td>20100000000000000</td>
+              <td>40100000000000000</td>
             </tr>
-            {% empty %}
             <tr>
-              <td colspan="5">No hay órdenes prioritarias disponibles.</td>
+              <td>Progression Bar</td>
+              <td>20100000000000000</td>
+              
+              <td>40100000000000000</td>
             </tr>
-            {% endfor %}
           </tbody>
         </table>
-      </div>
+      
     </div>
 
     <div class="right-panel">

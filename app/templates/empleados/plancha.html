@@ -1,1 +1,66 @@
-<h1>placha</h1>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registro por QR — Corte</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Plancha — Escanear QR y registrar cantidad</h1>
+      <div class="muted">Apunta con la cámara al QR.</div>
+    </header>
+
+    <section class="video-card">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas"></canvas>
+
+      <div class="controls">
+        <button id="btn-start">Iniciar cámara</button>
+        <button id="btn-stop">Detener</button>
+        <input id="fileInput" type="file" accept="image/*">
+        <select id="format">
+          <option value="json">QR contiene JSON</option>
+          <option value="plain">Texto plano</option>
+        </select>
+      </div>
+
+      <div style="margin-top:.75rem">
+        <div class="muted">Último QR leído:</div>
+        <div id="last" class="scan-result">—</div>
+      </div>
+    </section>
+
+    <aside class="right">
+      <form id="workForm" class="form-card" autocomplete="off">
+        <div style="display:flex;gap:.5rem">
+          <div style="flex:1">
+            <label>Empleado ID</label>
+            <input id="employee_id" class="field" name="employee_id" />
+          </div>
+          <div style="width:120px">
+            <label>Fecha / Hora</label>
+            <input id="ts" class="field" name="timestamp" />
+          </div>
+        </div>
+
+        <label>Trabajo / Orden / Tarjeta</label>
+        <input id="job_id" class="field" name="job_id" />
+
+        <label>Cantidad realizada</label>
+        <input id="quantity" type="number" min="0" step="1" class="field" name="quantity" />
+
+        <label>Comentarios (opcional)</label>
+        <input id="notes" class="field" name="notes" />
+
+        <button type="button" id="btn-submit" class="submit">Enviar registro</button>
+
+        <div id="status" style="margin-top:.6rem;font-size:.95rem;color:#374151"></div>
+      </form>
+    </aside>
+  </div>987
+</body>
+</html>

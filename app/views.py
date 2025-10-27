@@ -174,3 +174,6 @@ def plancha(request):
 
 def corte(request):
     return render(request, 'empleados/corte.html')
+
+def empaquetado(request):
+    return render(request, 'empleados/empaquetado.html')
