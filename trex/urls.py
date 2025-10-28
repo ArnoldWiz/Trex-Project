@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
     path('api/', include('app.api_urls')),
+    # DRF login/logout views for the browsable API (prompts Django auth)
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
