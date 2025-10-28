@@ -21,9 +21,14 @@
     <div class="login-nav">
       <div class="login-container">
         <h2>Inicio de Sesión</h2>
-        <form action="{% url 'homeAdmin' %}" method="get" id="form">
-          <input type="text" name="usuario" placeholder="Usuario" required />
+        <form action="{% url 'login' %}" method="post" id="form">
+          {% csrf_token %}
+          {% if error %}
+            <div class="error">{{ error }}</div>
+          {% endif %}
+          <input type="text" name="username" placeholder="Usuario" required />
           <input type="password" name="password" placeholder="Contraseña" required />
+          <input type="hidden" name="next" value="{{ request.GET.next }}" />
           <button type="submit">Ingresar</button>
         </form>
       </div>

@@ -8,7 +8,6 @@ from .models import (
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        # use fields explicitly to avoid surprises with unmanaged models
         fields = ['idcliente', 'nombre', 'contacto', 'estatus']
 
 
@@ -19,7 +18,6 @@ class ModeloSerializer(serializers.ModelSerializer):
 
 
 class LoteSerializer(serializers.ModelSerializer):
-    # use PKs for related fields; DRF will accept integer PKs for FK fields
     class Meta:
         model = Lote
         fields = [
@@ -42,7 +40,6 @@ class MaquinaSerializer(serializers.ModelSerializer):
 
 
 class OrdendepedidoSerializer(serializers.ModelSerializer):
-    # include cliente as PK and optional nested read-only name
     cliente_nombre = serializers.CharField(source='idcliente.nombre', read_only=True)
 
     class Meta:
@@ -51,7 +48,6 @@ class OrdendepedidoSerializer(serializers.ModelSerializer):
 
 
 class PedidoSerializer(serializers.ModelSerializer):
-    # include related readable fields for convenience
     modelo_folio = serializers.CharField(source='idmodelo.folio', read_only=True)
     orden_numero = serializers.CharField(source='idordenpedido.numeroorden', read_only=True)
 

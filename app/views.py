@@ -14,7 +14,22 @@ def homeGenerico(request):
 
 #VISTAS ADMINISTRADOR
 
+from django.contrib.auth import authenticate, login as auth_login
+
+
 def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        next_url = request.POST.get('next') or request.GET.get('next')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect(next_url or 'homeAdmin')
+        else:
+            return render(request, 'administrador/login.html', {'error': 'Usuario o contraseña incorrectos.'})
+
+    # GET
     return render(request, 'administrador/login.html')
 
 def catalogos(request):
