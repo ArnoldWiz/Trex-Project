@@ -1,10 +1,22 @@
-{% if object %}
-    <h1>Actualizar Empleado</h1>
-{% else %}
-    <h1>Registrar Empleado</h1>
-{% endif %}
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="post">
+{% block title %}Registrar Modelo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="center-area">
+
+{% if object %}
+    <div id="subtitle">Actualizar Empleado</div>
+{% else %}
+    <div id="subtitle">Registrar Empleado</div>
+{% endif %}
+      <div class="contenedor">
+        <form method="post">
     {% csrf_token %}
     {% for field in form %}
         <div class="form-group">
@@ -12,5 +24,11 @@
             {{ field }}
         </div>
     {% endfor %}
-    <button type="submit">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
+    <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
+          <div class="login-nav"><a href="{% url 'empleados' %}">Cancelar</a></div>
 </form>
+    </div>
+
+  </section>
+
+{% endblock %}

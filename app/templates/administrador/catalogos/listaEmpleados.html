@@ -8,9 +8,11 @@
 {% endblock %}
 
 {% block content %}
-  <div id="subtitle">Lista De Empleados</div>
   <section class="center-area">
-      <div class="contenedor">
+
+  <div id="subtitle">Lista De Empleados</div>
+
+    <div class="contenedor">
         <!-- Contenido temporal de la base de datos -->
         <table class="custom-table">
           <thead>
@@ -45,7 +47,7 @@
   <div class="login-nav" onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar</div>
 
   
-  {% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
 {% endblock %}
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
 {% endblock %}

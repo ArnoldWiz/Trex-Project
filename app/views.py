@@ -247,3 +247,6 @@ def corte(request):
 
 def empaquetado(request):
     return render(request, 'empleados/empaquetado.html')
+
+def reportes(request):
+    return render(request, 'administrador/reportes.html')

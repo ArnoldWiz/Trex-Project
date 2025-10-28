@@ -52,12 +52,13 @@
       <div class="menu-row">
         <div class="menu-opt" onclick="location.href='{% url 'listaOrdenes' %}'">LISTA DE ORDENES</div>
         <div class="menu-opt" onclick="location.href='{% url 'crearOrden' %}'">REGISTRAR ORDEN</div>
-        <div class="menu-opt">REPORTES</div>
+        <div class="menu-opt" onclick="location.href='{% url 'reportes' %}'">REPORTES</div>
         <div class="menu-opt" onclick="location.href='{% url 'catalogos' %}'">CATÁLOGOS</div>
       </div>
     </div>
   </section>
+
+{% endblock %}
 {% block regresar %}
 <div class="opcion" onclick="location.href='{% url 'login' %}'">Regresar</div>
-{% endblock %}
 {% endblock %}

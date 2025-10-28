@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reportes</title>
+</head>
+<body>
+
+  <h1>Reportes Generales</h1>
+
+  <nav>
+    <ul>
+      <li><a href="#reporte-maquina">Reporte por Máquina</a></li>
+      <li><a href="#reporte-empleado">Reporte por Empleado</a></li>
+      <li><a href="#reporte-productividad">Reporte de Productividad</a></li>
+      <li><a href="#reporte-consumo">Reporte de Consumo de Hilo</a></li>
+    </ul>
+  </nav>
+
+  <section id="reporte-maquina">
+    <h2>Reporte por Máquina</h2>
+    <p>Listado de órdenes, horas trabajadas, y estado de cada máquina.</p>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID Máquina</th>
+          <th>Nombre</th>
+          <th>Horas Trabajadas</th>
+          <th>Órdenes Completadas</th>
+          <th>Estado Actual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>001</td>
+          <td>Máquina A</td>
+          <td>120</td>
+          <td>15</td>
+          <td>Operativa</td>
+        </tr>
+        <tr>
+          <td>002</td>
+          <td>Máquina B</td>
+          <td>98</td>
+          <td>12</td>
+          <td>Mantenimiento</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="reporte-empleado">
+    <h2>Reporte por Empleado</h2>
+    <p>Desempeño individual de los empleados en sus respectivas órdenes.</p>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID Empleado</th>
+          <th>Nombre</th>
+          <th>Órdenes Completadas</th>
+          <th>Horas Trabajadas</th>
+          <th>Productividad (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>E01</td>
+          <td>Ana López</td>
+          <td>10</td>
+          <td>80</td>
+          <td>95%</td>
+        </tr>
+        <tr>
+          <td>E02</td>
+          <td>Juan Pérez</td>
+          <td>8</td>
+          <td>70</td>
+          <td>90%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="reporte-productividad">
+    <h2>Reporte de Productividad</h2>
+    <p>Resumen de la productividad general por semana o por orden.</p>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Semana</th>
+          <th>Órdenes Iniciadas</th>
+          <th>Órdenes Terminadas</th>
+          <th>Porcentaje de Cumplimiento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Semana 42</td>
+          <td>20</td>
+          <td>18</td>
+          <td>90%</td>
+        </tr>
+        <tr>
+          <td>Semana 43</td>
+          <td>22</td>
+          <td>21</td>
+          <td>95%</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="reporte-consumo">
+    <h2>Reporte de Consumo de Hilo</h2>
+    <p>Control de materiales utilizados por orden o máquina.</p>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID Orden</th>
+          <th>Máquina</th>
+          <th>Tipo de Hilo</th>
+          <th>Cantidad Utilizada (kg)</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ORD-001</td>
+          <td>Máquina A</td>
+          <td>Poliéster</td>
+          <td>3.5</td>
+          <td>20/10/2025</td>
+        </tr>
+        <tr>
+          <td>ORD-002</td>
+          <td>Máquina B</td>
+          <td>Algodón</td>
+          <td>2.8</td>
+          <td>21/10/2025</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    trex
+  </footer>
+
+</body>
+</html>

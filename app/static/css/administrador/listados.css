@@ -10,7 +10,7 @@
 }
 
 .custom-table thead {
-  background: linear-gradient(90deg, #2a388f, #fafafa);
+  background: #ff4d79;
   color: white;
 }
 
@@ -192,4 +192,60 @@
 .distribucion > div > div:not(.barra-vertical):not(.areas):not(.barras):not(.barra-item):not(.contenedor-barras) {
   margin-top: 1.25rem;
   padding: 0.6rem;
+}
+
+
+form {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  gap: 0.5rem;
+  background-color: #f9f9f9;
+  margin-top: 0.1rem;
+}
+
+form p {
+  margin-bottom: 0.3rem;
+}
+
+form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+form input[type="text"],
+form input[type="number"],
+form input[type="date"],
+form select,
+form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #ff4d79;
+  outline: none;
+}
+
+button.btn.btn-success {
+  background-color: #ff4d79;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.0rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+button.btn.btn-success:hover {
+  background-color: #842e8d;
 }

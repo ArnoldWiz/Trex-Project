@@ -39,6 +39,7 @@ urlpatterns = [
 
     #TEMPORALES
     path('administrador/lotes/', lotes, name='lotes'),
+    path('administrador/reportes/', reportes, name='reportes'),
     
     
     
