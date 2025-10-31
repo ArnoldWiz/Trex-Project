@@ -134,3 +134,17 @@
     height: 7rem;
   }
 }
+
+
+/*                   REPORTES                           */
+ #demo-ajax { background-color: #f9f9f9; border: 2px solid #007bff; padding: 15px; margin-top: 20px; border-radius: 8px; }
+    #form-comentario { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+    #form-comentario input, #form-comentario textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    #form-comentario button { padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    #lista-comentarios li { background-color: #fff; border: 1px solid #ddd; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    #lista-comentarios li .info { max-width: 70%; }
+    #lista-comentarios li .info strong { color: #0056b3; }
+    #lista-comentarios li .acciones button { margin-left: 5px; padding: 5px; cursor: pointer; }
+    .btn-solucionar { background-color: #ffc107; border: none; border-radius: 4px; }
+    .btn-eliminar { background-color: #dc3545; color: white; border: none; border-radius: 4px; }
+    .solucionado { text-decoration: line-through; background-color: #e9ecef; }

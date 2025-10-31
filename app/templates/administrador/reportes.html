@@ -1,27 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Reportes</title>
-  <style>
-    /* Estilos básicos para la nueva sección de demo */
-    #demo-ajax { background-color: #f9f9f9; border: 2px solid #007bff; padding: 15px; margin-top: 20px; border-radius: 8px; }
-    #form-comentario { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-    #form-comentario input, #form-comentario textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-    #form-comentario button { padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
-    #lista-comentarios li { background-color: #fff; border: 1px solid #ddd; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    #lista-comentarios li .info { max-width: 70%; }
-    #lista-comentarios li .info strong { color: #0056b3; }
-    #lista-comentarios li .acciones button { margin-left: 5px; padding: 5px; cursor: pointer; }
-    .btn-solucionar { background-color: #ffc107; border: none; border-radius: 4px; }
-    .btn-eliminar { background-color: #dc3545; color: white; border: none; border-radius: 4px; }
-    .solucionado { text-decoration: line-through; background-color: #e9ecef; }
-  </style>
-</head>
-<body>
-    {% csrf_token %}
+{% extends 'base.html' %}
+{% load static %}
 
-  <h1>Reportes Generales</h1>
+{% block title %}Reportes{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/homeAdmin.css' %}">
+
+{% endblock %}
+
+{% block content %}
+  <section class="center-area">
+    <div class="left-panel">
+      <div class="contenedor">
+        <div id="subtitle">Reportes Generales</div>
+         {% csrf_token %}
 
   <nav>
         <ul>
@@ -65,11 +57,14 @@
     <ul id="lista-comentarios">
         </ul>
   </section>
+    </div>
+  </section>
 
-  <footer>
-    trex
-  </footer>
-
+{% endblock %}
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'login' %}'">Regresar</div>
+{% endblock %}
+{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -463,5 +458,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-</body>
-</html>
+{% endblock %}
