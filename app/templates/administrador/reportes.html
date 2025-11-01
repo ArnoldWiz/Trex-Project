@@ -112,27 +112,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para renderizar la lista de comentarios en el UL
     function renderComentarios(comentarios) {
-        listaComentarios.innerHTML = ''; // Limpiar lista
-        comentarios.forEach(com => {
-            const li = document.createElement('li');
-            li.className = com.solucionado ? 'solucionado' : '';
-            li.setAttribute('data-id', com.idcomentariosmaquinas);
-            
-            li.innerHTML = `
-                <div class="info">
-                    <strong>[ID: ${com.idcomentariosmaquinas}]</strong> (Máquina: ${com.maquina_numero}, Empleado: ${com.empleado_nombre})
-                    <p>${com.comentario}</p>
-                    <small>Solucionado: ${com.solucionado ? 'Sí' : 'No'}</small>
-                </div>
-                <div class="acciones">
-                    <button class="btn-solucionar" data-id="${com.idcomentariosmaquinas}">Marcar como ${com.solucionado ? 'Pendiente' : 'Solucionado'} (PATCH)</button>
-                    <button class="btn-editar" data-id="${com.idcomentariosmaquinas}">Editar (Carga en form)</button>
-                    <button class="btn-eliminar" data-id="${com.idcomentariosmaquinas}">Eliminar (DELETE)</button>
-                </div>
-            `;
-            listaComentarios.appendChild(li);
-        });
-    }
+    listaComentarios.innerHTML = ''; // Limpiar lista
+    comentarios.forEach(com => {
+        const li = document.createElement('li');
+        li.className = com.solucionado ? 'solucionado' : '';
+        li.setAttribute('data-id', com.idcomentariosmaquinas);
+        
+        li.innerHTML = `
+            <div class="info">
+                <strong>[ID: ${com.idcomentariosmaquinas}]</strong> 
+                (Máquina: ${com.maquina?.numero ?? 'Desconocida'}, 
+                 Empleado: ${com.empleado?.nombre ?? 'Desconocido'} ${com.empleado?.apellidos ?? ''})
+                <p>${com.comentario}</p>
+                <small>Solucionado: ${com.solucionado ? 'Sí' : 'No'}</small>
+            </div>
+            <div class="acciones">
+                <button class="btn-solucionar" data-id="${com.idcomentariosmaquinas}">
+                    Marcar como ${com.solucionado ? 'Pendiente' : 'Solucionado'} (PATCH)
+                </button>
+                <button class="btn-editar" data-id="${com.idcomentariosmaquinas}">Editar (Carga en form)</button>
+                <button class="btn-eliminar" data-id="${com.idcomentariosmaquinas}">Eliminar (DELETE)</button>
+            </div>
+        `;
+        listaComentarios.appendChild(li);
+    });
+}
+
 
     // Función para limpiar el formulario
     function resetForm() {
@@ -315,8 +320,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Iniciando petición dependiente...');
         
         const datosComentario = {
-            idmaquina: 1, // ID de máquina de ejemplo
-            idempleado: 1, // ID de empleado de ejemplo
+            maquina_id: 1,
+            empleado_id: 1,
             comentario: 'PETICIÓN DEPENDIENTE: Reporte automático',
             fecharegistro: new Date().toISOString(), // DRF maneja bien ISO strings
             solucionado: 0 // Inicia como no solucionado
@@ -387,8 +392,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const id = inputId.value;
         const datos = {
-            idmaquina: inputMaquina.value,
-            idempleado: inputEmpleado.value,
+            maquina_id: inputMaquina.value,
+            empleado_id: inputEmpleado.value,
             comentario: inputTexto.value,
             // Tu serializer necesita fecharegistro y solucionado
             fecharegistro: new Date().toISOString(), // El backend debería manejar esto, pero lo mandamos por si acaso
@@ -436,8 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Llenar el formulario
                 inputId.value = data.idcomentariosmaquinas;
-                inputMaquina.value = data.idmaquina;
-                inputEmpleado.value = data.idempleado;
+                inputMaquina.value = data.maquina?.idmaquina ?? '';
+                inputEmpleado.value = data.empleado?.idempleado ?? '';
                 inputTexto.value = data.comentario;
                 
                 // Cambiar botón de submit
