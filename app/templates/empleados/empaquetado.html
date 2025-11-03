@@ -1,22 +1,23 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Registro por QR — Corte</title>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <h1>Empaquetado — Escanear QR y registrar cantidad</h1>
-      <div class="muted">Apunta con la cámara al QR.</div>
-    </header>
+{% extends 'base.html' %}
+{% load static %}
 
-    <section class="video-card">
-      <video id="video" autoplay playsinline></video>
-      <canvas id="canvas"></canvas>
+{% block title %}Registro por QR - Empaquetado{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/homeAdmin.css' %}">
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  
+  <section class="center-area">
+    <div id="subtitle">Empaquetado  - Escanear QR y registrar cantidad</div>
+      <div class="contenedor">
+        <div class="muted">Apunta con la cámara al QR.</div>
+        <section class="video-card">
+          <video id="video" autoplay playsinline></video>
+          <canvas id="canvas"></canvas>
 
       <div class="controls">
         <button id="btn-start">Iniciar cámara</button>
@@ -61,6 +62,36 @@
         <div id="status" style="margin-top:.6rem;font-size:.95rem;color:#374151"></div>
       </form>
     </aside>
-  </div>987
-</body>
-</html>
+  </section>
+        
+    </div>
+
+
+    <section id="demo-ajax">
+    <h2>Gestión de Comentarios de Máquinas (Demo AJAX)</h2>
+    <p>Usa este formulario para probar las peticiones CRUD con Fetch.</p>
+    
+    <form id="form-comentario">
+        <input type="hidden" id="comentario-id" value="">
+        <input type="number" id="comentario-maquina" placeholder="ID Máquina" required>
+        <input type="number" id="comentario-empleado" placeholder="ID Empleado" required>
+        <textarea id="comentario-texto" placeholder="Escribe tu comentario..." required></textarea>
+        <button type="submit" id="btn-submit-comentario">Crear Comentario (POST)</button>
+        <button type="button" id="btn-reset-form" style="background-color: #6c757d;">Limpiar</button>
+    </form>
+
+    <button id="btn-consultar">1. Consultar Todos (GET con .then)</button>
+    <button id="btn-dependiente">2. Demo Petición Dependiente (async/await)</button>
+
+    <h3>Comentarios Registrados</h3>
+    <ul id="lista-comentarios">
+        </ul>
+  </section>
+
+  </section>
+  
+{% endblock %}
+
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'home' %}'">Regresar</div>
+{% endblock %}
