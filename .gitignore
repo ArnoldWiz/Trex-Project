@@ -1,5 +1,9 @@
 venv/
 *.pyc
 __pycache__/
-__pycache__/
-*.pyc
+app/__pycache__/
+app/migrations/__pycache__/
+.vscode/
+.env
+env/
+trex/__pycache__/
