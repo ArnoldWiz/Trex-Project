@@ -2,6 +2,7 @@ from django.urls import path
 from app.views import *
 
 
+
 urlpatterns = [
     #GENERICAS
     path('', homeGenerico, name='home'),
@@ -40,12 +41,13 @@ urlpatterns = [
     #TEMPORALES
     path('administrador/lotes/', lotes, name='lotes'),
     path('administrador/reportes/', reportes, name='reportes'),
-    
-    
+
+
     
     #VISTA GENERAL EMPLEADOS
     path('empleados/tejido/', tejido, name='tejido'),
     path('empleados/plancha/', plancha, name='plancha'),
     path('empleados/corte/', corte, name='corte'),
     path('empleados/empaquetado/', empaquetado, name='empaquetado'),
+
 ]

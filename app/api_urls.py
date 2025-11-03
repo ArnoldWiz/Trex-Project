@@ -14,4 +14,5 @@ router.register(r'comentariosmaquinas', api_views.ComentariosMaquinasViewSet, ba
 
 urlpatterns = [
     path('', include(router.urls)),
+    
 ]
