@@ -4,7 +4,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from app.models import *
 from django.db.models import Count
+from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from app.utils import generate_lote_qr_image
 from app.forms import *
 
 # Create your views here.
@@ -144,21 +146,159 @@ class CrearPedido(CreateView):
     model = Pedido
     template_name = 'administrador/forms/formPedido.html'
     form_class = PedidoForm
-    success_url = '/administrador/pedidos/'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        # pass orden_pk from URL to template for cancel link
+        ctx['orden_pk'] = self.kwargs.get('orden_pk')
+        # initial totallotes for display (0 by default)
+        ctx['initial_totallotes'] = 0
+        return ctx
+
+    def form_valid(self, form):
+        # assign the parent orden (from URL) before saving
+        orden_pk = self.kwargs.get('orden_pk')
+        self.object = form.save(commit=False)
+        # field on model is `idordenpedido` (foreign key to Ordendepedido)
+        self.object.idordenpedido_id = orden_pk
+        # calculate totallotes as ceil(cantidad / 10)
+        try:
+            import math
+            cantidad = form.cleaned_data.get('cantidad') or 0
+            # use float to handle non-integer inputs, then round up
+            cantidad_val = float(cantidad)
+            self.object.totallotes = math.ceil(cantidad_val / 10) if cantidad_val > 0 else 0
+        except Exception:
+            # fallback: set 0
+            self.object.totallotes = 0
+        # initialize loteterminado to 0 on creation
+        try:
+            self.object.loteterminado = 0
+        except Exception:
+            pass
+        # save pedido and create lotes atomically
+        from django.db import IntegrityError
+        try:
+            with transaction.atomic():
+                self.object.save()
+                # create lotes: totallotes already set above
+                cantidad_val = int(float(form.cleaned_data.get('cantidad') or 0))
+                total_lotes = int(self.object.totallotes or 0)
+                # delete any existing lotes just in case (shouldn't be any on create)
+                Lote.objects.filter(idpedido=self.object).delete()
+                if total_lotes > 0 and cantidad_val > 0:
+                    for i in range(total_lotes):
+                        if i < total_lotes - 1:
+                            lote_cant = 10
+                        else:
+                            lote_cant = cantidad_val - 10 * (total_lotes - 1)
+                        created_lote = Lote.objects.create(idpedido=self.object, cantidad=lote_cant)
+                        # generate QR image for this lote (contains lote id)
+                        try:
+                            # fetch readable fields
+                            order_num = None
+                            try:
+                                order_num = self.object.idordenpedido.numeroorden
+                            except Exception:
+                                order_num = getattr(self.object, 'idordenpedido_id', '')
+                            modelo_str = ''
+                            try:
+                                modelo_str = self.object.idmodelo.modelo
+                            except Exception:
+                                modelo_str = getattr(self.object, 'idmodelo_id', '')
+                            color_str = getattr(self.object, 'color', '')
+                            generate_lote_qr_image(order_num, modelo_str, color_str, i+1, total_lotes, created_lote.idlote)
+                        except Exception:
+                            # if image generation fails, continue without stopping the transaction
+                            pass
+        except IntegrityError:
+            # fallback: ensure object saved
+            self.object.save()
+        return redirect('listaPedidos', orden_pk=orden_pk)
     
 class ActualizarPedido(UpdateView):
     model = Pedido
     template_name = 'administrador/forms/formPedido.html'
     form_class = PedidoForm
-    success_url = '/administrador/pedidos/'
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        # include orden_pk so template can build cancel/back links
+        if hasattr(self, 'object') and self.object:
+            ctx['orden_pk'] = getattr(self.object, 'idordenpedido_id', None)
+            ctx['initial_totallotes'] = getattr(self.object, 'totallotes', 0)
+        else:
+            ctx['initial_totallotes'] = 0
         return ctx
+
+    def form_valid(self, form):
+        # update totallotes based on cantidad
+        self.object = form.save(commit=False)
+        try:
+            import math
+            cantidad = form.cleaned_data.get('cantidad') or 0
+            cantidad_val = float(cantidad)
+            self.object.totallotes = math.ceil(cantidad_val / 10) if cantidad_val > 0 else 0
+        except Exception:
+            self.object.totallotes = 0
+        # save and recreate lotes according to new cantidad
+        from django.db import IntegrityError
+        try:
+            with transaction.atomic():
+                self.object.save()
+                cantidad_val = int(float(form.cleaned_data.get('cantidad') or 0))
+                total_lotes = int(self.object.totallotes or 0)
+                # remove existing lotes for this pedido and recreate
+                Lote.objects.filter(idpedido=self.object).delete()
+                if total_lotes > 0 and cantidad_val > 0:
+                    for i in range(total_lotes):
+                        if i < total_lotes - 1:
+                            lote_cant = 10
+                        else:
+                            lote_cant = cantidad_val - 10 * (total_lotes - 1)
+                        created_lote = Lote.objects.create(idpedido=self.object, cantidad=lote_cant)
+                        # generate QR image for this lote (contains lote id)
+                        try:
+                            order_num = None
+                            try:
+                                order_num = self.object.idordenpedido.numeroorden
+                            except Exception:
+                                order_num = getattr(self.object, 'idordenpedido_id', '')
+                            modelo_str = ''
+                            try:
+                                modelo_str = self.object.idmodelo.modelo
+                            except Exception:
+                                modelo_str = getattr(self.object, 'idmodelo_id', '')
+                            color_str = getattr(self.object, 'color', '')
+                            generate_lote_qr_image(order_num, modelo_str, color_str, i+1, total_lotes, created_lote.idlote)
+                        except Exception:
+                            pass
+        except IntegrityError:
+            self.object.save()
+        orden_pk = getattr(self.object, 'idordenpedido_id', None)
+        return redirect('listaPedidos', orden_pk=orden_pk)
     
 class ListaLotes(ListView):
     model = Lote
     template_name = 'administrador/catalogos/listaLotes.html'
     context_object_name = 'lotes'
+    
+    def get_queryset(self):
+        # filter lotes by the current pedido (pk in the URL)
+        pedido_pk = self.kwargs.get('pk')
+        if pedido_pk:
+            return Lote.objects.filter(idpedido_id=pedido_pk)
+        return Lote.objects.none()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['orden_pk'] = self.kwargs.get('orden_pk')
+        ctx['pedido_pk'] = self.kwargs.get('pk')
+        try:
+            ctx['pedido'] = Pedido.objects.get(pk=self.kwargs.get('pk'))
+        except Exception:
+            ctx['pedido'] = None
+        return ctx
 
     #CRUD EMPLEADOS
 class ListaEmpleados(ListView):

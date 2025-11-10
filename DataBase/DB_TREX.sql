@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Pedido` (
   `TotalLotes` INT NOT NULL,
   `LoteTerminado` INT NOT NULL,
   `FechaInicio` DATETIME NOT NULL,
-  `FechaFin` DATETIME NOT NULL,
+  `FechaFin` DATETIME NULL,
   `FechaPrevista` DATETIME NOT NULL,
   PRIMARY KEY (`idPedido`),
   INDEX `Foreign_Modelo_idx` (`idModelo` ASC) VISIBLE,
@@ -119,7 +119,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TREX`.`Lote` (
   `idLote` INT NOT NULL AUTO_INCREMENT,
-  `idOrden` INT NOT NULL,
+  `idPedido` INT NOT NULL,
   `idEmpTejido` INT NULL,
   `idEmpPlancha` INT NULL,
   `idEmpCorte` INT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Lote` (
   `FechaTermCorte` DATETIME NULL,
   `FechaEmpa` DATETIME NULL,
   PRIMARY KEY (`idLote`),
-  INDEX `Orden_idx` (`idOrden` ASC) VISIBLE,
+  INDEX `Orden_idx` (`idPedido` ASC) VISIBLE,
   INDEX `Foreign_Empleado_idx` (`idEmpTejido` ASC) VISIBLE,
   INDEX `Foreign_Maquina_idx` (`idMquTejido` ASC) VISIBLE,
   INDEX `Foreign_EmpPlancha_idx` (`idEmpPlancha` ASC) VISIBLE,
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Lote` (
   INDEX `Foreign_MaqPlancha_idx` (`idMaqPlancha` ASC) VISIBLE,
   INDEX `Foreign_MaqCorte_idx` (`idMaqCorte` ASC) VISIBLE,
   CONSTRAINT `Foreign_Orden`
-    FOREIGN KEY (`idOrden`)
+    FOREIGN KEY (`idPedido`)
     REFERENCES `TREX`.`Pedido` (`idPedido`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,

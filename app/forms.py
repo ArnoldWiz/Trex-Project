@@ -53,28 +53,32 @@ class OrdenForm(forms.ModelForm):
 
     class Meta:
         model = Ordendepedido
-        fields = ['idcliente', 'fechainicio', 'fechafin']
+        fields = ['numeroorden','idcliente', 'fechainicio', 'fechafin']
         widgets = {
+            'numeroorden': forms.TextInput(attrs={'class':'form-control','placeholder':'Número de Orden'}),
+            'idcliente': forms.Select(attrs={'class':'form-control'}),
             'fechainicio': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
             'fechafin': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
         }
 
 class PedidoForm(forms.ModelForm):
+    # show Modelo.folio in the select instead of the default __str__
+    class ModeloChoiceField(forms.ModelChoiceField):
+        def label_from_instance(self, obj):
+            return obj.folio
+
+    idmodelo = ModeloChoiceField(queryset=Modelo.objects.all(),
+                                 widget=forms.Select(attrs={'class':'form-control'}),
+                                 label='Modelo')
+
     class Meta:
         model = Pedido
-        # When using an inline formset the relation to the parent (idordenpedido)
-        # is provided by the formset instance, so exclude it here to avoid
-        # rendering it as a selectable field in each pedido form.
-        fields = ['idmodelo', 'talla', 'cantidad', 'color', 'totallotes', 'loteterminado',
-                  'fechainicio', 'fechafin', 'fechaprevista']
+        # omit totallotes from the editable fields — it's computed automatically
+        fields = ['idmodelo', 'talla', 'cantidad', 'color', 'fechainicio', 'fechaprevista']
         widgets = {
-            'idmodelo': forms.Select(attrs={'class':'form-control'}),
             'talla': forms.NumberInput(attrs={'class':'form-control','placeholder':'Talla'}),
             'cantidad': forms.NumberInput(attrs={'class':'form-control','placeholder':'Cantidad'}),
             'color': forms.TextInput(attrs={'class':'form-control','placeholder':'Color'}),
-            'totallotes': forms.NumberInput(attrs={'class':'form-control','placeholder':'Total de Lotes'}),
-            'loteterminado': forms.NumberInput(attrs={'class':'form-control','placeholder':'Lote Terminado'}),
             'fechainicio': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
-            'fechafin': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
             'fechaprevista': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
         }

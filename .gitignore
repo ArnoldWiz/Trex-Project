@@ -7,3 +7,4 @@ app/migrations/__pycache__/
 .env
 env/
 trex/__pycache__/
+QRs/

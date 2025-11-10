@@ -48,7 +48,7 @@ VALUES
 (4, 4, 36, 800, 'Gris', 8, 0, '2025-10-23 08:00:00', '2025-12-20 17:00:00', '2025-12-18 00:00:00'),
 (5, 5, 30, 300, 'Blanco', 3, 3, '2025-10-24 11:15:00', '2025-11-05 17:00:00', '2025-11-03 00:00:00');
 
-INSERT INTO `TREX`.`Lote` (`idOrden`, `idEmpTejido`, `idEmpPlancha`, `idEmpCorte`, `idMquTejido`, `idMaqPlancha`, `idMaqCorte`, `Cantidad`, `FechaTermTejido`, `FechaTermPlancha`, `FechaTermCorte`, `FechaEmpa`)
+INSERT INTO `TREX`.`Lote` (`idPedido`, `idEmpTejido`, `idEmpPlancha`, `idEmpCorte`, `idMquTejido`, `idMaqPlancha`, `idMaqCorte`, `Cantidad`, `FechaTermTejido`, `FechaTermPlancha`, `FechaTermCorte`, `FechaEmpa`)
 VALUES
 (1, 1, 3, 2, 1, 3, 4, 100, '2025-10-25 10:00:00', '2025-10-26 12:00:00', '2025-10-27 15:00:00', '2025-10-28 09:00:00'),
 (1, 1, 3, 2, 2, 3, 4, 100, '2025-10-26 11:00:00', NULL, NULL, NULL),

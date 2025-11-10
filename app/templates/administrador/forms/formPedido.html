@@ -1,15 +1,55 @@
-<h1>Registrar Pedido</h1>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrar Pedido{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+{% block content %}
+  <section class="center-area">
+    <div id="subtitle">Agregar Pedido</div> 
+  
+      <div class="contenedor">
+        {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
 <form method="post">
-  {% csrf_token %}
-  {{ form.non_field_errors }}
-  <div class="form-group">
-    {{ form.idproducto.label_tag }}{{ form.idproducto }}
-  </div>
-  <div class="form-group">
-    {{ form.cantidad.label_tag }}{{ form.cantidad }}
-  </div>
-  <div class="form-group">
-    {{ form.precio.label_tag }}{{ form.precio }}
-  </div>
-  <button type="submit">Guardar</button>
+    {% csrf_token %}
+    {{ form.as_p }}
+          <div class="form-group">
+            <label for="display_totallotes">Total Lotes</label>
+            <input type="text" id="display_totallotes" class="form-control" value="{{ initial_totallotes }}" disabled />
+          </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+      <div class="login-nav"><a href="{% url 'listaPedidos' orden_pk=orden_pk %}">Cancelar</a></div>
 </form>
+    </div>
+
+  </section>
+
+  <script>
+    (function(){
+      // compute totallotes = ceil(cantidad / 10) and display it in disabled field
+      function computeAndShow(){
+        var cantidadEl = document.querySelector('[name="cantidad"]');
+        var displayEl = document.getElementById('display_totallotes');
+        if(!cantidadEl || !displayEl) return;
+        var v = parseFloat(cantidadEl.value);
+        if(isNaN(v) || v <= 0){
+          displayEl.value = 0;
+          return;
+        }
+        var tot = Math.ceil(v / 10);
+        displayEl.value = tot;
+      }
+      document.addEventListener('DOMContentLoaded', function(){
+        var cantidadEl = document.querySelector('[name="cantidad"]');
+        if(cantidadEl){
+          cantidadEl.addEventListener('input', computeAndShow);
+          // initialize
+          computeAndShow();
+        }
+      });
+    })();
+  </script>
+
+{% endblock %}
