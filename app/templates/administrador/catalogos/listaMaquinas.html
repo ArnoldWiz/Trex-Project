@@ -1,7 +1,22 @@
-<h1>Lista de Máquinas</h1>
-<div class="table-container">
-    <table>
-        <thead>
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Máquinas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="center-area">
+
+  <div id="subtitle">Lista De Máquinas</div>
+
+    <div class="contenedor">
+        <!-- Contenido temporal de la base de datos -->
+        <table class="custom-table">
+          <thead>
             <tr>
                 <th>Área</th>
                 <th>Número</th>
@@ -19,6 +34,15 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
-    <button onclick="location.href='{% url 'formMaquina' %}'">Agregar Máquina</button>
-</div>
+        </table>
+    </div>
+
+  </section>
+
+  <div class="login-nav" onclick="window.location.href='{% url 'formMaquina' %}'">Agregar Máquina</div>
+
+  
+{% endblock %}
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
+{% endblock %}

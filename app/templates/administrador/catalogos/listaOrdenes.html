@@ -51,10 +51,12 @@
 
   </section>
 
-  <div class="login-nav">Ordenes Terminadas</div>
+  
   
 
 {% endblock %}
 {% block regresar %}
 <div class="opcion" onclick="location.href='{% url 'homeAdmin' %}'">Regresar</div>
 {% endblock %}
+
+  {% block optBarra %}<div class="login-nav">Ordenes Terminadas</div>{% endblock %}

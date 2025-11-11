@@ -40,7 +40,7 @@ nav{
 }
 
 .navbar-logo img{
-  height: 50px;
+  height: 35px;
   width: auto;
   object-fit: contain;
 }
@@ -60,7 +60,7 @@ nav{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 2rem;
+  padding: 0.4rem 1.5rem;
   border-bottom: 1px solid #ddd;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   position: sticky;
@@ -201,6 +201,7 @@ nav{
 }
 
 .page{
+  margin-right: 70px;
   padding: 15px auto 50px auto;
 }
 
@@ -423,4 +424,55 @@ button:hover{
   .rect, .menu-row {
     width: 94%;
   }
+}
+
+
+/**/
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 70px; /* ancho de la barra */
+  height: 100vh; /* ocupa toda la altura de la ventana */
+  background-color: #0B1F6A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 80px; /* espacio para que no tape el nav */
+  box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+  z-index: 900;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar li {
+  width: 100%;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.sidebar a {
+  color: #FAFAFA;
+  text-decoration: none;
+  font-size: 1.2rem;
+  display: block;
+  padding: 12px 0;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.sidebar a:hover {
+  background-color: #BF1E2E;
+  transform: scale(1.05);
+}
+
+.sidebar i {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
 }

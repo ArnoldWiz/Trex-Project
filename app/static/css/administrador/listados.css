@@ -10,7 +10,7 @@
 }
 
 .custom-table thead {
-  background: #ff4d79;
+  background: #C99A30;
   color: white;
 }
 
@@ -232,12 +232,12 @@ form textarea {
 form input:focus,
 form select:focus,
 form textarea:focus {
-  border-color: #ff4d79;
+  border-color: #C99A30;
   outline: none;
 }
 
 button.btn.btn-success {
-  background-color: #ff4d79;
+  background-color: #C99A30;
   color: white;
   border: none;
   padding: 0.5rem 1.0rem;

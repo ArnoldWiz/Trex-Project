@@ -1,5 +1,21 @@
-<h1>Lista de Clientes</h1>
-<table>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Clientes{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="center-area">
+
+  <div id="subtitle">Lista De Clientes</div>
+
+    <div class="contenedor">
+        <!-- Contenido temporal de la base de datos -->
+        <table class="custom-table">
+          
     <thead>
         <tr>
             <th>Nombre</th>
@@ -19,4 +35,13 @@
         {% endfor %}
     </tbody>
 </table>
-<button onclick="location.href='{% url 'formCliente' %}'">Agregar Cliente</button>
+    </div>
+
+  </section>
+  <div class="login-nav" onclick="window.location.href='{% url 'formCliente' %}'">Agregar Cliente</div>
+
+  
+{% endblock %}
+{% block regresar %}
+<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
+{% endblock %}

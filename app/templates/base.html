@@ -39,11 +39,22 @@
     </div>
   </nav>
 
+  <div class="sidebar">
+  <ul>
+    <li><a href="{% url 'listaOrdenes' %}"><i class="fa-solid fa-box"></i> Pedidos</a></li>
+    <li><a href="{% url 'reportes' %}"><i class="fa-solid fa-chart-line"></i> Reportes</a></li>
+    <li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Catálogos</a></li>
+  </ul>
+  {% block regresar %}{% endblock %}
+  {% block optBarra %}{% endblock %}
+</div>
+
+
   <main class="page">
     {% block content %}{% endblock %}
   </main>
 
-  {% block regresar %}{% endblock %}
+  
   <footer class="site-footer">Trex</footer>
 
   {% block extra_js %}{% endblock %}
