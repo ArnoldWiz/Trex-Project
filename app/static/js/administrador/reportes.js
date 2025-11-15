@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // HELPERS
     // =======================
     function renderComentarios(comentarios) {
+        if (!listaComentarios) {
+            console.warn('renderComentarios: no existe el elemento #lista-comentarios en esta página');
+            return;
+        }
         listaComentarios.innerHTML = '';
         comentarios.forEach(com => {
             const li = document.createElement('li');
@@ -63,12 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetForm() {
-        inputId.value = '';
-        inputMaquina.value = '';
-        inputEmpleado.value = '';
-        inputTexto.value = '';
-        btnSubmitComentario.textContent = 'Crear Comentario (POST)';
-        btnSubmitComentario.style.backgroundColor = '#28a745';
+        if (inputId) inputId.value = '';
+        if (inputMaquina) inputMaquina.value = '';
+        if (inputEmpleado) inputEmpleado.value = '';
+        if (inputTexto) inputTexto.value = '';
+        if (btnSubmitComentario) {
+            btnSubmitComentario.textContent = 'Crear Comentario (POST)';
+            btnSubmitComentario.style.backgroundColor = '#28a745';
+        }
+        if (formComentario) formComentario.style.display = 'none';
     }
 
     // =======================
@@ -91,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             alert(`¡Comentario ID ${data.idcomentariosmaquinas} creado!`);
             resetForm();
-            consultarComentariosConThen();
+            if (listaComentarios) consultarComentariosConThen();
         })
         .catch(err => console.error('POST error:', err));
     }
@@ -107,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             alert(`Comentario ID ${data.idcomentariosmaquinas} modificado`);
             resetForm();
-            consultarComentariosConThen();
+            if (listaComentarios) consultarComentariosConThen();
         } catch(err) { console.error('PUT error:', err); }
     };
 
@@ -120,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (!res.ok) throw await res.json();
             await res.json();
-            consultarComentariosConThen();
+            if (listaComentarios) consultarComentariosConThen();
         } catch(err) { console.error('PATCH error:', err); }
     };
 
@@ -132,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: headersModificacion
             });
             if (res.status === 204) {
-                consultarComentariosConThen();
+                if (listaComentarios) consultarComentariosConThen();
             } else throw await res.json();
         } catch(err) { console.error('DELETE error:', err); }
     };
@@ -160,24 +167,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ solucionado: 1 })
             });
 
-            consultarComentariosConThen();
+            if (listaComentarios) consultarComentariosConThen();
         } catch(err) { console.error('Dependiente error:', err); }
     };
 
     // =======================
     // EVENT LISTENERS
     // =======================
-    btnConsultar.addEventListener('click', consultarComentariosConThen);
-    btnDependiente.addEventListener('click', crearYMarcarSolucionado);
-    btnResetForm.addEventListener('click', resetForm);
+    if (btnConsultar) btnConsultar.addEventListener('click', consultarComentariosConThen);
+    if (btnDependiente) btnDependiente.addEventListener('click', crearYMarcarSolucionado);
+    if (btnResetForm) btnResetForm.addEventListener('click', resetForm);
+    // Form visibility is controlled only when loading an item for edit; no manual show button.
 
-    formComentario.addEventListener('submit', e => {
+    // Si la página define `CREATE_ON_PAGE`, dejamos que sea la propia página la que gestione
+    // el envío (POST). En caso contrario, `reportes.js` se encarga del submit (crear/modificar).
+    if (formComentario && !window.CREATE_ON_PAGE) formComentario.addEventListener('submit', e => {
         e.preventDefault();
-        const id = inputId.value;
+        const id = inputId ? inputId.value : '';
         const datos = {
-            maquina_id: inputMaquina.value,
-            empleado_id: inputEmpleado.value,
-            comentario: inputTexto.value,
+            maquina_id: inputMaquina ? inputMaquina.value : null,
+            empleado_id: inputEmpleado ? inputEmpleado.value : null,
+            comentario: inputTexto ? inputTexto.value : '',
             fecharegistro: new Date().toISOString(),
             solucionado: 0
         };
@@ -185,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else crearComentarioConThen(datos);
     });
 
-    listaComentarios.addEventListener('click', async e => {
+    if (listaComentarios) listaComentarios.addEventListener('click', async e => {
         const id = e.target.dataset.id;
         if (!id) return;
 
@@ -194,22 +204,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = e.target.closest('li');
             toggleSolucionadoConAsync(id, li.classList.contains('solucionado'));
         }
-        if (e.target.classList.contains('btn-editar')) {
-            try {
-                const res = await fetch(`${API_URL}${id}/`);
-                if (!res.ok) throw new Error('No se pudo cargar el comentario');
-                const data = await res.json();
-                inputId.value = data.idcomentariosmaquinas;
-                inputMaquina.value = data.maquina?.idmaquina ?? '';
-                inputEmpleado.value = data.empleado?.idempleado ?? '';
-                inputTexto.value = data.comentario;
-                btnSubmitComentario.textContent = `Modificar Comentario ${data.idcomentariosmaquinas} (PUT)`;
-                btnSubmitComentario.style.backgroundColor = '#007bff';
-                formComentario.scrollIntoView({ behavior: 'smooth' });
-            } catch(err) { alert(err.message); }
+        // Al hacer clic en EDITAR
+if (e.target.classList.contains('btn-editar')) {
+    try {
+        const res = await fetch(`${API_URL}${id}/`);
+        if (!res.ok) throw new Error('No se pudo cargar el comentario');
+        const data = await res.json();
+
+        if (inputId) inputId.value = data.idcomentariosmaquinas;
+        if (inputMaquina) inputMaquina.value = data.maquina?.idmaquina ?? '';
+        if (inputEmpleado) inputEmpleado.value = data.empleado?.idempleado ?? '';
+        if (inputTexto) inputTexto.value = data.comentario;
+
+        if (btnSubmitComentario) {
+            btnSubmitComentario.textContent = `Modificar Comentario ${data.idcomentariosmaquinas}`;
+            btnSubmitComentario.style.backgroundColor = '#007bff';
         }
+
+        // 🔥 AQUÍ SE MUESTRA EL FORM Y SOLO AQUÍ 🔥
+        if (formComentario) {
+            formComentario.style.display = 'block';
+            formComentario.scrollIntoView({ behavior: 'smooth' });
+        }
+
+    } catch(err) {
+        alert(err.message);
+    }
+}
+
     });
 
-    // Carga inicial
-    consultarComentariosConThen();
+    // Carga inicial (solo si hay lista o si existe botón de consulta)
+    if (listaComentarios || btnConsultar) consultarComentariosConThen();
 });

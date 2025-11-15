@@ -26,17 +26,19 @@
           {% if error %}
             <div class="error">{{ error }}</div>
           {% endif %}
+          <label for="">Ingresa tu usuario:</label>
           <input type="text" name="username" placeholder="Usuario" required />
+          <label for="">Ingresa tu contraseña:</label>
           <input type="password" name="password" placeholder="Contraseña" required />
           <input type="hidden" name="next" value="{{ request.GET.next }}" />
-          <button type="submit">Ingresar</button>
+          <button type="submit" class="login-nav">Ingresar</button>
+          <div class="login-nav" onclick="location.href='{% url 'home' %}'">Regresar</div>
         </form>
       </div>
     </div>
   </section>  
 </main>
 
-<div class="opcion" onclick="location.href='{% url 'home' %}'">Regresar</div>
 <footer class="site-footer">Trex</footer>
 
 </body>

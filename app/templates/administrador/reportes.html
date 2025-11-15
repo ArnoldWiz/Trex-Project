@@ -15,15 +15,6 @@
         <div id="subtitle">Reportes Generales</div>
          {% csrf_token %}
 
-  <nav>
-        <ul>
-      <li><a href="#reporte-maquina">Reporte por Máquina</a></li>
-      <li><a href="#reporte-empleado">Reporte por Empleado</a></li>
-      <li><a href="#reporte-productividad">Reporte de Productividad</a></li>
-      <li><a href="#reporte-consumo">Reporte de Consumo de Hilo</a></li>
-    </ul>
-  </nav>
-
     <section id="reporte-maquina">
     <h2>Reporte por Máquina</h2>
       </section>
@@ -41,13 +32,14 @@
     <h2>Gestión de Comentarios de Máquinas (Demo AJAX)</h2>
     <p>Usa este formulario para probar las peticiones CRUD con Fetch.</p>
     
-    <form id="form-comentario">
-        <input type="hidden" id="comentario-id" value="">
-        <input type="number" id="comentario-maquina" placeholder="ID Máquina" required>
-        <input type="number" id="comentario-empleado" placeholder="ID Empleado" required>
-        <textarea id="comentario-texto" placeholder="Escribe tu comentario..." required></textarea>
-        <button type="submit" id="btn-submit-comentario">Crear Comentario (POST)</button>
-        <button type="button" id="btn-reset-form" style="background-color: #6c757d;">Limpiar</button>
+    <!-- Formulario oculto por defecto; se muestra al editar -->
+    <form id="form-comentario" style="display:none;margin-top:.5rem">
+      <input type="hidden" id="comentario-id" value="">
+      <input type="number" id="comentario-maquina" placeholder="ID Máquina" required>
+      <input type="number" id="comentario-empleado" placeholder="ID Empleado" required>
+      <textarea id="comentario-texto" placeholder="Escribe tu comentario..." required></textarea>
+      <button type="submit" id="btn-submit-comentario">Modificar (POST)</button>
+      <button type="button" id="btn-reset-form" style="background-color: #6c757d;">Limpiar</button>
     </form>
 
     <button id="btn-consultar">1. Consultar Todos (GET con .then)</button>
@@ -62,11 +54,13 @@
 
 {% endblock %}
 {% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'login' %}'">Regresar</div>
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
 {% endblock %}
+
 {% block extra_js %}
 <script>
     const API_URL = "/api/comentariosmaquinas/";
+    const SOLO_LECTURA = true;
 </script>
 <script src="{% static 'js/administrador/reportes.js' %}"></script>
 {% endblock %}

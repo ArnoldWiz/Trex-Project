@@ -34,10 +34,11 @@
                 {{ orden.pedidos_count }}
               </td>
               <td>
-                <a href="{% url 'listaPedidos' orden_pk=orden.pk %}">Ver Detalles</a>
+                <a href="{% url 'listaPedidos' orden_pk=orden.pk %}"><i class="fa-regular fa-eye"></i></a>
               </td>
               <td>
-                <a href="{% url 'actualizarOrden' orden_pk=orden.pk %}">Editar</a>
+                <a href="{% url 'actualizarOrden' orden_pk=orden.pk %}">
+                        <i class="fa-solid fa-pen-to-square"></i></a>
               </td>
             </tr>
             {% empty %}
@@ -55,8 +56,9 @@
   
 
 {% endblock %}
-{% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'homeAdmin' %}'">Regresar</div>
-{% endblock %}
 
-  {% block optBarra %}<div class="login-nav">Ordenes Terminadas</div>{% endblock %}
+{% block regresar %}
+
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i>Regresar</a></li>
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i>Ordenes Terminadas</a></li> <!-- POR HACER-->
+{% endblock %}

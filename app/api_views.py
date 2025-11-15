@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 from .models import Cliente, Modelo, Lote, Empleado, Maquina, Pedido, Ordendepedido, Comentariosmaquinas
 from .serializers import (
     ClienteSerializer, ModeloSerializer, LoteSerializer,
@@ -62,4 +63,16 @@ class ComentariosMaquinasViewSet(viewsets.ModelViewSet):
     """CRUD para comentarios de maquinas (relacionado con Maquina y Empleado)"""
     queryset = Comentariosmaquinas.objects.all()
     serializer_class = ComentariosMaquinasSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # Permisos: GET/HEAD/OPTIONS y POST (creación) públicos; PUT/PATCH/DELETE requieren autenticación
+    class _ComentariosPermission(BasePermission):
+        def has_permission(self, request, view):
+            # permitir GETs públicos
+            if request.method in permissions.SAFE_METHODS:
+                return True
+            # permitir creación anónima (clientes/empleados en planta)
+            if request.method == 'POST':
+                return True
+            # para los demás métodos (PUT/PATCH/DELETE) requerir autenticación
+            return bool(request.user and request.user.is_authenticated)
+
+    permission_classes = [_ComentariosPermission]

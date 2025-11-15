@@ -29,7 +29,7 @@
         <td>{{ empleado.apellidos }}</td>
         <td>{{ empleado.area }}</td>
         <td>
-          <a href="{% url 'actualizarEmpleado' empleado.idempleado %}">Editar</a>
+          <a href="{% url 'actualizarEmpleado' empleado.idempleado %}"><i class="fa-solid fa-pen-to-square"></i></a></a>
         </td>
       </tr>
       {% empty %}
@@ -44,10 +44,9 @@
 
   </section>
 
-  <div class="login-nav" onclick="window.location.href='{% url 'formEmpleado' %}'">Agregar</div>
-
-  
 {% endblock %}
+
 {% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
+<li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+<li><a href="{% url 'formEmpleado' %}"><i class="fa-solid fa-folder-open"></i> Agregar Empleado</a></li>
 {% endblock %}

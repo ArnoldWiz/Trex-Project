@@ -29,7 +29,7 @@
             <td>{{ cliente.nombre }}</td>
             <td>{{ cliente.contacto }}</td>
             <td>
-                <a href="{% url 'actualizarCliente' cliente.idcliente %}">Editar</a>
+                <a href="{% url 'actualizarCliente' cliente.idcliente %}"><i class="fa-solid fa-pen-to-square"></i></a>
             </td>
         </tr>
         {% endfor %}
@@ -38,10 +38,9 @@
     </div>
 
   </section>
-  <div class="login-nav" onclick="window.location.href='{% url 'formCliente' %}'">Agregar Cliente</div>
-
-  
 {% endblock %}
+
 {% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'catalogos' %}'">Regresar</div>
+<li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+<li><a href="{% url 'formCliente' %}"><i class="fa-solid fa-folder-open"></i> Agregar Cliente</a></li>
 {% endblock %}

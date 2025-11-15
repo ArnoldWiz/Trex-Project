@@ -13,10 +13,12 @@
   
       <div class="contenedor">
         {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
-<form method="post">
+
+        <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
         <button type="submit" class="btn btn-success">Guardar</button>
+
       <div class="login-nav"><a href="{% url 'homeAdmin' %}">Cancelar</a></div>
 </form>
     </div>

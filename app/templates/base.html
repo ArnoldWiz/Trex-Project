@@ -41,11 +41,9 @@
 
   <div class="sidebar">
   <ul>
-    <li><a href="{% url 'listaOrdenes' %}"><i class="fa-solid fa-box"></i> Pedidos</a></li>
-    <li><a href="{% url 'reportes' %}"><i class="fa-solid fa-chart-line"></i> Reportes</a></li>
-    <li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Catálogos</a></li>
+    {% block regresar %}{% endblock %}
   </ul>
-  {% block regresar %}{% endblock %}
+  
   {% block optBarra %}{% endblock %}
 </div>
 

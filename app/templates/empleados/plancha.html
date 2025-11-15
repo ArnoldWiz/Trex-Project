@@ -1,19 +1,42 @@
-{% extends 'base.html' %}
 {% load static %}
-
-{% block title %}Registro por QR - Plancha{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/administrador/homeAdmin.css' %}">
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inicio</title>
+    <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}" />
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-{% endblock %}
+    <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+<nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+      </div>
 
-{% block content %}
-  
+      <div class="login-nav" onclick="location.href='{% url 'login' %}'">
+        <ul><li>Iniciar Sesión</li></ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <ul>
+      <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
+    </ul>
+  </div>
+
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-content">
+
   <section class="center-area">
-    <div id="subtitle">Plancha  - Escanear QR y registrar cantidad</div>
+    <div id="subtitle">Empaquetado  - Escanear QR y registrar cantidad</div>
       <div class="contenedor">
         <div class="muted">Apunta con la cámara al QR.</div>
         <section class="video-card">
@@ -72,6 +95,7 @@
     <p>Usa este formulario para probar las peticiones CRUD con Fetch.</p>
     
     <form id="form-comentario">
+      {% csrf_token %}
         <input type="hidden" id="comentario-id" value="">
         <input type="number" id="comentario-maquina" placeholder="ID Máquina" required>
         <input type="number" id="comentario-empleado" placeholder="ID Empleado" required>
@@ -80,18 +104,67 @@
         <button type="button" id="btn-reset-form" style="background-color: #6c757d;">Limpiar</button>
     </form>
 
-    <button id="btn-consultar">1. Consultar Todos (GET con .then)</button>
+<!--
+    <button id="btn-consultar">1. Consultar Todos (GET con .then)</button> -->
     <button id="btn-dependiente">2. Demo Petición Dependiente (async/await)</button>
 
     <h3>Comentarios Registrados</h3>
     <ul id="lista-comentarios">
         </ul>
   </section>
-
+      
   </section>
+  </div>
   
-{% endblock %}
+<footer class="site-footer">Trex</footer>
 
-{% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'home' %}'">Regresar</div>
-{% endblock %}
+</body>
+<script>
+    const API_URL = "/api/comentariosmaquinas/";
+</script>
+<script>
+  const CREATE_ON_PAGE = true;
+  document.addEventListener('DOMContentLoaded', () => {
+    function getCSRFToken() {
+      return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+    }
+    const CSRF_TOKEN = getCSRFToken();
+    const headers = { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN };
+    const form = document.getElementById('form-comentario');
+    if (!form) return;
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const maquina = document.getElementById('comentario-maquina')?.value;
+      const empleado = document.getElementById('comentario-empleado')?.value;
+      const texto = document.getElementById('comentario-texto')?.value;
+      const datos = {
+        maquina_id: maquina,
+        empleado_id: empleado,
+        comentario: texto,
+        fecharegistro: new Date().toISOString(),
+        solucionado: 0
+      };
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(datos)
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => null);
+          console.error('POST error', err || res.status);
+          alert('Error al crear comentario');
+          return;
+        }
+        const data = await res.json();
+        alert(`Comentario creado (ID ${data.idcomentariosmaquinas})`);
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        alert('Error de red al crear comentario');
+      }
+    });
+  });
+</script>
+<script src="{% static 'js/administrador/reportes.js' %}"></script>
+</html>
