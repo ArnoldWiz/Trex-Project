@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>{% block title %}TREX{% endblock %}</title>
+  <link rel="icon" href="{% static 'images/icono.png' %}" type="image/png">
   
   <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet">
@@ -16,7 +17,9 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="navbar-logo">
-        <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+        <a href="{% url 'homeAdmin' %}">
+          <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+        </a>
       </div>
 
       <div class="juntar">

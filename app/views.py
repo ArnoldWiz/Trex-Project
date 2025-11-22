@@ -62,61 +62,13 @@ class CrearOrden(CreateView):
     form_class = OrdenForm
     success_url = '/administrador/ordenes'
 
-def crear_orden_con_pedidos(request):
-    PedidoFormSet = inlineformset_factory(Ordendepedido, Pedido, form=PedidoForm, extra=1, can_delete=True)
-    if request.method == 'POST':
-        if orden_form.is_valid():
-            orden = orden_form.save(commit=False)
-            formset = PedidoFormSet(request.POST, instance=orden)
-            if formset.is_valid():
-                orden.save()
-                formset.save()
-                if 'save_add_more' in request.POST:
-                    return redirect('actualizarOrden', pk=orden.pk)
-                return redirect('listaOrdenes')
-        else:
-            formset = PedidoFormSet(request.POST)
-    else:
-        orden_form = OrdenForm()
-        formset = PedidoFormSet()
-
-    return render(request, 'administrador/forms/formOrden.html', {
-        'form': orden_form,
-        'formset': formset,
-        'orden': None,
-    })
-
-
-def actualizar_orden_con_pedidos(request, pk):
-    orden = Ordendepedido.objects.get(pk=pk)
-    PedidoFormSet = inlineformset_factory(Ordendepedido, Pedido, form=PedidoForm, extra=1, can_delete=True)
-    if request.method == 'POST':
-        orden_form = OrdenForm(request.POST, instance=orden)
-        formset = PedidoFormSet(request.POST, instance=orden)
-        if orden_form.is_valid() and formset.is_valid():
-            orden_form.save()
-            formset.save()
-            if 'save_add_more' in request.POST:
-                return redirect('actualizarOrden', pk=orden.pk)
-            return redirect('listaOrdenes')
-    else:
-        orden_form = OrdenForm(instance=orden)
-        formset = PedidoFormSet(instance=orden)
-
-    return render(request, 'administrador/forms/formOrden.html', {
-        'form': orden_form,
-        'formset': formset,
-        'orden': orden,
-    })
-
 class ActualizarOrden(UpdateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'
     form_class = OrdenForm
     success_url = '/administrador/ordenes'
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        return ctx
+    def get_object(self):
+        return Ordendepedido.objects.get(pk=self.kwargs['orden_pk'])
 
     #CRUD PEDIDOS
 class ListaPedidos(ListView):

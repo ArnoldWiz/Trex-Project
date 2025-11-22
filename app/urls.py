@@ -29,8 +29,8 @@ urlpatterns = [
     path('administrador/clientes/actualizar/<int:pk>/', ActualizarCliente.as_view(), name='actualizarCliente'),
         #CRUD ORDENES DE PEDIDO
     path('administrador/ordenes', ListaOrdenes.as_view(), name='listaOrdenes'),
-    path('administrador/ordenes/form/', crear_orden_con_pedidos, name='crearOrden'),
-    path('administrador/ordenes/actualizar/<int:orden_pk>/', actualizar_orden_con_pedidos, name='actualizarOrden'),
+    path('administrador/ordenes/form/', CrearOrden.as_view(), name='crearOrden'),
+    path('administrador/ordenes/actualizar/<int:orden_pk>/', ActualizarOrden.as_view(), name='actualizarOrden'),
         #CRUD PEDIDOS
     path('administrador/ordenes/<int:orden_pk>/pedidos/', ListaPedidos.as_view(), name='listaPedidos'),
     path('administrador/ordenes/<int:orden_pk>/pedidos/form/', CrearPedido.as_view(), name='crearPedido'),
