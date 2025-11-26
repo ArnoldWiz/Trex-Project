@@ -39,16 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'app',
     'rest_framework',
 ]
 
-# ===========================
+# ===========================                           
 # MIDDLEWARE
 # ===========================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    # Internal API key middleware: enforces X-API-KEY for configured internal endpoints
+    'app.middleware.ApiKeyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -154,3 +158,17 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_REFERRER_POLICY = 'same-origin'
     X_FRAME_OPTIONS = 'DENY'
+
+# ---------------------------
+# CORS configuration
+# ---------------------------
+# Read comma-separated origins from env var CORS_ALLOWED_ORIGINS
+cors_raw = os.getenv('CORS_ALLOWED_ORIGINS', '')
+if cors_raw:
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in cors_raw.split(',') if o.strip()]
+
+# Allow credentials in CORS only if explicitly enabled
+CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'False').lower() in ('1', 'true', 'yes')
+
+# If you want to allow all origins during development (not recommended in prod):
+# CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() in ('1','true','yes')
