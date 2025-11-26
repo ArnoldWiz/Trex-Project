@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',  # <--- NUEVO: Para cumplir requisito CORS
     'app',
     'rest_framework',
 ]
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # <--- NUEVO: Debe ir antes de CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -66,7 +68,7 @@ ROOT_URLCONF = 'trex.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'app' / 'templates'], # <--- RECOMENDACIÓN: Asegura que busque aquí
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -139,6 +141,17 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+# ===========================
+# CORS CONFIGURATION (Nuevo)
+# ===========================
+# Para desarrollo permitimos todo, pero en producción deberías restringirlo
+CORS_ALLOW_ALL_ORIGINS = DEBUG 
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "https://midominio.com",
+        # Agrega aquí la URL de Ngrok si la tienes fija
+    ]
 
 # ===========================
 # SECURITY (only when DEBUG=False)
