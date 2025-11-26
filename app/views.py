@@ -2,6 +2,9 @@ from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from functools import wraps
+from django.http import HttpResponseForbidden
 from app.models import *
 from django.db.models import Count
 from django.db import transaction
@@ -34,21 +37,46 @@ def login(request):
     # GET
     return render(request, 'administrador/login.html')
 
+
+# --- Security: require login + Administradores group for admin area ---
+def admin_group_required(view_func):
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(f"/administrador/login/?next={request.path}")
+        if not request.user.groups.filter(name='Administradores').exists():
+            return HttpResponseForbidden('Acceso denegado: se requieren permisos de administrador')
+        return view_func(request, *args, **kwargs)
+    return _wrapped
+
+
+class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = '/administrador/login/'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Administradores').exists()
+
+@admin_group_required
 def catalogos(request):
     return render(request, 'administrador/catalogos.html')
 
+@admin_group_required
 def homeAdmin(request):
     ordenes_prioritarias = Ordendepedido.objects.select_related('idcliente')
     return render(request, 'administrador/homeAdmin.html', {'ordenes_prioritarias': ordenes_prioritarias})
 
 #TEMPORALES
+@admin_group_required
 def pedidoEspecifico(request):
     return render(request, 'administrador/catalogos/pedidoEspecifico.html')
+
+
+@admin_group_required
 def lotes(request):
     return render(request, 'administrador/lotes.html')
 
     #CRUD ORDENES
-class ListaOrdenes(ListView):
+class ListaOrdenes(AdminRequiredMixin, ListView):
     model = Ordendepedido
     template_name = 'administrador/catalogos/listaOrdenes.html'
     context_object_name = 'ordenes'
@@ -56,13 +84,13 @@ class ListaOrdenes(ListView):
     def get_queryset(self):
         return Ordendepedido.objects.select_related('idcliente').annotate(pedidos_count=Count('pedido'))
 
-class CrearOrden(CreateView):
+class CrearOrden(AdminRequiredMixin, CreateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'
     form_class = OrdenForm
     success_url = '/administrador/ordenes'
 
-class ActualizarOrden(UpdateView):
+class ActualizarOrden(AdminRequiredMixin, UpdateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'
     form_class = OrdenForm
@@ -71,7 +99,7 @@ class ActualizarOrden(UpdateView):
         return Ordendepedido.objects.get(pk=self.kwargs['orden_pk'])
 
     #CRUD PEDIDOS
-class ListaPedidos(ListView):
+class ListaPedidos(AdminRequiredMixin, ListView):
     model = Pedido
     template_name = 'administrador/catalogos/listaPedidos.html'
     context_object_name = 'pedidos'
@@ -94,7 +122,7 @@ class ListaPedidos(ListView):
         ctx['orden'] = orden
         return ctx
     
-class CrearPedido(CreateView):
+class CrearPedido(AdminRequiredMixin, CreateView):
     model = Pedido
     template_name = 'administrador/forms/formPedido.html'
     form_class = PedidoForm
@@ -168,7 +196,7 @@ class CrearPedido(CreateView):
             self.object.save()
         return redirect('listaPedidos', orden_pk=orden_pk)
     
-class ActualizarPedido(UpdateView):
+class ActualizarPedido(AdminRequiredMixin, UpdateView):
     model = Pedido
     template_name = 'administrador/forms/formPedido.html'
     form_class = PedidoForm
@@ -230,7 +258,7 @@ class ActualizarPedido(UpdateView):
         orden_pk = getattr(self.object, 'idordenpedido_id', None)
         return redirect('listaPedidos', orden_pk=orden_pk)
     
-class ListaLotes(ListView):
+class ListaLotes(AdminRequiredMixin, ListView):
     model = Lote
     template_name = 'administrador/catalogos/listaLotes.html'
     context_object_name = 'lotes'
@@ -253,18 +281,18 @@ class ListaLotes(ListView):
         return ctx
 
     #CRUD EMPLEADOS
-class ListaEmpleados(ListView):
+class ListaEmpleados(AdminRequiredMixin, ListView):
     model = Empleado
     template_name = 'administrador/catalogos/listaEmpleados.html'
     context_object_name = 'empleados'
 
-class CrearEmpleado(CreateView):
+class CrearEmpleado(AdminRequiredMixin, CreateView):
     model = Empleado
     template_name = 'administrador/forms/formEmpleado.html'
     form_class = EmpleadoForm
     success_url = '/administrador/empleados/'
 
-class ActualizarEmpleado(UpdateView):
+class ActualizarEmpleado(AdminRequiredMixin, UpdateView):
     model = Empleado
     template_name = 'administrador/forms/formEmpleado.html'
     form_class = EmpleadoForm
@@ -275,18 +303,18 @@ class ActualizarEmpleado(UpdateView):
         return ctx
 
     #CRUD MAQUINAS
-class ListaMaquinas(ListView):
+class ListaMaquinas(AdminRequiredMixin, ListView):
     model = Maquina
     template_name = 'administrador/catalogos/listaMaquinas.html'
     context_object_name = 'maquinas'
     
-class CrearMaquina(CreateView):
+class CrearMaquina(AdminRequiredMixin, CreateView):
     model = Maquina
     template_name = 'administrador/forms/formMaquina.html'
     form_class = MaquinaForm
     success_url = '/administrador/maquinas/'
 
-class ActualizarMaquina(UpdateView):
+class ActualizarMaquina(AdminRequiredMixin, UpdateView):
     model = Maquina
     template_name = 'administrador/forms/formMaquina.html'
     form_class = MaquinaForm
@@ -297,18 +325,18 @@ class ActualizarMaquina(UpdateView):
         return ctx
 
     #CRUD MODELOS
-class ListaModelos(ListView):
+class ListaModelos(AdminRequiredMixin, ListView):
     model = Modelo
     template_name = 'administrador/catalogos/listaModelos.html'
     context_object_name = 'modelos'
     
-class CrearModelo(CreateView):
+class CrearModelo(AdminRequiredMixin, CreateView):
     model = Modelo
     template_name = 'administrador/forms/formModelo.html'
     form_class = ModeloForm
     success_url = '/administrador/modelos/'
 
-class ActualizarModelo(UpdateView):
+class ActualizarModelo(AdminRequiredMixin, UpdateView):
     model = Modelo
     template_name = 'administrador/forms/formModelo.html'
     form_class = ModeloForm
@@ -320,18 +348,18 @@ class ActualizarModelo(UpdateView):
     
     #CRUD CLIENTES
     
-class ListaClientes(ListView):
+class ListaClientes(AdminRequiredMixin, ListView):
     model = Cliente
     template_name = 'administrador/catalogos/listaClientes.html'
     context_object_name = 'clientes'
     
-class CrearCliente(CreateView):
+class CrearCliente(AdminRequiredMixin, CreateView):
     model = Cliente
     template_name = 'administrador/forms/formCliente.html'
     form_class = ClienteForm
     success_url = '/administrador/clientes/'
 
-class ActualizarCliente(UpdateView):
+class ActualizarCliente(AdminRequiredMixin, UpdateView):
     model = Cliente
     template_name = 'administrador/forms/formCliente.html'
     form_class = ClienteForm

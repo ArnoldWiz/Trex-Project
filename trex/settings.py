@@ -1,11 +1,19 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+
+# Optional: load environment from a .env file when python-dotenv is available.
+try:
+    from dotenv import load_dotenv
+    _DOTENV_AVAILABLE = True
+except Exception:
+    load_dotenv = lambda *a, **k: None
+    _DOTENV_AVAILABLE = False
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env
-load_dotenv(BASE_DIR / ".env")
+# Load .env if python-dotenv is installed (optional)
+if _DOTENV_AVAILABLE:
+    load_dotenv(BASE_DIR / ".env")
 
 # ===========================
 # BASIC CONFIG (from .env)
