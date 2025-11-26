@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-__329#9pynmgus_cct3$j0xeeca+$%cr^cocarmmgh43qlcse%'
+# In production keep the real secret in an environment variable and never commit it.
+_DEFAULT_SECRET = 'django-insecure-__329#9pynmgus_cct3$j0xeeca+$%cr^cocarmmgh43qlcse%'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', _DEFAULT_SECRET)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG should be False in production; toggle with env var
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = []
+# Hosts allowed to serve the app. In production set via env var (comma separated)
+ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h] or []
 
 
 # Application definition
@@ -37,12 +41,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # If you need CORS for an API/SPA, install and enable django-cors-headers
+    'corsheaders',
     'app',
     'rest_framework',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # corsheaders middleware should be high in the chain (before CommonMiddleware)
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -139,3 +147,43 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+# ---------- Security hardening (sensible defaults, enabled when DEBUG is False) ----------
+# Use environment variables in production to control these values.
+if not DEBUG:
+    # Ensure cookies are only sent over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Redirect all non-HTTPS requests to HTTPS
+    SECURE_SSL_REDIRECT = True
+
+    # HSTS: tell browsers to use HTTPS for future requests
+    SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_SECURE_HSTS_SECONDS', '3600'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Prevent the browser from guessing content types
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    # Referrer policy
+    SECURE_REFERRER_POLICY = 'same-origin'
+
+    # X-Frame-Options already enforced by middleware; keep it strict
+    X_FRAME_OPTIONS = 'DENY'
+
+# Example: explicitly trust CSRF origins when using a separate frontend domain
+# e.g. set DJANGO_CSRF_TRUSTED_ORIGINS to 'https://example.com,https://api.example.com'
+csrf_trusted = [u.strip() for u in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if u]
+if csrf_trusted:
+    CSRF_TRUSTED_ORIGINS = csrf_trusted
+
+# CORS configuration: set DJANGO_CORS_ALLOWED_ORIGINS to
+# 'https://example.com,https://localhost:3000' if you have an SPA
+cors_list = [u.strip() for u in os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',') if u]
+if cors_list:
+    CORS_ALLOWED_ORIGINS = cors_list
+
+# By default, do not allow credentials via CORS. Set to True only when necessary.
+CORS_ALLOW_CREDENTIALS = os.environ.get('DJANGO_CORS_ALLOW_CREDENTIALS', 'False').lower() in ('1', 'true', 'yes')
+
