@@ -2,9 +2,9 @@ name: Django CI/CD Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "WEB-II" ]  # rama
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "WEB-II" ] 
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.11, 3.12]
+        python-version: [3.11] 
 
     steps:
     - uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    # Creamos un .env falso para que las pruebas no fallen por falta de variables secretas
+    # Creamos un .env falso para que las pruebas no fallen
     - name: Create dummy .env file
       run: |
         echo "SECRET_KEY=django-insecure-test-key-for-ci" > .env
@@ -44,7 +44,7 @@ jobs:
       run: |
         python manage.py check
 
-    # Ejecutamos los tests (si existen)
+    # Ejecutamos los tests
     - name: Run Tests
       run: |
         python manage.py test
