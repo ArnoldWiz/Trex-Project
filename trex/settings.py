@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-# Optional: load environment from a .env file when python-dotenv is available.
 try:
     from dotenv import load_dotenv
     _DOTENV_AVAILABLE = True
@@ -11,7 +10,6 @@ except Exception:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env if python-dotenv is installed (optional)
 if _DOTENV_AVAILABLE:
     load_dotenv(BASE_DIR / ".env")
 
@@ -39,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',  # <--- NUEVO: Para cumplir requisito CORS
+    'corsheaders',
     'app',
     'rest_framework',
 ]
@@ -51,7 +49,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # <--- NUEVO: Debe ir antes de CommonMiddleware
+    'corsheaders.middleware.CorsMiddleware',
+    'app.middleware.ApiKeyMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -143,18 +142,17 @@ REST_FRAMEWORK = {
 }
 
 # ===========================
-# CORS CONFIGURATION (Nuevo)
+# CORS CONFIGURATION
 # ===========================
-# Para desarrollo permitimos todo, pero en producción deberías restringirlo
+cors_raw = os.getenv("CORS_ALLOWED_ORIGINS", "")
 CORS_ALLOW_ALL_ORIGINS = DEBUG 
 if not DEBUG:
     CORS_ALLOWED_ORIGINS = [
         "https://midominio.com",
-        # Agrega aquí la URL de Ngrok si la tienes fija
     ]
 
 # ===========================
-# SECURITY (only when DEBUG=False)
+# SECURITY
 # ===========================
 
 if not DEBUG:

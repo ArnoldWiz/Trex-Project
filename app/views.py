@@ -34,11 +34,9 @@ def login(request):
         else:
             return render(request, 'administrador/login.html', {'error': 'Usuario o contraseña incorrectos.'})
 
-    # GET
     return render(request, 'administrador/login.html')
 
 
-# --- Security: require login + Administradores group for admin area ---
 def admin_group_required(view_func):
     @wraps(view_func)
     def _wrapped(request, *args, **kwargs):
@@ -55,6 +53,30 @@ class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         return self.request.user.groups.filter(name='Administradores').exists()
+
+
+def group_required(group_name):
+    """Decorator: require authenticated user in given group_name."""
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                return redirect(f"/administrador/login/?next={request.path}")
+            if not request.user.groups.filter(name=group_name).exists():
+                return HttpResponseForbidden(f'Acceso denegado: se requieren permisos del grupo {group_name}')
+            return view_func(request, *args, **kwargs)
+        return _wrapped
+    return decorator
+
+
+class GroupRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = '/administrador/login/'
+    group_name = None
+
+    def test_func(self):
+        if not self.group_name:
+            return False
+        return self.request.user.groups.filter(name=self.group_name).exists()
 
 @admin_group_required
 def catalogos(request):
@@ -371,15 +393,22 @@ class ActualizarCliente(AdminRequiredMixin, UpdateView):
 
 #VISTAS EMPLEADOS
 
+@group_required('Tejido')
 def tejido(request):
     return render(request, 'empleados/tejido.html')
 
+
+@group_required('Plancha')
 def plancha(request):
     return render(request, 'empleados/plancha.html')
 
+
+@group_required('Corte')
 def corte(request):
     return render(request, 'empleados/corte.html')
 
+
+@group_required('Empaquetado')
 def empaquetado(request):
     return render(request, 'empleados/empaquetado.html')
 
