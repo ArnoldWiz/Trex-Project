@@ -12,6 +12,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 if _DOTENV_AVAILABLE:
     load_dotenv(BASE_DIR / ".env")
+else:
+    env_path = BASE_DIR / ".env"
+    if env_path.exists():
+        for raw_line in env_path.read_text(encoding='utf-8').splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith('#'):
+                continue
+            if '=' in line:
+                k, v = line.split('=', 1)
+                k = k.strip()
+                v = v.strip().strip('"').strip("'")
+                os.environ.setdefault(k, v)
 
 # ===========================
 # BASIC CONFIG (from .env)
