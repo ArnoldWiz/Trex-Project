@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    # WhiteNoise helper to serve static files in production
+    'whitenoise.runserver_nostatic',
     'app',
     'rest_framework',
 ]
@@ -51,6 +53,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    # WhiteNoise: serve static files efficiently in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     # Internal API key middleware: enforces X-API-KEY for configured internal endpoints
     'app.middleware.ApiKeyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -130,6 +134,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
+# In production, use WhiteNoise compressed manifest storage for static files
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # ===========================
 # DJANGO REST FRAMEWORK
 # ===========================
@@ -158,6 +166,10 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_REFERRER_POLICY = 'same-origin'
     X_FRAME_OPTIONS = 'DENY'
+    # HTTPOnly flags reduce access from JavaScript
+    SESSION_COOKIE_HTTPONLY = True
+    # CSRF cookie sometimes needs to be read by JS for AJAX; leave False unless confirmed
+    CSRF_COOKIE_HTTPONLY = False
 
 # ---------------------------
 # CORS configuration
@@ -172,3 +184,12 @@ CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'False').lower() in
 
 # If you want to allow all origins during development (not recommended in prod):
 # CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() in ('1','true','yes')
+
+# Configure SECURE_PROXY_SSL_HEADER via env var if behind a proxy that sets X-Forwarded-Proto
+_proxy = os.getenv('SECURE_PROXY_SSL_HEADER', '')
+if _proxy:
+    parts = [p.strip() for p in _proxy.split(',') if p.strip()]
+    if len(parts) == 1:
+        SECURE_PROXY_SSL_HEADER = (parts[0], 'https')
+    elif len(parts) >= 2:
+        SECURE_PROXY_SSL_HEADER = (parts[0], parts[1])
