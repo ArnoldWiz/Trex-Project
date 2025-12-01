@@ -91,6 +91,16 @@ TEMPLATES = [
     },
 ]
 
+# ===========================
+# Esto permite que Ngrok envíe formularios sin error CSRF
+# ===========================
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app',
+    'https://127.0.0.1',
+    'http://127.0.0.1',
+    'http://localhost',
+]
+
 WSGI_APPLICATION = 'trex.wsgi.application'
 
 # ===========================
