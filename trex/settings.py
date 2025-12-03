@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise Exception("SECRET_KEY no está definido en .env")
 
-DEBUG = False
+DEBUG = True
 
 raw_hosts = os.getenv("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = ['*']
@@ -96,6 +96,8 @@ TEMPLATES = [
 # ===========================
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
+    'https://*.ngrok-free.dev',
+    'https://prorefugee-astronomical-eddy.ngrok-free.dev',
     'https://127.0.0.1',
     'http://127.0.0.1',
     'http://localhost',
