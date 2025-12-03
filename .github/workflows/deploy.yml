@@ -16,6 +16,13 @@ jobs:
       with:
         clean: false 
 
+    # --- PASO NUEVO: COPIAR LAS LLAVES (.ENV) ---
+    # Esto toma el archivo .env de tu carpeta original y lo pone
+    # en la carpeta de trabajo del Runner.
+    - name: Copiar Credenciales (.env)
+      run: |
+        cp /home/pardo/Trex-Project/.env .
+
     # 2. Instalar dependencias 
     - name: Install Dependencies
       run: |
