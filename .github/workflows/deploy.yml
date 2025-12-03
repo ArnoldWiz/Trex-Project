@@ -1,6 +1,5 @@
 name: Despliegue a Raspberry Pi
 
-# Se activa cuando haces push a la rama WEB-II
 on:
   push:
     branches: [ "WEB-II" ]
@@ -10,39 +9,39 @@ jobs:
     runs-on: self-hosted
     
     steps:
-    # 1. Bajar el código nuevo
     - name: Checkout code
       uses: actions/checkout@v3
       with:
         clean: false 
 
-    # --- PASO NUEVO: COPIAR LAS LLAVES (.ENV) ---
-    # Esto toma el archivo .env de tu carpeta original y lo pone
-    # en la carpeta de trabajo del Runner.
+  
+    # Esto mueve el código nuevo del Runner a la carpeta real de la Web.
+    # Excluimos .env y venv para no romper tu configuración secreta.
+    - name: Deploy to Production Folder
+      run: |
+        rsync -av --exclude='.env' --exclude='venv' --exclude='.git' ./ /home/pardo/Trex-Project/
+
+    # --- PASO DE SEGURIDAD (.ENV) ---
+    # Nos aseguramos que el .env siga estando disponible para los comandos
     - name: Copiar Credenciales (.env)
       run: |
         cp /home/pardo/Trex-Project/.env .
 
-    # 2. Instalar dependencias 
     - name: Install Dependencies
       run: |
         source /home/pardo/Trex-Project/venv/bin/activate
         pip install -r requirements.txt
 
-    # 3. Migraciones
     - name: Apply Migrations
       run: |
         source /home/pardo/Trex-Project/venv/bin/activate
         python manage.py migrate
 
-    # 4. Estáticos
     - name: Collect Static
       run: |
         source /home/pardo/Trex-Project/venv/bin/activate
         echo "yes" | python manage.py collectstatic
 
-    # 5. Reiniciar Gunicorn (SIN CONTRASEÑA)
-    # IMPORTANTE: Requiere haber configurado 'sudo visudo' previamente.
     - name: Restart Gunicorn
       run: |
-        sudo systemctl restart gunicorn
+        sudo /usr/bin/systemctl restart gunicorn
