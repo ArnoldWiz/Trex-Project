@@ -1,0 +1,41 @@
+name: Despliegue a Raspberry Pi
+
+# Se activa cuando haces push a la rama WEB-II
+on:
+  push:
+    branches: [ "WEB-II" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    
+    steps:
+    # 1. Bajar el código nuevo
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        clean: false 
+
+    # 2. Instalar dependencias 
+    - name: Install Dependencies
+      run: |
+        source /home/pardo/Trex-Project/venv/bin/activate
+        pip install -r requirements.txt
+
+    # 3. Migraciones
+    - name: Apply Migrations
+      run: |
+        source /home/pardo/Trex-Project/venv/bin/activate
+        python manage.py migrate
+
+    # 4. Estáticos
+    - name: Collect Static
+      run: |
+        source /home/pardo/Trex-Project/venv/bin/activate
+        echo "yes" | python manage.py collectstatic
+
+    # 5. Reiniciar Gunicorn (SIN CONTRASEÑA)
+    # IMPORTANTE: Requiere haber configurado 'sudo visudo' previamente.
+    - name: Restart Gunicorn
+      run: |
+        sudo systemctl restart gunicorn
