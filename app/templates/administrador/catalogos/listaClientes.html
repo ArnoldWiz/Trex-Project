@@ -29,7 +29,9 @@
             <td>{{ cliente.nombre }}</td>
             <td>{{ cliente.contacto }}</td>
             <td>
+                {% if perms.app.change_cliente %}
                 <a href="{% url 'actualizarCliente' cliente.idcliente %}"><i class="fa-solid fa-pen-to-square"></i></a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
@@ -42,5 +44,7 @@
 
 {% block regresar %}
 <li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% if perms.app.add_cliente %}
 <li><a href="{% url 'formCliente' %}"><i class="fa-solid fa-folder-open"></i> Agregar Cliente</a></li>
+{% endif %}
 {% endblock %}

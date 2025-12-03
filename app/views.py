@@ -42,7 +42,7 @@ def admin_group_required(view_func):
     def _wrapped(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect(f"/administrador/login/?next={request.path}")
-        if not request.user.groups.filter(name='Administradores').exists():
+        if not (request.user.is_superuser or request.user.groups.filter(name__in=['Administradores', 'Encargado']).exists()):
             return HttpResponseForbidden('Acceso denegado: se requieren permisos de administrador')
         return view_func(request, *args, **kwargs)
     return _wrapped
@@ -52,7 +52,7 @@ class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = '/administrador/login/'
 
     def test_func(self):
-        return self.request.user.groups.filter(name='Administradores').exists()
+        return self.request.user.is_superuser or self.request.user.groups.filter(name__in=['Administradores', 'Encargado']).exists()
 
 
 class PermissionMixin(LoginRequiredMixin):
