@@ -33,10 +33,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise Exception("SECRET_KEY no está definido en .env")
 
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = False
 
 raw_hosts = os.getenv("ALLOWED_HOSTS", "")
-ALLOWED_HOSTS = raw_hosts.split(",") if raw_hosts else []
+ALLOWED_HOSTS = ['*']
 
 # ===========================
 # APPLICATIONS
