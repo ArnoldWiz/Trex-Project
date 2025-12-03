@@ -55,8 +55,39 @@ class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         return self.request.user.groups.filter(name='Administradores').exists()
 
 
+class PermissionMixin(LoginRequiredMixin):
+    login_url = '/administrador/login/'
+    permission_action = None
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(f"{self.login_url}?next={request.path}")
+
+        model = getattr(self, 'model', None)
+        if model is None:
+            return HttpResponseForbidden('Acceso denegado: modelo no especificado')
+
+        action = self.permission_action
+        if not action:
+            try:
+                from django.views.generic import CreateView, UpdateView, DeleteView
+                if isinstance(self, CreateView):
+                    action = 'add'
+                elif isinstance(self, UpdateView):
+                    action = 'change'
+                elif isinstance(self, DeleteView):
+                    action = 'delete'
+            except Exception:
+                action = 'change'
+
+        perm = f"{model._meta.app_label}.{action}_{model._meta.model_name}"
+        if not request.user.has_perm(perm):
+            return HttpResponseForbidden('Acceso denegado: permisos insuficientes')
+
+        return super().dispatch(request, *args, **kwargs)
+
+
 def group_required(group_name):
-    """Decorator: require authenticated user in given group_name."""
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped(request, *args, **kwargs):
@@ -106,13 +137,13 @@ class ListaOrdenes(AdminRequiredMixin, ListView):
     def get_queryset(self):
         return Ordendepedido.objects.select_related('idcliente').annotate(pedidos_count=Count('pedido'))
 
-class CrearOrden(AdminRequiredMixin, CreateView):
+class CrearOrden(PermissionMixin, CreateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'
     form_class = OrdenForm
     success_url = '/administrador/ordenes'
 
-class ActualizarOrden(AdminRequiredMixin, UpdateView):
+class ActualizarOrden(PermissionMixin, UpdateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'
     form_class = OrdenForm
@@ -144,7 +175,7 @@ class ListaPedidos(AdminRequiredMixin, ListView):
         ctx['orden'] = orden
         return ctx
     
-class CrearPedido(AdminRequiredMixin, CreateView):
+class CrearPedido(PermissionMixin, CreateView):
     model = Pedido
     template_name = 'administrador/forms/formPedido.html'
     form_class = PedidoForm
@@ -218,7 +249,7 @@ class CrearPedido(AdminRequiredMixin, CreateView):
             self.object.save()
         return redirect('listaPedidos', orden_pk=orden_pk)
     
-class ActualizarPedido(AdminRequiredMixin, UpdateView):
+class ActualizarPedido(PermissionMixin, UpdateView):
     model = Pedido
     template_name = 'administrador/forms/formPedido.html'
     form_class = PedidoForm
@@ -308,13 +339,13 @@ class ListaEmpleados(AdminRequiredMixin, ListView):
     template_name = 'administrador/catalogos/listaEmpleados.html'
     context_object_name = 'empleados'
 
-class CrearEmpleado(AdminRequiredMixin, CreateView):
+class CrearEmpleado(PermissionMixin, CreateView):
     model = Empleado
     template_name = 'administrador/forms/formEmpleado.html'
     form_class = EmpleadoForm
     success_url = '/administrador/empleados/'
 
-class ActualizarEmpleado(AdminRequiredMixin, UpdateView):
+class ActualizarEmpleado(PermissionMixin, UpdateView):
     model = Empleado
     template_name = 'administrador/forms/formEmpleado.html'
     form_class = EmpleadoForm
@@ -330,13 +361,13 @@ class ListaMaquinas(AdminRequiredMixin, ListView):
     template_name = 'administrador/catalogos/listaMaquinas.html'
     context_object_name = 'maquinas'
     
-class CrearMaquina(AdminRequiredMixin, CreateView):
+class CrearMaquina(PermissionMixin, CreateView):
     model = Maquina
     template_name = 'administrador/forms/formMaquina.html'
     form_class = MaquinaForm
     success_url = '/administrador/maquinas/'
 
-class ActualizarMaquina(AdminRequiredMixin, UpdateView):
+class ActualizarMaquina(PermissionMixin, UpdateView):
     model = Maquina
     template_name = 'administrador/forms/formMaquina.html'
     form_class = MaquinaForm
@@ -352,13 +383,13 @@ class ListaModelos(AdminRequiredMixin, ListView):
     template_name = 'administrador/catalogos/listaModelos.html'
     context_object_name = 'modelos'
     
-class CrearModelo(AdminRequiredMixin, CreateView):
+class CrearModelo(PermissionMixin, CreateView):
     model = Modelo
     template_name = 'administrador/forms/formModelo.html'
     form_class = ModeloForm
     success_url = '/administrador/modelos/'
 
-class ActualizarModelo(AdminRequiredMixin, UpdateView):
+class ActualizarModelo(PermissionMixin, UpdateView):
     model = Modelo
     template_name = 'administrador/forms/formModelo.html'
     form_class = ModeloForm
@@ -375,13 +406,13 @@ class ListaClientes(AdminRequiredMixin, ListView):
     template_name = 'administrador/catalogos/listaClientes.html'
     context_object_name = 'clientes'
     
-class CrearCliente(AdminRequiredMixin, CreateView):
+class CrearCliente(PermissionMixin, CreateView):
     model = Cliente
     template_name = 'administrador/forms/formCliente.html'
     form_class = ClienteForm
     success_url = '/administrador/clientes/'
 
-class ActualizarCliente(AdminRequiredMixin, UpdateView):
+class ActualizarCliente(PermissionMixin, UpdateView):
     model = Cliente
     template_name = 'administrador/forms/formCliente.html'
     form_class = ClienteForm
