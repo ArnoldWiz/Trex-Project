@@ -31,8 +31,10 @@
             <td>{{ modelo.modelo }}</td>
             <td>{{ modelo.cantidadhilo }}</td>
             <td>
-                <a href="{% url 'actualizarModelo' modelo.idmodelo %}" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                {% comment %} <a href="{% url 'eliminarModelo' modelo.idmodelo %}" class="btn btn-sm btn-danger">Eliminar</a> {% endcomment %}
+              {% if perms.app.change_modelo %}
+              <a href="{% url 'actualizarModelo' modelo.idmodelo %}" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+              {% endif %}
+              {% comment %} <a href="{% url 'eliminarModelo' modelo.idmodelo %}" class="btn btn-sm btn-danger">Eliminar</a> {% endcomment %}
             </td>
         </tr>
         {% endfor %}
@@ -44,5 +46,7 @@
 {% endblock %}
 {% block regresar %}
 <li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% if perms.app.add_modelo %}
 <li><a href="{% url 'formModelo' %}"><i class="fa-solid fa-folder-open"></i> Agregar Modelo</a></li>
+{% endif %}
 {% endblock %}

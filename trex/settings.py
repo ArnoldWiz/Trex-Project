@@ -33,10 +33,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise Exception("SECRET_KEY no está definido en .env")
 
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = True
 
 raw_hosts = os.getenv("ALLOWED_HOSTS", "")
-ALLOWED_HOSTS = raw_hosts.split(",") if raw_hosts else []
+ALLOWED_HOSTS = ['*']
 
 # ===========================
 # APPLICATIONS
@@ -79,7 +79,7 @@ ROOT_URLCONF = 'trex.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'app' / 'templates'], # <--- RECOMENDACIÓN: Asegura que busque aquí
+        'DIRS': [BASE_DIR / 'app' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -96,6 +96,8 @@ TEMPLATES = [
 # ===========================
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
+    'https://*.ngrok-free.dev',
+    'https://prorefugee-astronomical-eddy.ngrok-free.dev',
     'https://127.0.0.1',
     'http://127.0.0.1',
     'http://localhost',

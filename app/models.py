@@ -16,7 +16,7 @@ class Cliente(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'cliente'
+        db_table = 'Cliente'
         
     def __str__(self):
         return self.nombre
@@ -32,7 +32,7 @@ class Comentariosmaquinas(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'comentariosmaquinas'
+        db_table = 'ComentariosMaquinas'
 
 
 class Empleado(models.Model):
@@ -44,7 +44,7 @@ class Empleado(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'empleado'
+        db_table = 'Empleado'
 
 
 class Lote(models.Model):
@@ -64,7 +64,7 @@ class Lote(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'lote'
+        db_table = 'Lote'
 
 
 class Maquina(models.Model):
@@ -75,7 +75,7 @@ class Maquina(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'maquina'
+        db_table = 'Maquina'
 
 
 class Modelo(models.Model):
@@ -87,7 +87,7 @@ class Modelo(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'modelo'
+        db_table = 'Modelo'
 
 
 class Ordendepedido(models.Model):
@@ -99,7 +99,7 @@ class Ordendepedido(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'ordendepedido'
+        db_table = 'OrdenDePedido'
 
 
 class Pedido(models.Model):
@@ -117,4 +117,4 @@ class Pedido(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'pedido'
+        db_table = 'Pedido'

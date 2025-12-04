@@ -29,7 +29,9 @@
         <td>{{ empleado.apellidos }}</td>
         <td>{{ empleado.area }}</td>
         <td>
-          <a href="{% url 'actualizarEmpleado' empleado.idempleado %}"><i class="fa-solid fa-pen-to-square"></i></a></a>
+          {% if perms.app.change_empleado %}
+          <a href="{% url 'actualizarEmpleado' empleado.idempleado %}"><i class="fa-solid fa-pen-to-square"></i></a>
+          {% endif %}
         </td>
       </tr>
       {% empty %}
@@ -48,5 +50,7 @@
 
 {% block regresar %}
 <li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% if perms.app.add_empleado %}
 <li><a href="{% url 'formEmpleado' %}"><i class="fa-solid fa-folder-open"></i> Agregar Empleado</a></li>
+{% endif %}
 {% endblock %}

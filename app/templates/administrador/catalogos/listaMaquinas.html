@@ -29,8 +29,10 @@
                 <td>{{ maquina.area }}</td>
                 <td>{{ maquina.numero }}</td>
                 <td>
-                    <a href="{% url 'actualizarMaquina' maquina.idmaquina %}">
-                        <i class="fa-solid fa-pen-to-square"></i></a>
+                  {% if perms.app.change_maquina %}
+                  <a href="{% url 'actualizarMaquina' maquina.idmaquina %}">
+                    <i class="fa-solid fa-pen-to-square"></i></a>
+                  {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -43,5 +45,7 @@
 {% endblock %}
 {% block regresar %}
 <li><a href="{% url 'catalogos' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% if perms.app.add_maquina %}
 <li><a href="{% url 'formMaquina' %}"><i class="fa-solid fa-folder-open"></i> Agregar Máquina</a></li>
+{% endif %}
 {% endblock %}
