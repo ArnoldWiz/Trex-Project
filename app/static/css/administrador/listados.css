@@ -196,7 +196,7 @@
 
 
 form {
-  max-width: none;                 /* evita el límite anterior */
+  max-width: none;            
   width: 1000px;
   margin: 2rem auto;
   padding: 1.5rem;
@@ -251,7 +251,6 @@ button.btn.btn-success:hover {
   background-color: #842e8d;
 }
 
-/* ---------------- DASHBOARD SUPERIOR ---------------- */
 
 .dashboard-top {
   width: 90%;
@@ -268,7 +267,7 @@ button.btn.btn-success:hover {
   border-radius: 10px;
   padding: 1rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-top: 4px solid #C99A30; /* dorado del sistema */
+  border-top: 4px solid #C99A30;
 }
 
 .chart-card h3,
@@ -299,7 +298,6 @@ button.btn.btn-success:hover {
   font-size: 0.95rem;
 }
 
-/* ---------------- TARJETAS DE LOTES ---------------- */
 
 .lotes-dashboard {
   width: 90%;
@@ -317,7 +315,7 @@ button.btn.btn-success:hover {
   flex-direction: column;
   gap: 0.6rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-top: 4px solid #C99A30; /* mismo dorado */
+  border-top: 4px solid #C99A30; 
 }
 
 .lote-header {
@@ -332,7 +330,7 @@ button.btn.btn-success:hover {
   color: #333;
 }
 
-/* QR */
+
 .qr-area {
   margin-top: 0.5rem;
   display: flex;
@@ -354,7 +352,6 @@ button.btn.btn-success:hover {
   border: 2px dashed #bbb;
 }
 
-/* Botones */
 .lote-actions {
   width: 100%;
   display: flex;
