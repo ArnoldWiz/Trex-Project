@@ -11,10 +11,10 @@
 {% block content %}
   <section class="center-area">
 
-      <div class="contenedor">
-
      <div id="subtitle">{% if object %}Actualizar{% else %}Registrar{% endif %} Cliente</div>
         
+      <div class="contenedor">
+
 <form method="post">
     {% csrf_token %}
     {% for field in form %}

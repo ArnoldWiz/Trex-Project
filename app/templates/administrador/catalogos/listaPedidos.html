@@ -42,9 +42,9 @@
               <td>{{ pedido.fechafin|date:"Y-m-d H:i" }}</td>
               <td>{{ pedido.fechaprevista|date:"Y-m-d H:i" }}</td>
               <td>
-                <a href="{% url 'actualizarPedido' orden_pk=orden.pk pk=pedido.pk %}">Editar</a>
-                &nbsp;|&nbsp;
-                <a href="{% url 'listaLotes' orden_pk=orden.pk pk=pedido.pk %}">Lotes</a>
+                <a href="{% url 'actualizarPedido' orden_pk=orden.pk pk=pedido.pk %}"><i class="fa-regular fa-pen-to-square"></i></a>
+                &nbsp; &nbsp;
+                <a href="{% url 'listaLotes' orden_pk=orden.pk pk=pedido.pk %}"><i class="fa-solid fa-chart-pie"></i></a>
               </td>
             </tr>
             {% empty %}
@@ -57,11 +57,12 @@
     </div>
 
   </section>
-
-  <div class="login-nav" onclick="location.href='{% url 'crearPedido' orden_pk=orden.pk %}'">Agregar pedido</div>
-  
 {% endblock %}
+
 
 {% block regresar %}
-<div class="opcion" onclick="location.href='{% url 'homeAdmin' %}'">Regresar</div>
+<li><a href="{% url 'listaOrdenes' %}"><i class="fa-solid fa-folder-open"></i>Regresar</a></li>
+<li><a href="{% url 'crearPedido' orden_pk=orden.pk %}"><i class="fa-solid fa-folder-open"></i>Agregar Pedido</a></li>
 {% endblock %}
+
+  

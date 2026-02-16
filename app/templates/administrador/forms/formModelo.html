@@ -9,7 +9,12 @@
 
 {% block content %}
   <section class="center-area">
-    <div id="subtitle">Agregar Modelo</div> <!--Opción de activar o desactivar dependiendo la existencia de los modelos que ocupen.-->
+        {% if object %}
+    <div id="subtitle">Editar Modelo</div>
+{% else %}
+    <div id="subtitle">Agregar Modelo</div>
+{% endif %}
+ <!--Opción de activar o desactivar dependiendo la existencia de los modelos que ocupen.-->
   
       <div class="contenedor">
         {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}

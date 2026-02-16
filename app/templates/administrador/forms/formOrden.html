@@ -9,7 +9,12 @@
 
 {% block content %}
   <section class="center-area">
-    <div id="subtitle">Agregar Orden</div> <!--Opción de activar o desactivar dependiendo la existencia de los modelos que ocupen.-->
+
+    {% if object %}
+    <div id="subtitle">Editar Orden</div>
+{% else %}
+    <div id="subtitle">Agregar Orden</div>
+{% endif %}
   
       <div class="contenedor">
         {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
@@ -19,7 +24,7 @@
     {{ form.as_p }}
         <button type="submit" class="btn btn-success">Guardar</button>
 
-      <div class="login-nav"><a href="{% url 'homeAdmin' %}">Cancelar</a></div>
+      <div class="login-nav"><a href="{% url 'listaOrdenes' %}">Cancelar</a></div>
 </form>
     </div>
 

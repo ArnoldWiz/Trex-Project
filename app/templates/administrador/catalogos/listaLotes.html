@@ -8,52 +8,72 @@
 {% endblock %}
 
 {% block content %}
-  <section class="center-area">
-    <div id="subtitle">Lotes del Pedido: {% if pedido %}{{ pedido.pk }} - {{ pedido.idmodelo.folio }}{% else %}--{% endif %}</div>
-      <div class="contenedor">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th># Lote</th>
-              <th>Cantidad</th>
-              <th>Máq. Tejido</th>
-              <th>Empleado Tejido</th>
-              <th>Fecha Term Tejido</th>
-              <th>Máq. Plancha</th>
-              <th>Empleado Plancha</th>
-              <th>Fecha Term Plancha</th>
-              <th>Máq. Corte</th>
-              <th>Empleado Corte</th>
-              <th>Fecha Term Corte</th>
-              <th>Fecha Empa</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for lote in lotes %}
-            <tr>
-              <td>{{ forloop.counter }}</td>
-              <td>{{ lote.cantidad }}</td>
-              <td>{% if lote.idmqutejido %}{{ lote.idmqutejido.numero }}{% else %}-{% endif %}</td>
-              <td>{% if lote.idemptejido %}{{ lote.idemptejido.nombre }} {{ lote.idemptejido.apellidos }}{% else %}-{% endif %}</td>
-              <td>{% if lote.fechatermtejido %}{{ lote.fechatermtejido|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
-              <td>{% if lote.idmaqplancha %}{{ lote.idmaqplancha.numero }}{% else %}-{% endif %}</td>
-              <td>{% if lote.idempplancha %}{{ lote.idempplancha.nombre }} {{ lote.idempplancha.apellidos }}{% else %}-{% endif %}</td>
-              <td>{% if lote.fechatermplancha %}{{ lote.fechatermplancha|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
-              <td>{% if lote.idmaqcorte %}{{ lote.idmaqcorte.numero }}{% else %}-{% endif %}</td>
-              <td>{% if lote.idempcorte %}{{ lote.idempcorte.nombre }} {{ lote.idempcorte.apellidos }}{% else %}-{% endif %}</td>
-              <td>{% if lote.fechatermcorte %}{{ lote.fechatermcorte|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
-              <td>{% if lote.fechaempa %}{{ lote.fechaempa|date:"Y-m-d H:i" }}{% else %}-{% endif %}</td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="12">No hay lotes para este pedido.</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+<section class="center-area">
+
+  <div id="subtitle">
+    Lotes del Pedido:
+    {% if pedido %}
+      {{ pedido.pk }} - {{ pedido.idmodelo.folio }}
+    {% else %}
+      --
+    {% endif %}
+  </div>
+
+  <!-- DASHBOARD SUPERIOR -->
+  <div class="dashboard-top">
+    <div class="chart-card">
+      <h3>Estado de Lotes</h3>
+      <div class="chart-placeholder">
+        Gráfica de pastel
+      </div>
     </div>
 
-  </section>
+    <div class="stats-card">
+      <h3>Resumen</h3>
+      <ul>
+        <li>Total lotes: {{ lotes|length }}</li>
+        <li>Empacados: --</li>
+        <li>En proceso: --</li>
+        <li>Pendientes: --</li>
+      </ul>
+    </div>
+  </div>
 
-  <div class="login-nav" onclick="location.href='{% url 'listaPedidos' orden_pk=orden_pk %}'">Regresar a Pedidos</div>
+  <!-- TARJETAS DE LOTES -->
+  <div class="lotes-dashboard">
+    {% for lote in lotes %}
+      <div class="lote-card">
+
+        <div class="lote-header">
+          Lote {{ forloop.counter }}/{{ lotes|length }}
+        </div>
+
+        <div class="lote-body">
+          <p><strong>Cantidad:</strong> {{ lote.cantidad }}</p>
+        </div>
+
+        <div class="qr-area">
+          <div class="qr-placeholder">
+            QR
+          </div>
+
+          <div class="lote-actions">
+            <button class="btn-qr">Ver QR</button>
+            <button class="btn-qr download">Descargar</button>
+          </div>
+        </div>
+
+      </div>
+    {% empty %}
+      <p>No hay lotes para este pedido.</p>
+    {% endfor %}
+  </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block regresar %}
+<li><a href="{% url 'listaPedidos' orden_pk=orden_pk %}"><i class="fa-solid fa-folder-open"></i>Regresar a Pedidos</a></li>
 {% endblock %}
