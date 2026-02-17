@@ -49,10 +49,10 @@
 
     <div class="right-panel">
       <div class="menu-row">
-        <div class="menu-opt" onclick="location.href='{% url 'listaOrdenes' %}'">LISTA DE ORDENES</div>
-        <div class="menu-opt" onclick="location.href='{% url 'crearOrden' %}'">REGISTRAR ORDEN</div>
-        <div class="menu-opt" onclick="location.href='{% url 'reportes' %}'">REPORTES</div>
-        <div class="menu-opt" onclick="location.href='{% url 'catalogos' %}'">CATÁLOGOS</div>
+      <div class="menu-opt"><a href="{% url 'listaOrdenes' %}"><p>LISTA DE ORDENES</p></a></div>
+      <div class="menu-opt"><a href="{% url 'crearOrden' %}"><p>REGISTRAR ORDEN</p></a></div>
+      <div class="menu-opt"><a href="{% url 'reportes' %}"><p>REPORTES</p></a></div>
+      <div class="menu-opt"><a href="{% url 'catalogos' %}"><p>CATÁLOGOS</p></a></div>
       </div>
     </div>
   </section>

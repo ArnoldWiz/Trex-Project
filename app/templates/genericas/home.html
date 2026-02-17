@@ -26,10 +26,10 @@
 <main class="page">
   <section class="center-area">
     <div class="menu-row">
-      <div class="menu-opt" onclick="location.href='{% url 'tejido' %}'">TEJIDO</div>
-      <div class="menu-opt" onclick="location.href='{% url 'plancha' %}'">PLANCHA</div>
-      <div class="menu-opt" onclick="location.href='{% url 'corte' %}'">CORTE</div>
-      <div class="menu-opt" onclick="location.href='{% url 'empaquetado' %}'">EMPAQUETADO</div>
+      <div class="menu-opt"><a href="{% url 'tejido' %}"><p>TEJIDO</p></a></div>
+      <div class="menu-opt"><a href="{% url 'plancha' %}"><p>PLANCHA</p></a></div>
+      <div class="menu-opt"><a href="{% url 'corte' %}"><p>CORTE</p></a></div>
+      <div class="menu-opt"><a href="{% url 'empaquetado' %}"><p>EMPAQUETADO</p></a></div>
     </div>
   </section>  
 </main>

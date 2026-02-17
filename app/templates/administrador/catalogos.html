@@ -10,21 +10,25 @@
 {% block content %}
 <div class="catalogos-wrapper">
   <div class="cards-grid">
-    <div class="card" onclick="location.href='{% url 'modelos' %}'">
+    <div class="card"><a href="{% url 'modelos' %}">
       <h1>MODELOS</h1>
       <p>Gestiona los modelos.</p>
+      </a>
     </div>
-    <div class="card" onclick="location.href='{% url 'empleados' %}'">
+    <div class="card"><a href="{% url 'empleados' %}">
       <h1>EMPLEADOS</h1>
       <p>Lista y administración.</p>
+      </a>
     </div>
-    <div class="card" onclick="location.href='{% url 'maquinas' %}'">
+    <div class="card"><a href="{% url 'maquinas' %}">
       <h1>MÁQUINAS</h1>
       <p>Control de máquinas.</p>
+      </a>
     </div>
-    <div class="card" onclick="location.href='{% url 'clientes' %}'">
+    <div class="card"><a href="{% url 'clientes' %}">
       <h1>CLIENTES</h1>
       <p>Control de clientes.</p>
+    </a>
     </div>
     
   </div>
