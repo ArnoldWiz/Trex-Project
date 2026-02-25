@@ -171,13 +171,14 @@ nav{
 }
 
 .center-area{
-  width: 90%;
+  width: calc(100% - 80px);
   max-width: 1200px;
-  margin: 6vh auto;
+  margin: 5vh auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  margin-right: 80px;
 }
 
 .stack{
@@ -201,8 +202,10 @@ nav{
 }
 
 .page{
-  margin-right: 70px;
-  padding: 15px auto 50px auto;
+  /*margin-right: 70px;*/
+  padding: 20px;
+  margin-right: 80px;
+  min-height: calc(100vh - 4vh);
 }
 
 .opcion{
@@ -268,7 +271,6 @@ nav{
 
 .menu-opt:hover{
   background-color: #2A388F;
-  color: #FAFAFA;
   transform: scale(1.05) translateY(-5px);
   cursor: pointer;
   box-shadow: 0 3px 10px #BF1E2E;
@@ -286,6 +288,16 @@ nav{
   justify-content: center;
   height: 100%;
   align-items: center;
+}
+
+.menu-opt:hover a, 
+.menu-opt:hover p {
+  color: #FAFAFA;
+}
+
+.menu-opt a {
+  color: inherit; 
+  text-decoration: none;
 }
 
 .login-nav{
