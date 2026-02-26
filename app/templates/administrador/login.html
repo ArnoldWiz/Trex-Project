@@ -14,11 +14,12 @@
       <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
     </div>
 
-    <div class="login-nav" onclick="location.href='{% url 'home' %}'">
-      <ul>
-        <li>Regresar</li>
-      </ul>
-    </div>
+    <div class="login-nav">
+    <ul>
+      <li><a href="{% url 'home' %}">Regresar</a></li>
+    </ul>
+  </div>
+
     </div>
   </nav>
 

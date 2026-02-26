@@ -5,8 +5,9 @@
     <meta charset="UTF-8" />
     <title>Inicio</title>
     <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}" />
-<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet" />
   </head>
@@ -17,10 +18,13 @@
         <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
       </div>
 
-      <div class="login-nav" onclick="location.href='{% url 'login' %}'">
-        <ul><li>Iniciar Sesión</li></ul>
-      </div>
-    </div>
+      
+
+    <div class="login-nav">
+    <ul>
+      <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+    </ul>
+  </div>
   </nav>
 
 
@@ -31,17 +35,12 @@
     </ul>
   </div>
 
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <div class="main-content">
-
+<main class="page">
     <section class="center-area">
+
       <div id="subtitle">Corte - Escanear QR y registrar cantidad</div>
-      <div class="contenedor">
+
         <div class="muted">Apunta con la cámara al QR.</div>
-        <section class="video-card">
-          <video id="video" autoplay playsinline></video>
-          <canvas id="canvas"></canvas>
 
       <div class="controls">
         <button id="btn-start">Iniciar cámara</button>
@@ -57,9 +56,7 @@
         <div class="muted">Último QR leído:</div>
         <div id="last" class="scan-result">—</div>
       </div>
-    </section>
 
-    <aside class="right">
       <form id="workForm" class="form-card" autocomplete="off">
         <div style="display:flex;gap:.5rem">
           <div style="flex:1">
@@ -85,14 +82,9 @@
 
         <div id="status" style="margin-top:.6rem;font-size:.95rem;color:#374151"></div>
       </form>
-    </aside>
-  </section>
-        
-    </div>
 
     <section id="demo-ajax">
     <h2>Gestión de Comentarios de Máquinas (Demo AJAX)</h2>
-    <p>Usa este formulario para probar las peticiones CRUD con Fetch.</p>
     
     <form id="form-comentario" style="display:none;margin-top:.5rem">
       {% csrf_token %}
@@ -103,8 +95,7 @@
         <button type="submit" id="btn-submit-comentario">Crear Comentario (POST)</button>
         <button type="button" id="btn-reset-form" style="background-color: #6c757d;">Limpiar</button>
     </form>
-<!--
-    <button id="btn-consultar">1. Consultar Todos (GET con .then)</button> -->
+    <button id="btn-consultar">1. Consultar Todos (GET con .then)</button> 
     <button id="btn-dependiente">2. Demo Petición Dependiente (async/await)</button>
 
     <h3>Comentarios Registrados</h3>
@@ -112,12 +103,13 @@
         </ul>
   </section>
       
-  </section>
-  </div>
-  
+</section>
+</main>
 <footer class="site-footer">Trex</footer>
 
 </body>
+
+
 <script>
     const API_URL = "/api/comentariosmaquinas/";
 </script>

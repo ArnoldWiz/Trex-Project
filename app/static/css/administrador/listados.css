@@ -57,9 +57,11 @@
   display: flex;
   align-items: flex-start;
   flex-direction: row;
+  box-shadow: #333 0px 3px 10px 0px;
   justify-content: center;
   gap: 3rem;
   max-width: 75rem;
+  border-radius: 30px;
   margin: 3rem auto 0.6rem;
 }
 
@@ -207,6 +209,9 @@ form {
   margin-top: 0.1rem;
 }
 
+form#workForm{
+  width: 700px;
+}
 form p {
   margin-bottom: 0.3rem;
 }
@@ -375,4 +380,25 @@ button.btn.btn-success:hover {
 
 .btn-qr:hover {
   opacity: 0.85;
+}
+
+.pie-svg {
+    width: 150px;
+    height: 150px;
+}
+
+.pie-chart {
+    position: relative;
+}
+
+.pie-chart::after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
