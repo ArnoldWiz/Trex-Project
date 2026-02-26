@@ -8,8 +8,11 @@
 {% endblock %}
 {% block content %}
   <section class="center-area">
-    <div id="subtitle">Agregar Pedido</div> 
-  
+        {% if object %}
+    <div id="subtitle">Editar Pedido</div>
+{% else %}
+    <div id="subtitle">Agregar Pedido</div>
+{% endif %}  
       <div class="contenedor">
         {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
 <form method="post">

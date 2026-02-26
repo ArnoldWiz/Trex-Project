@@ -1,30 +1,60 @@
+/* --- Configuración General y Reset --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+/* --- Contenedor Principal (Layout) --- */
+.center-area {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  gap: 2rem; /* Espacio real entre paneles */
+  max-width: 1400px;
+  margin: 5vh auto;
+  padding: 0 20px;
+}
+
+/* --- Panel Izquierdo (Tabla) --- */
 .left-panel {
   flex: 2;
   background: #FAFAFA;
   padding: 2rem;
   border-radius: 1rem;
-  box-shadow: 0 0 0.6rem rgba(0,0,0,0.1);
-  min-width: 40%;
+  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.08);
+  width: 100%;
+  overflow-x: hidden;
 }
 
-.right-panel {
-  flex: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  min-width: 35%;;
+#subtitle {
+  font-size: 1.8rem;
+  color: #2A388F;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+/* --- Tabla Responsiva --- */
+.table-responsive {
+  overflow-x: auto; /* Permite scroll horizontal si la tabla es muy ancha */
+  width: 100%;
+  border-radius: 0.8rem;
 }
 
 .custom-table {
-  width: 50%;
-  margin: 2rem auto;
+  width: 100%; /* Ocupa todo el ancho disponible del panel */
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.1);
-  font-family: 'Arial', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  min-width: 500px;
 }
 
 .custom-table thead {
@@ -34,110 +64,143 @@
 
 .custom-table th, 
 .custom-table td {
-  padding: 1rem 2rem;
+  padding: 1.2rem 1rem;
   text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
 .custom-table tbody tr {
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   transition: background 0.3s;
 }
 
 .custom-table tbody tr:nth-child(even) {
-  background-color: #e9f0f7;
+  background-color: #f8f9fa;
 }
 
 .custom-table tbody tr:hover {
-  background-color: #d0e7ff;
+  background-color: #f1f4ff;
   cursor: pointer;
 }
 
-.center-area {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 4vw;
-  max-width: 90vw;
-  margin: 8vh auto 2vh;
+.right-panel {
+  flex: 1;
+  width: 100%;
 }
 
 .menu-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr); 
-  grid-template-rows: auto auto 1fr;           
-  gap: 2vh 2vw;
-  justify-items: center;
-  align-items: center;
+  gap: 1.2rem;
   width: 100%;
-  max-width: 40vw;
 }
 
 .menu-opt {
-  width: 100%;
-  max-width: 16rem;
-  height: 6.5rem;
+  text-decoration: none;
   background: #FFFFFF;
   border-radius: 1rem;
   box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.1);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2A388F;
+  height: 7rem;
+  padding: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.menu-opt:nth-child(1) { 
-  grid-column: 1 / 3; 
-  grid-row: 1;
-  width: 100%;
+.menu-opt p {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2A388F;
+  text-align: center;
+  margin: 0;
 }
 
-.menu-opt:nth-child(2) { 
+/* Configuración de Grilla para botones */
+.menu-opt:nth-child(1),
+.menu-opt:nth-child(2) {
   grid-column: 1 / 3;
-  grid-row: 2;
-  width: 100%;
-}
-
-.menu-opt:nth-child(3) {  
-  grid-column: 1;
-  grid-row: 3;
-}
-
-.menu-opt:nth-child(4) { 
-  grid-column: 2;
-  grid-row: 3;
 }
 
 .menu-opt:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.15);
 }
 
-/* Responsive */
-@media (max-width: 900px) {
+.menu-opt:hover a, 
+.menu-opt:hover p {
+  color: #FAFAFA;
+}
+
+.menu-opt a {
+  color: inherit; 
+  text-decoration: none;
+}
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 1024px) {
+  .page {
+    margin-right: 0; 
+  }
   .center-area {
     flex-direction: column;
     align-items: center;
+    margin-right: 80px;
+    width: calc(100% - 90px)
+  }
+
+  .left-panel, .right-panel {
+    width: 100%;
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 600px) {
+  .center-area {
+    margin: 2vh auto;
+    padding: 0 10px;
+  }
+
+  .left-panel {
+    padding: 1rem;
   }
 
   .menu-row {
     grid-template-columns: 1fr;
-    grid-template-rows: none;
-    max-width: 90%;
   }
 
-  .menu-opt {
-    width: 100%;
-    height: 7rem;
+  .menu-opt:nth-child(1),
+  .menu-opt:nth-child(2),
+  .menu-opt:nth-child(3),
+  .menu-opt:nth-child(4) {
+    grid-column: 1 / 2;
   }
+
+  .custom-table th, 
+  .custom-table td {
+    padding: 0.8rem 0.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* --- Estilos Adicionales (Reportes/Feedback) --- */
+.solucionado {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.btn-eliminar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 
 /*                   REPORTES                           */
- #demo-ajax { background-color: #f9f9f9; border: 2px solid #007bff; padding: 15px; margin-top: 20px; border-radius: 8px; }
+#demo-ajax { background-color: #f9f9f9; border: 2px solid #007bff; padding: 15px; margin-top: 20px; border-radius: 8px; }
     #form-comentario { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
     #form-comentario input, #form-comentario textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
     #form-comentario button { padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
