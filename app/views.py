@@ -6,7 +6,7 @@ from app.models import *
 from django.db.models import Count
 from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from app.utils import generate_lote_qr_image
+from app.utils import generate_lote_qr_image, delete_lote_qr_images
 from app.forms import *
 
 # Create your views here.
@@ -159,7 +159,8 @@ class CrearPedido(CreateView):
                             except Exception:
                                 modelo_str = getattr(self.object, 'idmodelo_id', '')
                             color_str = getattr(self.object, 'color', '')
-                            generate_lote_qr_image(order_num, modelo_str, color_str, i+1, total_lotes, created_lote.idlote)
+                            pedido_id = getattr(self.object, 'idpedido', None) or getattr(self.object, 'pk', '')
+                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, modelo_str)
                         except Exception:
                             # if image generation fails, continue without stopping the transaction
                             pass
@@ -197,6 +198,23 @@ class ActualizarPedido(UpdateView):
         from django.db import IntegrityError
         try:
             with transaction.atomic():
+                # delete existing QR images before saving changes
+                try:
+                    order_num = None
+                    try:
+                        order_num = self.object.idordenpedido.numeroorden
+                    except Exception:
+                        order_num = getattr(self.object, 'idordenpedido_id', '')
+                    modelo_str = ''
+                    try:
+                        modelo_str = self.object.idmodelo.modelo
+                    except Exception:
+                        modelo_str = getattr(self.object, 'idmodelo_id', '')
+                    color_str = getattr(self.object, 'color', '')
+                    delete_lote_qr_images(order_num, color_str, modelo_str)
+                except Exception:
+                    pass
+                
                 self.object.save()
                 cantidad_val = int(float(form.cleaned_data.get('cantidad') or 0))
                 total_lotes = int(self.object.totallotes or 0)
@@ -222,7 +240,8 @@ class ActualizarPedido(UpdateView):
                             except Exception:
                                 modelo_str = getattr(self.object, 'idmodelo_id', '')
                             color_str = getattr(self.object, 'color', '')
-                            generate_lote_qr_image(order_num, modelo_str, color_str, i+1, total_lotes, created_lote.idlote)
+                            pedido_id = getattr(self.object, 'idpedido', None) or getattr(self.object, 'pk', '')
+                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, modelo_str)
                         except Exception:
                             pass
         except IntegrityError:

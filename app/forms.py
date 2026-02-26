@@ -5,6 +5,12 @@ class EmpleadoForm(forms.ModelForm):
     class Meta:
         model = Empleado
         fields = ['nombre', 'apellidos', 'area', 'estatus']
+        labels = {
+            'nombre': 'Nombre',
+            'apellidos': 'Apellidos',
+            'area': 'Área',
+            'estatus': 'Estatus',
+        }
         widgets = {
             'nombre': forms.TextInput(attrs={'class':'form-control','placeholder':'Nombre'}),
             'apellidos': forms.TextInput(attrs={'class':'form-control','placeholder':'Apellidos'}),
@@ -16,6 +22,11 @@ class MaquinaForm(forms.ModelForm):
     class Meta:
         model = Maquina
         fields = ['area', 'numero', 'estatus']
+        labels = {
+            'area': 'Área',
+            'numero': 'Número',
+            'estatus': 'Estatus',
+        }
         widgets = {
             'area': forms.Select(attrs={'class':'form-control'}, choices=[('Corte', 'Corte'), ('Tejido', 'Tejido'), ('Plancha', 'Plancha')]),
             'numero': forms.TextInput(attrs={'class':'form-control','placeholder':'Número'}),
@@ -26,6 +37,12 @@ class ModeloForm(forms.ModelForm):
     class Meta:
         model = Modelo
         fields = ['folio', 'modelo', 'cantidadhilo', 'estatus']
+        labels = {
+            'folio': 'Folio',
+            'modelo': 'Modelo',
+            'cantidadhilo': 'Cantidad de Hilo',
+            'estatus': 'Estatus',
+        }
         widgets = {
             'folio': forms.TextInput(attrs={'class':'form-control','placeholder':'Folio'}),
             'modelo': forms.TextInput(attrs={'class':'form-control','placeholder':'Modelo'}),
@@ -37,6 +54,11 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['nombre', 'contacto', 'estatus']
+        labels = {
+            'nombre': 'Nombre',
+            'contacto': 'Contacto',
+            'estatus': 'Estatus',
+        }
         widgets = {
             'nombre': forms.TextInput(attrs={'class':'form-control','placeholder':'Nombre'}),
             'contacto': forms.TextInput(attrs={'class':'form-control','placeholder':'Contacto'}),
@@ -54,6 +76,12 @@ class OrdenForm(forms.ModelForm):
     class Meta:
         model = Ordendepedido
         fields = ['numeroorden','idcliente', 'fechainicio', 'fechafin']
+        labels = {
+            'numeroorden': 'Número de Orden',
+            'idcliente': 'Cliente',
+            'fechainicio': 'Fecha de Inicio',
+            'fechafin': 'Fecha de Fin',
+        }
         widgets = {
             'numeroorden': forms.TextInput(attrs={'class':'form-control','placeholder':'Número de Orden'}),
             'idcliente': forms.Select(attrs={'class':'form-control'}),
@@ -75,6 +103,14 @@ class PedidoForm(forms.ModelForm):
         model = Pedido
         # omit totallotes from the editable fields — it's computed automatically
         fields = ['idmodelo', 'talla', 'cantidad', 'color', 'fechainicio', 'fechaprevista']
+        labels = {
+            'idmodelo': 'Modelo',
+            'talla': 'Talla',
+            'cantidad': 'Cantidad',
+            'color': 'Color',
+            'fechainicio': 'Fecha de Inicio',
+            'fechaprevista': 'Fecha Prevista',
+        }
         widgets = {
             'talla': forms.NumberInput(attrs={'class':'form-control','placeholder':'Talla'}),
             'cantidad': forms.NumberInput(attrs={'class':'form-control','placeholder':'Cantidad'}),
