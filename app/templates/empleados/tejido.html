@@ -1,162 +1,163 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <title>Inicio</title>
+    <title>{{ area }} - Trex</title>
     <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
-  
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet" />
-  </head>
-  <body>
+    <style>
+        .form-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .center-area {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        #subtitle {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .muted {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
 <nav class="navbar">
     <div class="navbar-container">
-      <div class="navbar-logo">
-        <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
-      </div>
+        <div class="navbar-logo">
+            <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+        </div>
+        <div class="login-nav">
+            <ul>
+                <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-      
-
-    <div class="login-nav">
+<!-- SIDEBAR -->
+<div class="sidebar">
     <ul>
-      <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+        <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
     </ul>
-  </div>
-  </nav>
-
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <ul>
-      <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
-    </ul>
-  </div>
+</div>
 
 <main class="page">
     <section class="center-area">
+        <div id="subtitle">{{ area }} - Registrar Empleado y Máquina por QR</div>
+        <div class="muted">Selecciona un empleado, una máquina y sube la imagen del QR del lote</div>
 
-      <div id="subtitle">Tejido - Escanear QR y registrar cantidad</div>
+        {% if mensaje_error %}
+            <div class="alert alert-error">{{ mensaje_error }}</div>
+        {% endif %}
 
-        <div class="muted">Apunta con la cámara al QR.</div>
+        {% if mensaje_exito %}
+            <div class="alert alert-success">{{ mensaje_exito }}</div>
+        {% endif %}
 
-      <div class="controls">
-        <button id="btn-start">Iniciar cámara</button>
-        <button id="btn-stop">Detener</button>
-        <input id="fileInput" type="file" accept="image/*">
-        <select id="format">
-          <option value="json">QR contiene JSON</option>
-          <option value="plain">Texto plano</option>
-        </select>
-      </div>
+        <form method="post" enctype="multipart/form-data" class="form-card">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_empleado">Empleado:</label>
+                {{ form.empleado }}
+                {% if form.empleado.errors %}
+                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
+                        {{ form.empleado.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-      <div style="margin-top:.75rem">
-        <div class="muted">Último QR leído:</div>
-        <div id="last" class="scan-result">—</div>
-      </div>
+            <div class="form-group">
+                <label for="id_maquina">Máquina:</label>
+                {{ form.maquina }}
+                {% if form.maquina.errors %}
+                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
+                        {{ form.maquina.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-      <form id="workForm" class="form-card" autocomplete="off">
-        <div style="display:flex;gap:.5rem">
-          <div style="flex:1">
-            <label>Empleado ID</label>
-            <input id="employee_id" class="field" name="employee_id" />
-          </div>
-          <div style="width:120px">
-            <label>Fecha / Hora</label>
-            <input id="ts" class="field" name="timestamp" />
-          </div>
-        </div>
+            <div class="form-group">
+                <label for="id_qr_image">Imagen QR del Lote:</label>
+                {{ form.qr_image }}
+                {% if form.qr_image.errors %}
+                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
+                        {{ form.qr_image.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-        <label>Trabajo / Orden / Tarjeta</label>
-        <input id="job_id" class="field" name="job_id" />
-
-        <label>Cantidad realizada</label>
-        <input id="quantity" type="number" min="0" step="1" class="field" name="quantity" />
-
-        <label>Comentarios (opcional)</label>
-        <input id="notes" class="field" name="notes" />
-
-        <button type="button" id="btn-submit" class="submit">Enviar registro</button>
-
-        <div id="status" style="margin-top:.6rem;font-size:.95rem;color:#374151"></div>
-      </form>
-
-    <section id="demo-ajax">
-    <h2>Gestión de Comentarios de Máquinas (Demo AJAX)</h2>
-    
-    <form id="form-comentario" style="display:none;margin-top:.5rem">
-      {% csrf_token %}
-        <input type="hidden" id="comentario-id" value="">
-        <input type="number" id="comentario-maquina" placeholder="ID Máquina" required>
-        <input type="number" id="comentario-empleado" placeholder="ID Empleado" required>
-        <textarea id="comentario-texto" placeholder="Escribe tu comentario..." required></textarea>
-        <button type="submit" id="btn-submit-comentario">Crear Comentario (POST)</button>
-        <button type="button" id="btn-reset-form" style="background-color: #6c757d;">Limpiar</button>
-    </form>
-    <button id="btn-consultar">1. Consultar Todos (GET con .then)</button> 
-    <button id="btn-dependiente">2. Demo Petición Dependiente (async/await)</button>
-
-    <h3>Comentarios Registrados</h3>
-    <ul id="lista-comentarios">
-        </ul>
-  </section>
-      
-</section>
+            <button type="submit" class="submit-btn">Guardar Registro</button>
+        </form>
+    </section>
 </main>
+
 <footer class="site-footer">Trex</footer>
-
 </body>
-
-
-<script>
-    const API_URL = "/api/comentariosmaquinas/";
-</script>
-<script>
-  const CREATE_ON_PAGE = true;
-  document.addEventListener('DOMContentLoaded', () => {
-    function getCSRFToken() {
-      return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
-    }
-    const CSRF_TOKEN = getCSRFToken();
-    const headers = { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN };
-    const form = document.getElementById('form-comentario');
-    if (!form) return;
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const maquina = document.getElementById('comentario-maquina')?.value;
-      const empleado = document.getElementById('comentario-empleado')?.value;
-      const texto = document.getElementById('comentario-texto')?.value;
-      const datos = {
-        maquina_id: maquina,
-        empleado_id: empleado,
-        comentario: texto,
-        fecharegistro: new Date().toISOString(),
-        solucionado: 0
-      };
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(datos)
-        });
-        if (!res.ok) {
-          const err = await res.json().catch(() => null);
-          console.error('POST error', err || res.status);
-          alert('Error al crear comentario');
-          return;
-        }
-        const data = await res.json();
-        alert(`Comentario creado (ID ${data.idcomentariosmaquinas})`);
-        form.reset();
-      } catch (err) {
-        console.error(err);
-        alert('Error de red al crear comentario');
-      }
-    });
-    // Form visibility: left hidden by default; reportes.js will show it when editing.
-  });
-</script>
-<script src="{% static 'js/administrador/reportes.js' %}"></script>
-</html>

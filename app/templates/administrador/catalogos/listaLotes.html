@@ -69,10 +69,10 @@
     <div class="stats-card">
       <h3>Resumen</h3>
       <ul>
-        <li>Total lotes: {{ lotes|length }}</li>
-        <li>Empacados: --</li>
-        <li>En proceso: --</li>
-        <li>Pendientes: --</li>
+        <li>Corte: {{ resumen_lotes.corte }}/{{ resumen_lotes.total }}</li>
+        <li>Tejido: {{ resumen_lotes.tejido }}/{{ resumen_lotes.total }}</li>
+        <li>Plancha: {{ resumen_lotes.plancha }}/{{ resumen_lotes.total }}</li>
+        <li>Empaque: {{ resumen_lotes.empaque }}/{{ resumen_lotes.total }}</li>
       </ul>
     </div>
   </div>

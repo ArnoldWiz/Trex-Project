@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Pedido` (
   CONSTRAINT `Foreign_OrdenPedido`
     FOREIGN KEY (`idOrdenPedido`)
     REFERENCES `TREX`.`OrdenDePedido` (`idOrdenDePedido`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `TREX`.`Lote` (
   CONSTRAINT `Foreign_Orden`
     FOREIGN KEY (`idPedido`)
     REFERENCES `TREX`.`Pedido` (`idPedido`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `Foreign_EmpTejido`
     FOREIGN KEY (`idEmpTejido`)

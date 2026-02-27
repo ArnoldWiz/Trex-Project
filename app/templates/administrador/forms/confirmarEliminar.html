@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+<style>
+  .warning-box {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .warning-icon {
+    font-size: 48px;
+    color: #ff9800;
+    margin-bottom: 10px;
+  }
+  
+  .warning-message {
+    font-size: 18px;
+    color: #856404;
+    margin: 15px 0;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="center-area">
+    <div id="subtitle">Confirmar Eliminación</div>
+    
+    <div class="contenedor">
+      <div class="warning-box">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-message">
+          <strong>¿Estás seguro de que deseas eliminar {% if tipo == 'orden' %}esta orden{% else %}este pedido{% endif %}?</strong>
+        </div>
+        
+        <div style="background-color: #fff; padding: 15px; border-radius: 5px; margin: 15px 0; text-align: left;">
+          <p style="margin: 5px 0;"><strong>Número de Orden:</strong> {{ numeroorden }}</p>
+          <p style="margin: 5px 0;"><strong>Cliente:</strong> {{ cliente }}</p>
+          <p style="margin: 5px 0;"><strong>Fecha de Inicio:</strong> {{ fechainicio|date:"d/m/Y H:i" }}</p>
+          {% if tipo == 'pedido' %}
+          <hr style="margin: 10px 0;">
+          <p style="margin: 5px 0;"><strong>Modelo:</strong> {{ modelo }} ({{ folio }})</p>
+          <p style="margin: 5px 0;"><strong>Color:</strong> {{ color }}</p>
+          <p style="margin: 5px 0;"><strong>Talla:</strong> {{ talla }}</p>
+          <p style="margin: 5px 0;"><strong>Cantidad:</strong> {{ cantidad }}</p>
+          {% endif %}
+        </div>
+        
+        <p style="color: #856404; margin-top: 10px;">
+          Esta acción no se puede deshacer. Todos los datos asociados serán eliminados permanentemente.
+        </p>
+        
+        <form method="post">
+          {% csrf_token %}
+          <div class="button-group">
+            <button type="submit" class="btn-danger">Sí, Eliminar</button>
+            <a href="javascript:history.back()" class="btn-secondary">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}

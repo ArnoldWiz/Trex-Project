@@ -6,7 +6,7 @@ from app.models import *
 from django.db.models import Count
 from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from app.utils import generate_lote_qr_image, delete_lote_qr_images
+from app.utils import generate_lote_qr_image, delete_lote_qr_images, decode_qr_from_image, delete_orden_qr_folder
 from app.forms import *
 
 # Create your views here.
@@ -69,6 +69,63 @@ class ActualizarOrden(UpdateView):
     success_url = '/administrador/ordenes'
     def get_object(self):
         return Ordendepedido.objects.get(pk=self.kwargs['orden_pk'])
+
+class EliminarOrden(DeleteView):
+    model = Ordendepedido
+    template_name = 'administrador/forms/confirmarEliminar.html'
+    success_url = '/administrador/ordenes'
+    
+    def get_object(self):
+        return Ordendepedido.objects.get(pk=self.kwargs['orden_pk'])
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tipo'] = 'orden'
+        context['numeroorden'] = self.object.numeroorden
+        context['cliente'] = self.object.idcliente.nombre
+        context['fechainicio'] = self.object.fechainicio
+        return context
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        order_num = self.object.numeroorden
+        print(f"\n=== Iniciando eliminación de Orden: {order_num} ===")
+        
+        # Obtener todos los pedidos antes de eliminar (para limpiar QR)
+        pedidos = Pedido.objects.filter(idordenpedido=self.object)
+        print(f"Pedidos a eliminar: {pedidos.count()}")
+        try:
+            for pedido in pedidos:
+                try:
+                    # Eliminar carpeta QR de cada pedido
+                    color_str = pedido.color
+                    folio_str = pedido.idmodelo.folio
+                    print(f"Eliminando QR del pedido {pedido.idpedido} - Folio: {folio_str}, Color: {color_str}")
+                    delete_lote_qr_images(order_num, color_str, folio_str)
+                except Exception as e:
+                    print(f"Error eliminando carpeta QR del pedido {pedido.idpedido}: {e}")
+        except Exception as e:
+            print(f"Error procesando carpetas QR: {e}")
+        
+        # Eliminar carpeta QR de la orden
+        print(f"Eliminando carpeta QR de la orden: {order_num}")
+        try:
+            delete_orden_qr_folder(order_num)
+        except Exception as e:
+            print(f"Error eliminando carpeta QR de orden: {e}")
+        
+        # Django y la base de datos se encargarán del resto con CASCADE
+        try:
+            print(f"Eliminando registro de orden de la base de datos...")
+            result = super().delete(request, *args, **kwargs)
+            print(f"Orden eliminada exitosamente")
+            print(f"=== Eliminación completada ===\n")
+            return result
+        except Exception as e:
+            print(f"Error eliminando orden: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
 
     #CRUD PEDIDOS
 class ListaPedidos(ListView):
@@ -153,14 +210,14 @@ class CrearPedido(CreateView):
                                 order_num = self.object.idordenpedido.numeroorden
                             except Exception:
                                 order_num = getattr(self.object, 'idordenpedido_id', '')
-                            modelo_str = ''
+                            folio_str = ''
                             try:
-                                modelo_str = self.object.idmodelo.modelo
+                                folio_str = self.object.idmodelo.folio
                             except Exception:
-                                modelo_str = getattr(self.object, 'idmodelo_id', '')
+                                folio_str = getattr(self.object, 'idmodelo_id', '')
                             color_str = getattr(self.object, 'color', '')
                             pedido_id = getattr(self.object, 'idpedido', None) or getattr(self.object, 'pk', '')
-                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, modelo_str)
+                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, folio_str)
                         except Exception:
                             # if image generation fails, continue without stopping the transaction
                             pass
@@ -185,6 +242,18 @@ class ActualizarPedido(UpdateView):
         return ctx
 
     def form_valid(self, form):
+        # Obtener valores originales ANTES de actualizar
+        original_pedido = Pedido.objects.get(pk=self.object.pk)
+        try:
+            original_order_num = original_pedido.idordenpedido.numeroorden
+        except Exception:
+            original_order_num = getattr(original_pedido, 'idordenpedido_id', '')
+        try:
+            original_folio = original_pedido.idmodelo.folio
+        except Exception:
+            original_folio = getattr(original_pedido, 'idmodelo_id', '')
+        original_color = getattr(original_pedido, 'color', '')
+        
         # update totallotes based on cantidad
         self.object = form.save(commit=False)
         try:
@@ -198,22 +267,11 @@ class ActualizarPedido(UpdateView):
         from django.db import IntegrityError
         try:
             with transaction.atomic():
-                # delete existing QR images before saving changes
+                # delete existing QR images using ORIGINAL values before saving changes
                 try:
-                    order_num = None
-                    try:
-                        order_num = self.object.idordenpedido.numeroorden
-                    except Exception:
-                        order_num = getattr(self.object, 'idordenpedido_id', '')
-                    modelo_str = ''
-                    try:
-                        modelo_str = self.object.idmodelo.modelo
-                    except Exception:
-                        modelo_str = getattr(self.object, 'idmodelo_id', '')
-                    color_str = getattr(self.object, 'color', '')
-                    delete_lote_qr_images(order_num, color_str, modelo_str)
-                except Exception:
-                    pass
+                    delete_lote_qr_images(original_order_num, original_color, original_folio)
+                except Exception as e:
+                    print(f"Error deleting old QR folder: {e}")
                 
                 self.object.save()
                 cantidad_val = int(float(form.cleaned_data.get('cantidad') or 0))
@@ -234,20 +292,63 @@ class ActualizarPedido(UpdateView):
                                 order_num = self.object.idordenpedido.numeroorden
                             except Exception:
                                 order_num = getattr(self.object, 'idordenpedido_id', '')
-                            modelo_str = ''
+                            folio_str = ''
                             try:
-                                modelo_str = self.object.idmodelo.modelo
+                                folio_str = self.object.idmodelo.folio
                             except Exception:
-                                modelo_str = getattr(self.object, 'idmodelo_id', '')
+                                folio_str = getattr(self.object, 'idmodelo_id', '')
                             color_str = getattr(self.object, 'color', '')
                             pedido_id = getattr(self.object, 'idpedido', None) or getattr(self.object, 'pk', '')
-                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, modelo_str)
+                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, folio_str)
                         except Exception:
                             pass
         except IntegrityError:
             self.object.save()
         orden_pk = getattr(self.object, 'idordenpedido_id', None)
         return redirect('listaPedidos', orden_pk=orden_pk)
+
+class EliminarPedido(DeleteView):
+    model = Pedido
+    template_name = 'administrador/forms/confirmarEliminar.html'
+    
+    def get_object(self):
+        return Pedido.objects.get(pk=self.kwargs['pk'])
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tipo'] = 'pedido'
+        context['numeroorden'] = self.object.idordenpedido.numeroorden
+        context['cliente'] = self.object.idordenpedido.idcliente.nombre
+        context['fechainicio'] = self.object.idordenpedido.fechainicio
+        context['modelo'] = self.object.idmodelo.modelo
+        context['folio'] = self.object.idmodelo.folio
+        context['color'] = self.object.color
+        context['talla'] = self.object.talla
+        context['cantidad'] = self.object.cantidad
+        return context
+    
+    def get_success_url(self):
+        orden_pk = getattr(self.object, 'idordenpedido_id', None)
+        return f'/administrador/ordenes/{orden_pk}/pedidos/'
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Eliminar carpeta QR del pedido antes de eliminar
+        try:
+            order_num = self.object.idordenpedido.numeroorden
+            color_str = self.object.color
+            folio_str = self.object.idmodelo.folio
+            delete_lote_qr_images(order_num, color_str, folio_str)
+        except Exception as e:
+            print(f"Error eliminando carpeta QR del pedido: {e}")
+        
+        try:
+            return super().delete(request, *args, **kwargs)
+        except Exception as e:
+            print(f"Error eliminando pedido: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
     
 class ListaLotes(ListView):
     model = Lote
@@ -269,6 +370,26 @@ class ListaLotes(ListView):
             ctx['pedido'] = Pedido.objects.get(pk=self.kwargs.get('pk'))
         except Exception:
             ctx['pedido'] = None
+        lotes_qs = getattr(self, 'object_list', None) or ctx.get('lotes', Lote.objects.none())
+        if hasattr(lotes_qs, 'count'):
+            total_lotes = lotes_qs.count()
+            corte_count = lotes_qs.filter(idempcorte__isnull=False).count()
+            tejido_count = lotes_qs.filter(idemptejido__isnull=False).count()
+            plancha_count = lotes_qs.filter(idempplancha__isnull=False).count()
+            empaque_count = lotes_qs.filter(fechaempa__isnull=False).count()
+        else:
+            total_lotes = len(lotes_qs)
+            corte_count = sum(1 for lote in lotes_qs if getattr(lote, 'idempcorte', None))
+            tejido_count = sum(1 for lote in lotes_qs if getattr(lote, 'idemptejido', None))
+            plancha_count = sum(1 for lote in lotes_qs if getattr(lote, 'idempplancha', None))
+            empaque_count = sum(1 for lote in lotes_qs if getattr(lote, 'fechaempa', None))
+        ctx['resumen_lotes'] = {
+            'total': total_lotes,
+            'corte': corte_count,
+            'tejido': tejido_count,
+            'plancha': plancha_count,
+            'empaque': empaque_count,
+        }
         return ctx
 
     #CRUD EMPLEADOS
@@ -362,14 +483,88 @@ class ActualizarCliente(UpdateView):
 
 #VISTAS EMPLEADOS
 
+def registrar_lote_empleado(request, area_type):
+    """
+    Vista genérica para registrar un empleado y máquina en un lote usando QR.
+    area_type puede ser 'corte', 'tejido' o 'plancha'
+    """
+    from django.utils import timezone
+    
+    # Formatear nombre del área para el título
+    area_titles = {
+        'corte': 'Corte',
+        'tejido': 'Tejido',
+        'plancha': 'Plancha'
+    }
+    
+    area_capitalizada = area_titles.get(area_type.lower(), area_type)
+    
+    mensaje_error = None
+    mensaje_exito = None
+    
+    if request.method == 'POST':
+        form = LoteEmpleadoForm(request.POST, request.FILES, area=area_capitalizada)
+        if form.is_valid():
+            try:
+                empleado = form.cleaned_data['empleado']
+                maquina = form.cleaned_data['maquina']
+                qr_image = form.cleaned_data['qr_image']
+                
+                # Decodificar el QR
+                qr_data = decode_qr_from_image(qr_image)
+                
+                if qr_data:
+                    try:
+                        lote_id = int(qr_data)
+                        lote = Lote.objects.get(idlote=lote_id)
+                        
+                        # Actualizar el lote con el empleado, máquina y la fecha según el área
+                        now = timezone.now()
+                        
+                        if area_type.lower() == 'corte':
+                            lote.idempcorte = empleado
+                            lote.idmaqcorte = maquina
+                            lote.fechatermcorte = now
+                        elif area_type.lower() == 'tejido':
+                            lote.idemptejido = empleado
+                            lote.idmqutejido = maquina
+                            lote.fechatermtejido = now
+                        elif area_type.lower() == 'plancha':
+                            lote.idempplancha = empleado
+                            lote.idmaqplancha = maquina
+                            lote.fechatermplancha = now
+                        
+                        lote.save()
+                        mensaje_exito = f"Empleado {empleado.nombre} y máquina {maquina} registrados correctamente en el lote {lote_id}"
+                    except ValueError:
+                        mensaje_error = "El QR no contiene un ID de lote válido"
+                    except Lote.DoesNotExist:
+                        mensaje_error = f"No se encontró el lote con ID {qr_data}"
+                else:
+                    mensaje_error = "No se pudo decodificar el QR. Verifica que la imagen sea clara."
+            except Exception as e:
+                mensaje_error = f"Error al procesar el formulario: {str(e)}"
+    else:
+        form = LoteEmpleadoForm(area=area_capitalizada)
+    
+    context = {
+        'form': form,
+        'area': area_capitalizada,
+        'mensaje_error': mensaje_error,
+        'mensaje_exito': mensaje_exito,
+    }
+    
+    template_name = f'empleados/{area_type.lower()}.html'
+    return render(request, template_name, context)
+
 def tejido(request):
-    return render(request, 'empleados/tejido.html')
+    return registrar_lote_empleado(request, 'tejido')
 
 def plancha(request):
-    return render(request, 'empleados/plancha.html')
+    return registrar_lote_empleado(request, 'plancha')
 
 def corte(request):
-    return render(request, 'empleados/corte.html')
+    return registrar_lote_empleado(request, 'corte')
 
 def empaquetado(request):
     return render(request, 'empleados/empaquetado.html')

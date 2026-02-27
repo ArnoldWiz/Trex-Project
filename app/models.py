@@ -33,6 +33,9 @@ class Comentariosmaquinas(models.Model):
     class Meta:
         managed = False
         db_table = 'comentariosmaquinas'
+    
+    def __str__(self):
+        return f"Comentario {self.idcomentariosmaquinas} - {self.idmaquina}"
 
 
 class Empleado(models.Model):
@@ -45,6 +48,9 @@ class Empleado(models.Model):
     class Meta:
         managed = False
         db_table = 'empleado'
+    
+    def __str__(self):
+        return f"{self.nombre} {self.apellidos}"
 
 
 class Lote(models.Model):
@@ -65,6 +71,9 @@ class Lote(models.Model):
     class Meta:
         managed = False
         db_table = 'lote'
+    
+    def __str__(self):
+        return f"Lote {self.idlote}"
 
 
 class Maquina(models.Model):
@@ -76,6 +85,9 @@ class Maquina(models.Model):
     class Meta:
         managed = False
         db_table = 'maquina'
+    
+    def __str__(self):
+        return f"{self.area} - Máquina {self.numero}"
 
 
 class Modelo(models.Model):
@@ -88,6 +100,9 @@ class Modelo(models.Model):
     class Meta:
         managed = False
         db_table = 'modelo'
+    
+    def __str__(self):
+        return f"{self.folio} - {self.modelo}"
 
 
 class Ordendepedido(models.Model):
@@ -100,6 +115,9 @@ class Ordendepedido(models.Model):
     class Meta:
         managed = False
         db_table = 'ordendepedido'
+    
+    def __str__(self):
+        return f"Orden {self.numeroorden}"
 
 
 class Pedido(models.Model):
@@ -118,3 +136,6 @@ class Pedido(models.Model):
     class Meta:
         managed = False
         db_table = 'pedido'
+    
+    def __str__(self):
+        return f"Pedido {self.idpedido} - {self.idmodelo.modelo} ({self.color})"

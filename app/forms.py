@@ -118,3 +118,31 @@ class PedidoForm(forms.ModelForm):
             'fechainicio': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
             'fechaprevista': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
         }
+
+class LoteEmpleadoForm(forms.Form):
+    """Form para registrar un empleado y máquina en un lote mediante QR"""
+    empleado = forms.ModelChoiceField(
+        queryset=Empleado.objects.none(),
+        widget=forms.Select(attrs={'class':'form-control'}),
+        empty_label="Selecciona un empleado",
+        label="Empleado"
+    )
+    maquina = forms.ModelChoiceField(
+        queryset=Maquina.objects.none(),
+        widget=forms.Select(attrs={'class':'form-control'}),
+        empty_label="Selecciona una máquina",
+        label="Máquina"
+    )
+    qr_image = forms.ImageField(
+        widget=forms.FileInput(attrs={'class':'form-control', 'accept':'image/*'}),
+        label="Imagen QR del Lote"
+    )
+    
+    def __init__(self, *args, **kwargs):
+        area = kwargs.pop('area', None)
+        super().__init__(*args, **kwargs)
+        
+        if area:
+            # Filtrar empleados y máquinas por área
+            self.fields['empleado'].queryset = Empleado.objects.filter(estatus=1)
+            self.fields['maquina'].queryset = Maquina.objects.filter(area=area, estatus=1)

@@ -31,10 +31,12 @@ urlpatterns = [
     path('administrador/ordenes', ListaOrdenes.as_view(), name='listaOrdenes'),
     path('administrador/ordenes/form/', CrearOrden.as_view(), name='crearOrden'),
     path('administrador/ordenes/actualizar/<int:orden_pk>/', ActualizarOrden.as_view(), name='actualizarOrden'),
+    path('administrador/ordenes/eliminar/<int:orden_pk>/', EliminarOrden.as_view(), name='eliminarOrden'),
         #CRUD PEDIDOS
     path('administrador/ordenes/<int:orden_pk>/pedidos/', ListaPedidos.as_view(), name='listaPedidos'),
     path('administrador/ordenes/<int:orden_pk>/pedidos/form/', CrearPedido.as_view(), name='crearPedido'),
     path('administrador/ordenes/<int:orden_pk>/pedidos/actualizar/<int:pk>/', ActualizarPedido.as_view(), name='actualizarPedido'),
+    path('administrador/ordenes/<int:orden_pk>/pedidos/eliminar/<int:pk>/', EliminarPedido.as_view(), name='eliminarPedido'),
         #LOTES
     path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pk>/lotes/", ListaLotes.as_view(), name="listaLotes"),
 
