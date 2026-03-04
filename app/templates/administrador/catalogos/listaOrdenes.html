@@ -5,6 +5,43 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+<style>
+  .center-area.full-width {
+    padding: 0.5rem;
+  }
+  
+  .contenedor {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .custom-table {
+    margin: 1rem 0;
+  }
+  
+  @media (max-width: 768px) {
+    #subtitle {
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
+    
+    .custom-table i {
+      margin: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    #subtitle {
+      font-size: 1.2rem;
+    }
+    
+    .custom-table th,
+    .custom-table td {
+      padding: 0.4rem 0.3rem;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -34,10 +71,10 @@
                 {{ orden.pedidos_count }}
               </td>
               <td>
-                <a href="{% url 'listaPedidos' orden_pk=orden.pk %}"><i class="fa-regular fa-eye"></i></a>
+                <a href="{% url 'listaPedidos' orden_pk=orden.pk %}" title="Ver detalles"><i class="fa-regular fa-eye"></i></a>
               </td>
               <td>
-                <a href="{% url 'actualizarOrden' orden_pk=orden.pk %}">
+                <a href="{% url 'actualizarOrden' orden_pk=orden.pk %}" title="Editar orden">
                         <i class="fa-solid fa-pen-to-square"></i></a>
               </td>
             </tr>
@@ -59,6 +96,6 @@
 
 {% block regresar %}
 
-<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i>Regresar</a></li>
-<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i>Ordenes Terminadas</a></li> 
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-arrow-rotate-left"></i> Regresar</a></li>
+<li><a href="{% url 'ordenesTerminadas' %}"><i class="fa-solid fa-folder-open"></i>Ordenes Terminadas</a></li> 
 {% endblock %}

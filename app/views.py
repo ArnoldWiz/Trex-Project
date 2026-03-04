@@ -56,6 +56,22 @@ class ListaOrdenes(ListView):
     def get_queryset(self):
         return Ordendepedido.objects.select_related('idcliente').annotate(pedidos_count=Count('pedido'))
 
+
+class ListaOrdenesTerminadas(ListView):
+    """Muestra las órdenes que ya tienen fecha de fin (terminadas)."""
+    model = Ordendepedido
+    template_name = 'administrador/catalogos/listaOrdenesTerminadas.html'
+    context_object_name = 'ordenes'
+
+    def get_queryset(self):
+        # filtrar solo órdenes con fecha de fin no nula
+        return (
+            Ordendepedido.objects
+            .filter(fechafin__isnull=False)
+            .select_related('idcliente')
+            .annotate(pedidos_count=Count('pedido'))
+        )
+
 class CrearOrden(CreateView):
     model = Ordendepedido
     template_name = 'administrador/forms/formOrden.html'

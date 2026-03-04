@@ -32,6 +32,7 @@ urlpatterns = [
     path('administrador/ordenes/form/', CrearOrden.as_view(), name='crearOrden'),
     path('administrador/ordenes/actualizar/<int:orden_pk>/', ActualizarOrden.as_view(), name='actualizarOrden'),
     path('administrador/ordenes/eliminar/<int:orden_pk>/', EliminarOrden.as_view(), name='eliminarOrden'),
+        path('administrador/ordenes/terminadas/', ListaOrdenesTerminadas.as_view(), name='ordenesTerminadas'),
         #CRUD PEDIDOS
     path('administrador/ordenes/<int:orden_pk>/pedidos/', ListaPedidos.as_view(), name='listaPedidos'),
     path('administrador/ordenes/<int:orden_pk>/pedidos/form/', CrearPedido.as_view(), name='crearPedido'),

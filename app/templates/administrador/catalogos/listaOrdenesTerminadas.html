@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Órdenes Terminadas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="center-area full-width">
+    <div id="subtitle">Órdenes Terminadas</div>
+      <div class="contenedor">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Numero de Orden</th>
+              <th>Cliente</th>
+              <th>Fecha Inicio</th>
+              <th>Fecha Fin</th>
+              <th>Pedidos</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for orden in ordenes %}
+            <tr>
+              <td>{{ orden.numeroorden }}</td>
+              <td>{{ orden.idcliente.nombre }}</td>
+              <td>{{ orden.fechainicio|date:"d/m/Y H:i" }}</td>
+              <td>{{ orden.fechafin|date:"d/m/Y H:i" }}</td>
+              <td>{{ orden.pedidos_count }}</td>
+              <td>
+                <a href="{% url 'listaPedidos' orden_pk=orden.pk %}" title="Ver detalles"><i class="fa-regular fa-eye"></i></a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6">No hay órdenes terminadas.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+
+  </section>
+
+{% endblock %}
+
+{% block regresar %}
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i>Regresar</a></li>
+{% endblock %}

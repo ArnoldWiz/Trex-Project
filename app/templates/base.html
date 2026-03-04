@@ -3,6 +3,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}TREX{% endblock %}</title>
   <link rel="icon" href="{% static 'images/icono.png' %}" type="image/png">
   
@@ -34,6 +35,7 @@
           <i class="fa-solid fa-bars"></i>
           <ul class="dropdown">
             <li><a href="{% url 'listaOrdenes' %}">Pedidos</a></li>
+            <li><a href="{% url 'ordenesTerminadas' %}">Órdenes Terminadas</a></li>
             <li><a href="{% url 'reportes' %}">Reportes</a></li>
             <li><a href="{% url 'catalogos' %}">Catálogos</a></li>
           </ul>

@@ -25,7 +25,7 @@
     {{ form.as_p }}
         <button type="submit" class="login-nav">Guardar</button>
         {% if object %}
-        <a href="{% url 'eliminarOrden' orden_pk=object.pk %}" class="login-nav">Eliminar</a>
+        <a href="{% url 'eliminarOrden' orden_pk=object.pk %}" class="btn btn-danger" style="background-color: #dc3545; color: white; padding: 8px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 10px;">Eliminar</a>
         {% endif %}
 
 </form>

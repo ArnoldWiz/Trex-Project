@@ -8,6 +8,16 @@
 body {
   font-family: 'Arial', sans-serif;  background-color: rgb(235, 237, 238);
   color: #333;
+  padding-right: 78px;
+}
+
+/* Asegurar que navbar no sea afectado */
+.navbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
 /* --- Contenedor Principal (Layout) --- */
@@ -21,6 +31,17 @@ body {
   max-width: 1400px;
   margin: 5vh auto;
   padding: 0 20px;
+  padding-top: 60px;
+}
+
+/* Mantener sidebar a la derecha en homeAdmin */
+.sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: auto !important;
+  width: 78px !important;
+  height: 100vh !important;
 }
 
 /* --- Panel Izquierdo (Tabla) --- */
@@ -32,6 +53,7 @@ body {
   box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.08);
   width: 100%;
   overflow-x: hidden;
+  margin-bottom: 100px;
 }
 
 #subtitle {
@@ -92,6 +114,8 @@ body {
   grid-template-columns: repeat(2, 1fr); 
   gap: 1.2rem;
   width: 100%;
+
+  margin-bottom: 100px;
 }
 
 .menu-opt {
@@ -102,7 +126,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 7rem;
+  height: 8rem;
   padding: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -137,6 +161,7 @@ body {
 }
 
 /* --- RESPONSIVIDAD --- */
+/* Para mantener el sidebar a la derecha en homeAdmin */
 @media (max-width: 1024px) {
   .page {
     margin-right: 0; 
@@ -144,20 +169,58 @@ body {
   .center-area {
     flex-direction: column;
     align-items: center;
-    margin-right: 80px;
-    width: calc(100% - 90px)
+    width: 100%;
+    padding-top: 60px;
   }
 
   .left-panel, .right-panel {
     width: 100%;
     max-width: 800px;
   }
+
+  .menu-opt {
+    height: 4rem;
+  }
+
+  .left-panel {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-right: 78px;
+  }
+  
+  .center-area {
+    width: 100%;
+    flex-direction: column;
+    padding-top: 60px;
+  }
+
+    .menu-opt {
+    height: 4rem;
+  }
+
+  .left-panel {
+    margin-bottom: 30px;
+  }
 }
 
 @media (max-width: 600px) {
+  body {
+    padding-right: 70px;
+  }
+  
   .center-area {
     margin: 2vh auto;
     padding: 0 10px;
+    padding-top: 60px;
+    width: 100%;
+  }
+
+    .left-panel {
+    margin-bottom: 30px;
   }
 
   .left-panel {
@@ -179,6 +242,10 @@ body {
   .custom-table td {
     padding: 0.8rem 0.5rem;
     font-size: 0.85rem;
+  }
+
+    .menu-opt {
+    height: 4rem;
   }
 }
 

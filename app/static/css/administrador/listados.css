@@ -48,6 +48,38 @@
   border-bottom-right-radius: 0.75rem;
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .custom-table th,
+  .custom-table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .custom-table th:nth-child(3),
+  .custom-table td:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .custom-table th,
+  .custom-table td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .custom-table th:nth-child(4),
+  .custom-table td:nth-child(4) {
+    display: none;
+  }
+}
+
 @media (max-width: 56.25rem) {
   .center-area {
     flex-direction: column;
@@ -63,19 +95,48 @@
   max-width: 100rem;
   border-radius: 30px;
   margin: 2rem auto 0.6rem;
+  width: calc(100% - 100px);
+  margin-right: 100px;
 }
 
-/* full-width variant for catalog tables */
+/* Full-width variant for catalog tables */
 .center-area.full-width {
   max-width: none;
-  width: 100%;
+  width: calc(100% - 100px);
   margin: 0;
-  padding: 0 1rem;
+  margin-right: 100px;
+  padding: 1rem 0.5rem;
 }
 
 .center-area.full-width .custom-table {
   width: 100%;
-  margin: 0;
+  margin: 1rem 0;
+}
+
+/* Responsive adjustments for center-area based on screen size */
+@media (max-width: 1024px) {
+  .center-area,
+  .center-area.full-width {
+    width: calc(100% - 80px);
+    margin-right: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .center-area,
+  .center-area.full-width {
+    width: 100%;
+    margin: 1rem 0;
+    margin-right: 0;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .center-area,
+  .center-area.full-width {
+    padding: 0 0.5rem;
+  }
 }
 
 .center-area {
