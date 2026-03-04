@@ -90,14 +90,18 @@ def delete_lote_qr_images(order_number: str, color: str, folio: str = ''):
         traceback.print_exc()
         return False
 
-def generate_lote_qr_image(order_number: str, pedido_id: int, color: str, lote_number: int, total_lotes: int, lote_id: int, folio: str = ''):
+def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
     """
     Generate an image that contains:
-      - NumeroOrden
-      - Pedido ID
+      - Modelo (large)
+      - Folio
+      - Cantidad de chinelas
+      - Talla
+      - Máquina tejido
+      - Turno/Operador
       - Color
-      - "Lote n/total"
-      - a QR encoding the lote_id
+      - Máquina plancha
+      - QR encoding the lote_id
 
     The image is saved under: BASE_DIR/QRs/NumeroOrden/Folio-Color/lote_<idlote>.png
     Returns the absolute path to the saved image.
@@ -106,45 +110,82 @@ def generate_lote_qr_image(order_number: str, pedido_id: int, color: str, lote_n
         from PIL import Image, ImageDraw, ImageFont
         import qrcode
     except Exception:
-        # required libraries not installed; silently skip and return None
         return None
+
+    pedido = lote_obj.idpedido
+    modelo = pedido.idmodelo
+    orden = pedido.idordenpedido
+    
+    model_str = modelo.modelo
+    folio_str = modelo.folio
+    color_str = pedido.color
+    cantidad_str = str(pedido.cantidad)
+    talla_str = str(pedido.talla)
+    
+    empl_tejido = lote_obj.idemptejido
+    maq_tejido = lote_obj.idmqutejido
+    empl_plancha = lote_obj.idempplancha
+    maq_plancha = lote_obj.idmaqplancha
+    
+    turno_str = f"{empl_tejido.nombre}" if empl_tejido else "___"
+    operador_str = f"{empl_tejido.apellidos}" if empl_tejido else "___"
+    maq_tejido_str = f"{maq_tejido.numero}" if maq_tejido else "___"
+    maq_plancha_str = f"{maq_plancha.numero}" if maq_plancha else "___"
+    
+    order_num = orden.numeroorden
+    lote_id = lote_obj.idlote
 
     base_dir = Path(getattr(settings, 'BASE_DIR', Path(__file__).resolve().parent.parent))
     # build folder: QRs/NumeroOrden/Folio-Color
-    order_safe = _safe_name(str(order_number))
-    folio_color_safe = _safe_name(f"{folio}-{color}")
+    order_safe = _safe_name(str(order_num))
+    folio_color_safe = _safe_name(f"{folio_str}-{color_str}")
     out_dir = base_dir / 'QRs' / order_safe / folio_color_safe
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # image layout
-    width = 720
-    height = 300
+    # image layout - larger image to fit more information
+    width = 900
+    height = 400
     bg_color = (255, 255, 255)
     img = Image.new('RGB', (width, height), color=bg_color)
     draw = ImageDraw.Draw(img)
 
     # fonts (fallback to default)
     try:
-        font_large = ImageFont.truetype('arial.ttf', 28)
-        font_small = ImageFont.truetype('arial.ttf', 18)
+        font_xlarge = ImageFont.truetype('arial.ttf', 40)  # For MODELO
+        font_large = ImageFont.truetype('arial.ttf', 20)
+        font_small = ImageFont.truetype('arial.ttf', 16)
     except Exception:
+        font_xlarge = ImageFont.load_default()
         font_large = ImageFont.load_default()
         font_small = ImageFont.load_default()
 
-    # left side text
-    padding = 20
+    # Layout: Left side with info, Right side with QR
+    padding = 15
     x_text = padding
     y = padding
-    draw.text((x_text, y), f"Orden: {order_number}", font=font_large, fill=(0, 0, 0))
-    y += 40
-    draw.text((x_text, y), f"Pedido: {pedido_id}", font=font_small, fill=(0, 0, 0))
-    y += 26
-    if folio:
-        draw.text((x_text, y), f"Folio: {folio}", font=font_small, fill=(0, 0, 0))
-        y += 26
-    draw.text((x_text, y), f"Color: {color}", font=font_small, fill=(0, 0, 0))
-    y += 26
-    draw.text((x_text, y), f"Lote: {lote_number}/{total_lotes}", font=font_small, fill=(0, 0, 0))
+    
+    # MODELO - Large at top
+    draw.text((x_text, y), f"{model_str}", font=font_xlarge, fill=(0, 0, 0))
+    y += 50
+    
+    # Folio and Cantidad
+    draw.text((x_text, y), f"Folio: {folio_str:<15} Cant. chinelas: {cantidad_str}", font=font_small, fill=(0, 0, 0))
+    y += 28
+    
+    # Talla, Maq tejido, Turno
+    draw.text((x_text, y), f"Talla: {talla_str}   Máq tejido: # {maq_tejido_str}   Turno: {turno_str}", font=font_small, fill=(0, 0, 0))
+    y += 28
+    
+    # Color, Operador
+    draw.text((x_text, y), f"Color: {color_str:<25} Operador: {operador_str}", font=font_small, fill=(0, 0, 0))
+    y += 28
+    
+    # Plancha
+    draw.text((x_text, y), f"Plancha #: {maq_plancha_str}", font=font_small, fill=(0, 0, 0))
+    y += 28
+    
+    # Lote info
+    draw.text((x_text, y), f"Lote: {lote_number}/{total_lotes}", font=font_large, fill=(0, 0, 0))
 
     # generate QR for lote_id
     qr_data = str(lote_id)
@@ -160,7 +201,6 @@ def generate_lote_qr_image(order_number: str, pedido_id: int, color: str, lote_n
     img.paste(qr_img, (qr_x, qr_y))
 
     # save file
-    # save file named with the lote number (e.g. lote_1.png, lote_2.png, etc.)
     filename = f"lote_{lote_number}.png"
     out_path = out_dir / filename
     img.save(out_path, format='PNG')

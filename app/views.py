@@ -204,20 +204,7 @@ class CrearPedido(CreateView):
                         created_lote = Lote.objects.create(idpedido=self.object, cantidad=lote_cant)
                         # generate QR image for this lote (contains lote id)
                         try:
-                            # fetch readable fields
-                            order_num = None
-                            try:
-                                order_num = self.object.idordenpedido.numeroorden
-                            except Exception:
-                                order_num = getattr(self.object, 'idordenpedido_id', '')
-                            folio_str = ''
-                            try:
-                                folio_str = self.object.idmodelo.folio
-                            except Exception:
-                                folio_str = getattr(self.object, 'idmodelo_id', '')
-                            color_str = getattr(self.object, 'color', '')
-                            pedido_id = getattr(self.object, 'idpedido', None) or getattr(self.object, 'pk', '')
-                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, folio_str)
+                            generate_lote_qr_image(created_lote, i+1, total_lotes)
                         except Exception:
                             # if image generation fails, continue without stopping the transaction
                             pass
@@ -287,19 +274,7 @@ class ActualizarPedido(UpdateView):
                         created_lote = Lote.objects.create(idpedido=self.object, cantidad=lote_cant)
                         # generate QR image for this lote (contains lote id)
                         try:
-                            order_num = None
-                            try:
-                                order_num = self.object.idordenpedido.numeroorden
-                            except Exception:
-                                order_num = getattr(self.object, 'idordenpedido_id', '')
-                            folio_str = ''
-                            try:
-                                folio_str = self.object.idmodelo.folio
-                            except Exception:
-                                folio_str = getattr(self.object, 'idmodelo_id', '')
-                            color_str = getattr(self.object, 'color', '')
-                            pedido_id = getattr(self.object, 'idpedido', None) or getattr(self.object, 'pk', '')
-                            generate_lote_qr_image(order_num, pedido_id, color_str, i+1, total_lotes, created_lote.idlote, folio_str)
+                            generate_lote_qr_image(created_lote, i+1, total_lotes)
                         except Exception:
                             pass
         except IntegrityError:

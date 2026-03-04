@@ -1,6 +1,7 @@
 .custom-table {
-  width: 80%;
-  margin: 1.25rem auto;
+  width: 100%;
+  max-width: none;
+  margin: 1rem auto;
   border-collapse: separate;
   border-spacing: 0;
   border-radius: 0.75rem;
@@ -57,12 +58,24 @@
   display: flex;
   align-items: flex-start;
   flex-direction: row;
-  box-shadow: #333 0px 3px 10px 0px;
   justify-content: center;
   gap: 3rem;
-  max-width: 75rem;
+  max-width: 100rem;
   border-radius: 30px;
-  margin: 3rem auto 0.6rem;
+  margin: 2rem auto 0.6rem;
+}
+
+/* full-width variant for catalog tables */
+.center-area.full-width {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 1rem;
+}
+
+.center-area.full-width .custom-table {
+  width: 100%;
+  margin: 0;
 }
 
 .center-area {

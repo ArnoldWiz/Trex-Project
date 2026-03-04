@@ -5,6 +5,8 @@
     <meta charset="UTF-8" />
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="{% static 'css/genericas/login.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet" />
   </head>
   <body>
@@ -14,14 +16,15 @@
       <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
     </div>
 
-    <div class="login-nav">
-    <ul>
-      <li><a href="{% url 'home' %}">Regresar</a></li>
-    </ul>
-  </div>
 
     </div>
   </nav>
+
+  <div class="sidebar">
+    <ul>
+        <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
+    </ul>
+</div>
 
 <main class="page">
   <section class="center-area">
