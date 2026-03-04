@@ -312,7 +312,10 @@ nav{
   cursor: pointer;
   border: 0.5px solid #8A2E8D;
 }
+.login-nav.forms{
+  padding: 10px 15px;
 
+}
 .login-nav:hover{
   transform: translateY(-2px);
   box-shadow: 0 3px 10px #BF1E2E;

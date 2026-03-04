@@ -281,6 +281,8 @@ form {
   gap: 0.5rem;
   background-color: #f9f9f9;
   margin-top: 0.1rem;
+  margin-bottom: 3rem;
+  
 }
 
 form#workForm{
