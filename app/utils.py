@@ -175,10 +175,17 @@ def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
 
     # generate QR for lote_id
     qr_data = str(lote_id)
-    qr = qrcode.QRCode(box_size=4, border=2)
+    qr = qrcode.QRCode(box_size=10, border=2)
     qr.add_data(qr_data)
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color='black', back_color='white').convert('RGB')
+
+    # Make QR occupy almost half of the image/card visual space
+    target_qr_side = min(height - (padding * 2), int(width * 0.48))
+    if hasattr(Image, 'Resampling'):
+        qr_img = qr_img.resize((target_qr_side, target_qr_side), Image.Resampling.NEAREST)
+    else:
+        qr_img = qr_img.resize((target_qr_side, target_qr_side), Image.NEAREST)
 
     # paste QR on right side
     qr_w, qr_h = qr_img.size
