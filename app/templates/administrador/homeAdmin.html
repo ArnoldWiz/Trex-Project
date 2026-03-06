@@ -8,6 +8,16 @@
 {% endblock %}
 
 {% block content %}
+  {% if messages %}
+    <div style="margin: 0 0 1rem 0;">
+      {% for message in messages %}
+        <div style="padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 0.5rem; background: {% if message.tags == 'error' %}#f8d7da{% else %}#d4edda{% endif %}; color: {% if message.tags == 'error' %}#721c24{% else %}#155724{% endif %}; border: 1px solid {% if message.tags == 'error' %}#f5c6cb{% else %}#c3e6cb{% endif %};">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <section class="center-area">
     <div class="left-panel">
       <div class="contenedor">
@@ -18,7 +28,7 @@
               <th>Numero Orden</th>
               <th>Cliente</th>
               <th>Fecha Inicio</th>
-              <th>Fecha Fin</th>
+              <th>Fecha Prevista</th>
               <th>Avance</th>
             </tr>
           </thead>
@@ -29,13 +39,13 @@
               <td>{{ orden.idcliente.nombre }}</td>
               <td>{{ orden.fechainicio|date:"d/m/Y H:i" }}</td>
               <td>
-                {% if orden.fechafin %}
-                  {{ orden.fechafin|date:"d/m/Y H:i" }}
+                {% if orden.fechaprevista %}
+                  {{ orden.fechaprevista|date:"d/m/Y H:i" }}
                 {% else %}
                   N/A
                 {% endif %}
               </td>
-              <td>{{ orden.avance }}%</td>
+              <td>{{ orden.pedidos_completados }}/{{ orden.total_pedidos }}</td>
             </tr>
             {% empty %}
             <tr>

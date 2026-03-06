@@ -332,6 +332,57 @@ button.btn.btn-success:hover {
   background-color: #842e8d;
 }
 
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-actions button,
+.form-actions a {
+  min-width: 130px;
+  height: 56px;
+  padding: 0 18px;
+  border-radius: 14px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 !important;
+  box-sizing: border-box;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.form-actions .btn.btn-success {
+  background-color: #C99A30 !important;
+  color: #fff !important;
+  border: none;
+}
+
+.form-actions a.btn.btn-danger,
+.form-actions a.btn-danger,
+.form-actions .btn.btn-danger,
+.form-actions .btn-danger {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.form-actions .btn-cancel {
+  background: #fff !important;
+  color: #222 !important;
+  border: 1px solid #842e8d !important;
+}
+
+.form-actions .btn-cancel:hover {
+  background: #f6ecf7 !important;
+}
+
 
 .dashboard-top {
   width: 90%;
@@ -477,4 +528,40 @@ button.btn.btn-success:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.hidden-select {
+  display: none;
+}
+
+.select-pills {
+  margin-top: 0.65rem;
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.select-pill {
+  background: #f5f5f5;
+  color: #2A388F;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .25s, background-color .25s, color .25s;
+}
+
+.select-pill:hover {
+  transform: translateY(-1px);
+}
+
+.select-pill.active {
+  background-color: #2A388F;
+  color: #FAFAFA;
+}
+
+.field-error {
+  color: #721c24;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
 }

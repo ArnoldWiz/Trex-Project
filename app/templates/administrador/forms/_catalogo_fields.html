@@ -1,0 +1,57 @@
+{% for field in form %}
+  {% if object or field.name != 'estatus' %}
+    <div class="form-group">
+      {{ field.label_tag }}
+
+      {% if field.field.widget.attrs.pill_select %}
+        <div class="hidden-select">{{ field }}</div>
+        <div class="select-pills" data-target="{{ field.id_for_label }}">
+          {% for value, label in field.field.widget.choices %}
+            {% if value != '' %}
+              <div class="select-pill{% if field.value|stringformat:'s' == value|stringformat:'s' %} active{% endif %}" data-value="{{ value }}">{{ label }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        {{ field }}
+      {% endif %}
+
+      {% if field.errors %}
+        <div class="field-error">{{ field.errors.0 }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endfor %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.select-pills').forEach(function(group) {
+      var targetId = group.getAttribute('data-target');
+      var select = document.getElementById(targetId);
+      if (!select) return;
+
+      var pills = group.querySelectorAll('.select-pill');
+
+      function setActive(value) {
+        pills.forEach(function(pill) {
+          if (String(pill.getAttribute('data-value')) === String(value)) {
+            pill.classList.add('active');
+          } else {
+            pill.classList.remove('active');
+          }
+        });
+      }
+
+      setActive(select.value);
+
+      pills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+          var value = pill.getAttribute('data-value');
+          select.value = value;
+          setActive(value);
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+      });
+    });
+  });
+</script>

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Imprimir QRs{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+<style>
+  .print-actions {
+    margin: 1rem 0;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .print-actions .action-btn {
+    min-width: 240px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    background: #ffffff;
+    color: #2A388F;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+    transition: box-shadow .25s, transform .25s, background-color .25s;
+    cursor: pointer;
+  }
+  .print-actions .action-btn:hover {
+    background-color: #2A388F;
+    transform: scale(1.05) translateY(-5px);
+    color: #FAFAFA;
+    box-shadow: 0 3px 10px #BF1E2E;
+  }
+  .qr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .qr-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .qr-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+  @media print {
+    .navbar, .sidebar, .site-footer, .print-actions {
+      display: none !important;
+    }
+    .page {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="center-area full-width">
+  <div id="subtitle">Impresión de QRs - Pedido {{ pedido.idpedido }}</div>
+
+  <div class="print-actions">
+    <button class="action-btn" onclick="window.print()">Imprimir ahora</button>
+    <a class="action-btn" href="{% url 'listaLotes' orden_pk=orden_pk pk=pedido.idpedido %}">Regresar a lotes</a>
+  </div>
+
+  <div class="qr-grid">
+    {% for qr in qr_images %}
+      <div class="qr-card">
+        <div><strong>{{ qr.name }}</strong></div>
+        <img src="data:image/png;base64,{{ qr.data }}" alt="{{ qr.name }}">
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.addEventListener('load', function() {
+    setTimeout(function() { window.print(); }, 300);
+  });
+</script>
+{% endblock %}

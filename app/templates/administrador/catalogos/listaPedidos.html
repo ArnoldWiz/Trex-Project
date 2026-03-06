@@ -37,7 +37,7 @@
               <td>{{ pedido.cantidad }}</td>
               <td>{{ pedido.color }}</td>
               <td>{{ pedido.totallotes }}</td>
-              <td>{{ pedido.loteterminado }}</td>
+              <td>{{ pedido.lotes_terminados_calc|default:pedido.loteterminado }}</td>
               <td>{{ pedido.fechainicio|date:"Y-m-d H:i" }}</td>
               <td>{{ pedido.fechafin|date:"Y-m-d H:i" }}</td>
               <td>{{ pedido.fechaprevista|date:"Y-m-d H:i" }}</td>

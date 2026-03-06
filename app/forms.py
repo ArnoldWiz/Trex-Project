@@ -1,7 +1,25 @@
 from django import forms
 from app.models import *
 
-class EmpleadoForm(forms.ModelForm):
+
+class CatalogoEstatusCreateMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        is_create = not (getattr(self.instance, 'pk', None))
+
+        for field in self.fields.values():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs['pill_select'] = '1'
+
+        if is_create and 'estatus' in self.fields:
+            self.fields['estatus'].required = False
+            self.initial.setdefault('estatus', 1)
+
+    def clean_estatus(self):
+        valor = self.cleaned_data.get('estatus')
+        return 1 if valor in (None, '') else valor
+
+class EmpleadoForm(CatalogoEstatusCreateMixin, forms.ModelForm):
     class Meta:
         model = Empleado
         fields = ['nombre', 'apellidos', 'area', 'estatus']
@@ -18,7 +36,7 @@ class EmpleadoForm(forms.ModelForm):
             'estatus': forms.Select(attrs={'class':'form-control'}, choices=[(1, 'Activo'), (0, 'Inactivo')]),
         }
 
-class MaquinaForm(forms.ModelForm):
+class MaquinaForm(CatalogoEstatusCreateMixin, forms.ModelForm):
     class Meta:
         model = Maquina
         fields = ['area', 'numero', 'estatus']
@@ -33,7 +51,7 @@ class MaquinaForm(forms.ModelForm):
             'estatus': forms.Select(attrs={'class':'form-control'}, choices=[(1, 'Activo'), (0, 'Inactivo')]),
         }
         
-class ModeloForm(forms.ModelForm):
+class ModeloForm(CatalogoEstatusCreateMixin, forms.ModelForm):
     class Meta:
         model = Modelo
         fields = ['folio', 'modelo', 'cantidadhilo', 'estatus']
@@ -50,7 +68,7 @@ class ModeloForm(forms.ModelForm):
             'estatus': forms.Select(attrs={'class':'form-control'}, choices=[(1, 'Activo'), (0, 'Inactivo')]),
         }
 
-class ClienteForm(forms.ModelForm):
+class ClienteForm(CatalogoEstatusCreateMixin, forms.ModelForm):
     class Meta:
         model = Cliente
         fields = ['nombre', 'contacto', 'estatus']
@@ -75,18 +93,18 @@ class OrdenForm(forms.ModelForm):
 
     class Meta:
         model = Ordendepedido
-        fields = ['numeroorden','idcliente', 'fechainicio', 'fechafin']
+        fields = ['numeroorden','idcliente', 'fechainicio', 'fechaprevista']
         labels = {
             'numeroorden': 'Número de Orden',
             'idcliente': 'Cliente',
             'fechainicio': 'Fecha de Inicio',
-            'fechafin': 'Fecha de Fin',
+            'fechaprevista': 'Fecha Prevista',
         }
         widgets = {
             'numeroorden': forms.TextInput(attrs={'class':'form-control','placeholder':'Número de Orden'}),
             'idcliente': forms.Select(attrs={'class':'form-control'}),
             'fechainicio': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
-            'fechafin': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
+            'fechaprevista': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
         }
 
 class PedidoForm(forms.ModelForm):
@@ -137,6 +155,12 @@ class LoteEmpleadoForm(forms.Form):
         widget=forms.FileInput(attrs={'class':'form-control', 'accept':'image/*'}),
         label="Imagen QR del Lote"
     )
+    plancha_etapa = forms.ChoiceField(
+        choices=[('pre', 'Pre-Plancha'), ('post', 'Post-Plancha')],
+        required=False,
+        label="Etapa de Plancha",
+        widget=forms.RadioSelect
+    )
     
     def __init__(self, *args, **kwargs):
         area = kwargs.pop('area', None)
@@ -145,4 +169,15 @@ class LoteEmpleadoForm(forms.Form):
         if area:
             # Filtrar empleados y máquinas por área
             self.fields['empleado'].queryset = Empleado.objects.filter(estatus=1)
-            self.fields['maquina'].queryset = Maquina.objects.filter(area=area, estatus=1)
+            if area.lower() == 'empaquetado':
+                self.fields['maquina'].queryset = Maquina.objects.filter(estatus=1)
+                self.fields['maquina'].required = False
+                self.fields['maquina'].label = 'Máquina (opcional)'
+            else:
+                self.fields['maquina'].queryset = Maquina.objects.filter(area=area, estatus=1)
+                self.fields['maquina'].required = True
+
+        if area and area.lower() == 'plancha':
+            self.fields['plancha_etapa'].required = True
+        else:
+            self.fields.pop('plancha_etapa', None)

@@ -57,14 +57,16 @@ class Lote(models.Model):
     idlote = models.AutoField(db_column='idLote', primary_key=True)  # Field name made lowercase.
     idpedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='idPedido')  # Field name made lowercase.
     idemptejido = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='idEmpTejido', blank=True, null=True)  # Field name made lowercase.
-    idempplancha = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='idEmpPlancha', related_name='lote_idempplancha_set', blank=True, null=True)  # Field name made lowercase.
+    idempplanchapre = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='idEmpPlanchaPre', related_name='lote_idempplanchapre_set', blank=True, null=True)  # Field name made lowercase.
+    idempplanchapost = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='idEmpPlanchaPost', related_name='lote_idempplanchapost_set', blank=True, null=True)  # Field name made lowercase.
     idempcorte = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='idEmpCorte', related_name='lote_idempcorte_set', blank=True, null=True)  # Field name made lowercase.
     idmqutejido = models.ForeignKey('Maquina', models.DO_NOTHING, db_column='idMquTejido', blank=True, null=True)  # Field name made lowercase.
     idmaqplancha = models.ForeignKey('Maquina', models.DO_NOTHING, db_column='idMaqPlancha', related_name='lote_idmaqplancha_set', blank=True, null=True)  # Field name made lowercase.
     idmaqcorte = models.ForeignKey('Maquina', models.DO_NOTHING, db_column='idMaqCorte', related_name='lote_idmaqcorte_set', blank=True, null=True)  # Field name made lowercase.
     cantidad = models.IntegerField(db_column='Cantidad')  # Field name made lowercase.
     fechatermtejido = models.DateTimeField(db_column='FechaTermTejido', blank=True, null=True)  # Field name made lowercase.
-    fechatermplancha = models.DateTimeField(db_column='FechaTermPlancha', blank=True, null=True)  # Field name made lowercase.
+    fechatermplanchapre = models.DateTimeField(db_column='FechaTermPlanchaPre', blank=True, null=True)  # Field name made lowercase.
+    fechatermplanchapost = models.DateTimeField(db_column='FechaTermPlanchaPost', blank=True, null=True)  # Field name made lowercase.
     fechatermcorte = models.DateTimeField(db_column='FechaTermCorte', blank=True, null=True)  # Field name made lowercase.
     fechaempa = models.DateTimeField(db_column='FechaEmpa', blank=True, null=True)  # Field name made lowercase.
 
@@ -110,6 +112,7 @@ class Ordendepedido(models.Model):
     numeroorden = models.CharField(db_column='NumeroOrden', max_length=45)  # Field name made lowercase.
     idcliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='idCliente')  # Field name made lowercase.
     fechainicio = models.DateTimeField(db_column='FechaInicio')  # Field name made lowercase.
+    fechaprevista = models.DateTimeField(db_column='FechaPrevista', blank=True, null=True)  # Field name made lowercase.
     fechafin = models.DateTimeField(db_column='FechaFin', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:

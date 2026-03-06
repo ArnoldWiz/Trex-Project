@@ -55,6 +55,8 @@
             <tr>
               <th>Numero de Orden</th>
               <th>Cliente</th>
+              <th>Fecha Inicio</th>
+              <th>Fecha Prevista</th>
               <th>Avance</th>
               <th>Pedidos</th>
               <th>Detalles</th>
@@ -66,7 +68,15 @@
             <tr>
               <td>{{ orden.numeroorden }}</td>
               <td>{{ orden.idcliente.nombre }}</td>
-              <td>%</td>
+              <td>{{ orden.fechainicio|date:"d/m/Y H:i" }}</td>
+              <td>
+                {% if orden.fechaprevista %}
+                  {{ orden.fechaprevista|date:"d/m/Y H:i" }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
+              <td>{{ orden.pedidos_completados }}/{{ orden.total_pedidos }}</td>
               <td>
                 {{ orden.pedidos_count }}
               </td>
@@ -80,7 +90,7 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="6">No hay órdenes disponibles.</td>
+              <td colspan="8">No hay órdenes disponibles.</td>
             </tr>
             {% endfor %}
           </tbody>

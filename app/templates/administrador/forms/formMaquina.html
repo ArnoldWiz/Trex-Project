@@ -16,14 +16,11 @@
         
 <form method="post">
     {% csrf_token %}
-    {% for field in form %}
-        <div class="form-group">
-            {{ field.label_tag }}
-            {{ field }}
-        </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
-    <div class="login-nav"><a href="{% url 'maquinas' %}">Cancelar</a></div>
+  {% include 'administrador/forms/_catalogo_fields.html' %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Registrar{% endif %}</button>
+      <a href="{% url 'maquinas' %}" class="btn-cancel">Cancelar</a>
+    </div>
 </form>
    
     </div>

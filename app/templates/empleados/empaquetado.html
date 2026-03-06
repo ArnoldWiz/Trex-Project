@@ -13,18 +13,19 @@
             background: white;
             border-radius: 8px;
             padding: 2rem;
-            max-width: 500px;
+            max-width: 640px;
             margin: 0rem auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .form-group {
-            margin-bottom: 0rem;
+            margin-bottom: 1rem;
         }
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
             color: #333;
+            text-align: left;
         }
         .form-control {
             width: 100%;
@@ -33,26 +34,6 @@
             border-radius: 4px;
             font-size: 1rem;
             box-sizing: border-box;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .submit-btn:hover {
-            background-color: #218838;
         }
         .alert {
             padding: 1rem;
@@ -100,7 +81,6 @@
     </div>
 </nav>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <ul>
         <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
@@ -109,8 +89,7 @@
 
 <main class="page">
     <section class="center-area">
-        <div id="subtitle">{{ area }} - Registrar Empleado y Máquina por QR</div>
-        <div class="muted">Selecciona un empleado, una máquina y sube la imagen del QR del lote</div>
+        <div id="subtitle">EMPAQUETADO</div>
 
         {% if mensaje_error %}
             <div class="alert alert-error">{{ mensaje_error }}</div>
@@ -120,43 +99,76 @@
             <div class="alert alert-success">{{ mensaje_exito }}</div>
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="form-card">
+        <form method="post" class="form-card">
             {% csrf_token %}
-            
+
             <div class="form-group">
-                <label for="id_empleado">Empleado:</label>
-                {{ form.empleado }}
-                {% if form.empleado.errors %}
-                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
-                        {{ form.empleado.errors.0 }}
-                    </div>
-                {% endif %}
+                <label for="orden_id">Orden:</label>
+                <select id="orden_id" name="orden_id" class="form-control" required>
+                    <option value="">Selecciona una orden</option>
+                    {% for orden in ordenes %}
+                        <option value="{{ orden.idordendepedido }}" {% if selected_orden_id == orden.idordendepedido|stringformat:'s' %}selected{% endif %}>
+                            {{ orden.numeroorden }} - {{ orden.idcliente.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="id_maquina">Máquina:</label>
-                {{ form.maquina }}
-                {% if form.maquina.errors %}
-                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
-                        {{ form.maquina.errors.0 }}
-                    </div>
-                {% endif %}
+                <label for="pedido_id">Pedido:</label>
+                <select id="pedido_id" name="pedido_id" class="form-control" required>
+                    <option value="">Selecciona un pedido</option>
+                    {% for pedido in pedidos %}
+                        <option
+                            value="{{ pedido.idpedido }}"
+                            data-orden="{{ pedido.idordenpedido_id }}"
+                            {% if selected_pedido_id == pedido.idpedido|stringformat:'s' %}selected{% endif %}
+                        >
+                            Pedido {{ pedido.idpedido }} - {{ pedido.idmodelo.folio }} - {{ pedido.color }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <div class="form-group">
-                <label for="id_qr_image">Imagen QR del Lote:</label>
-                {{ form.qr_image }}
-                {% if form.qr_image.errors %}
-                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
-                        {{ form.qr_image.errors.0 }}
-                    </div>
-                {% endif %}
-            </div>
-
-            <button type="submit" class="login-nav forms">Guardar Registro</button>
+            <button type="submit" class="login-nav forms">Guardar Empaquetado</button>
         </form>
     </section>
 </main>
 
-<footer class="site-footer">Trex</footer>
+<script>
+  (function () {
+    var ordenSelect = document.getElementById('orden_id');
+    var pedidoSelect = document.getElementById('pedido_id');
+
+    if (!ordenSelect || !pedidoSelect) return;
+
+    function filtrarPedidos() {
+      var ordenId = ordenSelect.value;
+      var opciones = pedidoSelect.querySelectorAll('option');
+      var pedidoActual = pedidoSelect.value;
+      var pedidoVisible = false;
+
+      opciones.forEach(function (opt, idx) {
+        if (idx === 0) {
+          opt.hidden = false;
+          return;
+        }
+        var pertenece = String(opt.getAttribute('data-orden')) === String(ordenId);
+        opt.hidden = !pertenece;
+        if (pertenece && String(opt.value) === String(pedidoActual)) {
+          pedidoVisible = true;
+        }
+      });
+
+      if (!pedidoVisible) {
+        pedidoSelect.value = '';
+      }
+    }
+
+    ordenSelect.addEventListener('change', filtrarPedidos);
+    document.addEventListener('DOMContentLoaded', filtrarPedidos);
+    filtrarPedidos();
+  })();
+</script>
+
 </body>

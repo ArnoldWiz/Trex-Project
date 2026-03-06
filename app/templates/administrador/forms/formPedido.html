@@ -22,11 +22,13 @@
             <label for="display_totallotes">Total Lotes</label>
             <input type="text" id="display_totallotes" class="form-control" value="{{ initial_totallotes }}" disabled />
           </div>
-        <button type="submit" class="btn btn-success">Guardar</button>
-        {% if object %}
-        <a href="{% url 'eliminarPedido' orden_pk=orden_pk pk=object.pk %}" class="btn btn-danger" style="background-color: #dc3545; color: white; padding: 8px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 10px;">Eliminar</a>
-        {% endif %}
-      <div class="login-nav"><a href="{% url 'listaPedidos' orden_pk=orden_pk %}">Cancelar</a></div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          {% if object %}
+            <a href="{% url 'eliminarPedido' orden_pk=orden_pk pk=object.pk %}" class="btn btn-danger">Eliminar</a>
+          {% endif %}
+          <a href="{% url 'listaPedidos' orden_pk=orden_pk %}" class="btn-cancel">Cancelar</a>
+        </div>
 </form>
     </div>
 
@@ -38,12 +40,25 @@
         var cantidadEl = document.querySelector('[name="cantidad"]');
         var displayEl = document.getElementById('display_totallotes');
         if(!cantidadEl || !displayEl) return;
-        var v = parseFloat(cantidadEl.value);
+        var v = parseInt(cantidadEl.value, 10);
         if(isNaN(v) || v <= 0){
           displayEl.value = 0;
           return;
         }
-        var tot = Math.ceil(v / 10);
+        var base = Math.floor(v / 10);
+        var residuo = v % 10;
+        var tot = 0;
+
+        if(base === 0){
+          tot = 1;
+        } else if(residuo === 0){
+          tot = base;
+        } else if(residuo >= 1 && residuo <= 4){
+          tot = base;
+        } else {
+          tot = base + 1;
+        }
+
         displayEl.value = tot;
       }
       document.addEventListener('DOMContentLoaded', function(){

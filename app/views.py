@@ -1,13 +1,24 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
+import os
+import base64
+from django.utils import timezone
 from app.models import *
-from django.db.models import Count
+from django.db.models import Count, Q, Max
 from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from app.utils import generate_lote_qr_image, delete_lote_qr_images, decode_qr_from_image, delete_orden_qr_folder
+from app.utils import (
+    generate_lote_qr_image,
+    delete_lote_qr_images,
+    decode_qr_from_image,
+    delete_orden_qr_folder,
+    get_pedido_qr_folder,
+)
 from app.forms import *
+from app.temp_seed_data import insertar_datos_prueba_temporales
 
 # Create your views here.
 #VISTAS GENERICAS
@@ -38,7 +49,15 @@ def catalogos(request):
     return render(request, 'administrador/catalogos.html')
 
 def homeAdmin(request):
-    ordenes_prioritarias = Ordendepedido.objects.select_related('idcliente')
+    ordenes_prioritarias = (
+        Ordendepedido.objects
+        .select_related('idcliente')
+        .filter(fechafin__isnull=True)
+        .annotate(
+            total_pedidos=Count('pedido'),
+            pedidos_completados=Count('pedido', filter=Q(pedido__fechafin__isnull=False)),
+        )
+    )
     return render(request, 'administrador/homeAdmin.html', {'ordenes_prioritarias': ordenes_prioritarias})
 
 #TEMPORALES
@@ -47,6 +66,51 @@ def pedidoEspecifico(request):
 def lotes(request):
     return render(request, 'administrador/lotes.html')
 
+
+def _calcular_lotes_por_cantidad(cantidad_total):
+    cantidad_total = int(cantidad_total or 0)
+    if cantidad_total <= 0:
+        return []
+
+    lotes = []
+    lotes_base = cantidad_total // 10
+    residuo = cantidad_total % 10
+
+    if lotes_base == 0:
+        return [cantidad_total]
+
+    lotes.extend([10] * lotes_base)
+
+    if residuo == 0:
+        return lotes
+
+    if 1 <= residuo <= 4:
+        lotes[-1] += residuo
+    else:
+        lotes.append(residuo)
+
+    return lotes
+
+
+def _actualizar_fecha_fin_orden(orden_id):
+    try:
+        orden = Ordendepedido.objects.get(pk=orden_id)
+    except Ordendepedido.DoesNotExist:
+        return
+
+    pedidos_qs = Pedido.objects.filter(idordenpedido_id=orden_id)
+
+    if not pedidos_qs.exists() or pedidos_qs.filter(fechafin__isnull=True).exists():
+        if orden.fechafin is not None:
+            orden.fechafin = None
+            orden.save(update_fields=['fechafin'])
+        return
+
+    fecha_fin_orden = pedidos_qs.aggregate(ultima_fecha_fin=Max('fechafin')).get('ultima_fecha_fin')
+    if orden.fechafin != fecha_fin_orden:
+        orden.fechafin = fecha_fin_orden
+        orden.save(update_fields=['fechafin'])
+
     #CRUD ORDENES
 class ListaOrdenes(ListView):
     model = Ordendepedido
@@ -54,7 +118,16 @@ class ListaOrdenes(ListView):
     context_object_name = 'ordenes'
     
     def get_queryset(self):
-        return Ordendepedido.objects.select_related('idcliente').annotate(pedidos_count=Count('pedido'))
+        return (
+            Ordendepedido.objects
+            .filter(fechafin__isnull=True)
+            .select_related('idcliente')
+            .annotate(
+                pedidos_count=Count('pedido'),
+                total_pedidos=Count('pedido'),
+                pedidos_completados=Count('pedido', filter=Q(pedido__fechafin__isnull=False)),
+            )
+        )
 
 
 class ListaOrdenesTerminadas(ListView):
@@ -152,7 +225,21 @@ class ListaPedidos(ListView):
     def get_queryset(self):
         orden_pk = self.kwargs.get('orden_pk')
         if orden_pk:
-            return Pedido.objects.filter(idordenpedido_id=orden_pk)
+            return (
+                Pedido.objects
+                .filter(idordenpedido_id=orden_pk)
+                .annotate(
+                    lotes_terminados_calc=Count(
+                        'lote',
+                        filter=(
+                            Q(lote__idemptejido__isnull=False)
+                            & Q(lote__idempplanchapre__isnull=False)
+                            & Q(lote__idempplanchapost__isnull=False)
+                            & Q(lote__idempcorte__isnull=False)
+                        ),
+                    )
+                )
+            )
         return Pedido.objects.none()
 
     def get_context_data(self, **kwargs):
@@ -186,16 +273,17 @@ class CrearPedido(CreateView):
         self.object = form.save(commit=False)
         # field on model is `idordenpedido` (foreign key to Ordendepedido)
         self.object.idordenpedido_id = orden_pk
-        # calculate totallotes as ceil(cantidad / 10)
+        # calculate totallotes by business rule:
+        # residuo 1-4 se queda en lote anterior, residuo 5-9 crea lote nuevo
         try:
-            import math
             cantidad = form.cleaned_data.get('cantidad') or 0
-            # use float to handle non-integer inputs, then round up
-            cantidad_val = float(cantidad)
-            self.object.totallotes = math.ceil(cantidad_val / 10) if cantidad_val > 0 else 0
+            cantidad_val = int(float(cantidad))
+            lotes_por_cantidad = _calcular_lotes_por_cantidad(cantidad_val)
+            self.object.totallotes = len(lotes_por_cantidad)
         except Exception:
             # fallback: set 0
             self.object.totallotes = 0
+            lotes_por_cantidad = []
         # initialize loteterminado to 0 on creation
         try:
             self.object.loteterminado = 0
@@ -206,17 +294,11 @@ class CrearPedido(CreateView):
         try:
             with transaction.atomic():
                 self.object.save()
-                # create lotes: totallotes already set above
-                cantidad_val = int(float(form.cleaned_data.get('cantidad') or 0))
-                total_lotes = int(self.object.totallotes or 0)
+                total_lotes = len(lotes_por_cantidad)
                 # delete any existing lotes just in case (shouldn't be any on create)
                 Lote.objects.filter(idpedido=self.object).delete()
-                if total_lotes > 0 and cantidad_val > 0:
-                    for i in range(total_lotes):
-                        if i < total_lotes - 1:
-                            lote_cant = 10
-                        else:
-                            lote_cant = cantidad_val - 10 * (total_lotes - 1)
+                if total_lotes > 0:
+                    for i, lote_cant in enumerate(lotes_por_cantidad):
                         created_lote = Lote.objects.create(idpedido=self.object, cantidad=lote_cant)
                         # generate QR image for this lote (contains lote id)
                         try:
@@ -227,6 +309,8 @@ class CrearPedido(CreateView):
         except IntegrityError:
             # fallback: ensure object saved
             self.object.save()
+
+        _actualizar_fecha_fin_orden(orden_pk)
         return redirect('listaPedidos', orden_pk=orden_pk)
     
 class ActualizarPedido(UpdateView):
@@ -260,12 +344,13 @@ class ActualizarPedido(UpdateView):
         # update totallotes based on cantidad
         self.object = form.save(commit=False)
         try:
-            import math
             cantidad = form.cleaned_data.get('cantidad') or 0
-            cantidad_val = float(cantidad)
-            self.object.totallotes = math.ceil(cantidad_val / 10) if cantidad_val > 0 else 0
+            cantidad_val = int(float(cantidad))
+            lotes_por_cantidad = _calcular_lotes_por_cantidad(cantidad_val)
+            self.object.totallotes = len(lotes_por_cantidad)
         except Exception:
             self.object.totallotes = 0
+            lotes_por_cantidad = []
         # save and recreate lotes according to new cantidad
         from django.db import IntegrityError
         try:
@@ -277,16 +362,11 @@ class ActualizarPedido(UpdateView):
                     print(f"Error deleting old QR folder: {e}")
                 
                 self.object.save()
-                cantidad_val = int(float(form.cleaned_data.get('cantidad') or 0))
-                total_lotes = int(self.object.totallotes or 0)
+                total_lotes = len(lotes_por_cantidad)
                 # remove existing lotes for this pedido and recreate
                 Lote.objects.filter(idpedido=self.object).delete()
-                if total_lotes > 0 and cantidad_val > 0:
-                    for i in range(total_lotes):
-                        if i < total_lotes - 1:
-                            lote_cant = 10
-                        else:
-                            lote_cant = cantidad_val - 10 * (total_lotes - 1)
+                if total_lotes > 0:
+                    for i, lote_cant in enumerate(lotes_por_cantidad):
                         created_lote = Lote.objects.create(idpedido=self.object, cantidad=lote_cant)
                         # generate QR image for this lote (contains lote id)
                         try:
@@ -296,6 +376,7 @@ class ActualizarPedido(UpdateView):
         except IntegrityError:
             self.object.save()
         orden_pk = getattr(self.object, 'idordenpedido_id', None)
+        _actualizar_fecha_fin_orden(orden_pk)
         return redirect('listaPedidos', orden_pk=orden_pk)
 
 class EliminarPedido(DeleteView):
@@ -324,6 +405,7 @@ class EliminarPedido(DeleteView):
     
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
+        orden_pk = getattr(self.object, 'idordenpedido_id', None)
         # Eliminar carpeta QR del pedido antes de eliminar
         try:
             order_num = self.object.idordenpedido.numeroorden
@@ -334,7 +416,9 @@ class EliminarPedido(DeleteView):
             print(f"Error eliminando carpeta QR del pedido: {e}")
         
         try:
-            return super().delete(request, *args, **kwargs)
+            result = super().delete(request, *args, **kwargs)
+            _actualizar_fecha_fin_orden(orden_pk)
+            return result
         except Exception as e:
             print(f"Error eliminando pedido: {e}")
             import traceback
@@ -366,13 +450,19 @@ class ListaLotes(ListView):
             total_lotes = lotes_qs.count()
             corte_count = lotes_qs.filter(idempcorte__isnull=False).count()
             tejido_count = lotes_qs.filter(idemptejido__isnull=False).count()
-            plancha_count = lotes_qs.filter(idempplancha__isnull=False).count()
+            plancha_count = lotes_qs.filter(
+                idempplanchapre__isnull=False,
+                idempplanchapost__isnull=False,
+            ).count()
             empaque_count = lotes_qs.filter(fechaempa__isnull=False).count()
         else:
             total_lotes = len(lotes_qs)
             corte_count = sum(1 for lote in lotes_qs if getattr(lote, 'idempcorte', None))
             tejido_count = sum(1 for lote in lotes_qs if getattr(lote, 'idemptejido', None))
-            plancha_count = sum(1 for lote in lotes_qs if getattr(lote, 'idempplancha', None))
+            plancha_count = sum(
+                1 for lote in lotes_qs
+                if getattr(lote, 'idempplanchapre', None) and getattr(lote, 'idempplanchapost', None)
+            )
             empaque_count = sum(1 for lote in lotes_qs if getattr(lote, 'fechaempa', None))
         ctx['resumen_lotes'] = {
             'total': total_lotes,
@@ -382,6 +472,68 @@ class ListaLotes(ListView):
             'empaque': empaque_count,
         }
         return ctx
+
+
+@login_required
+def lotes_imprimir_qrs(request, orden_pk, pk):
+    try:
+        pedido = Pedido.objects.select_related('idordenpedido', 'idmodelo').get(pk=pk, idordenpedido_id=orden_pk)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'No se encontró el pedido para imprimir QRs.')
+        return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
+
+    qr_folder = get_pedido_qr_folder(
+        pedido.idordenpedido.numeroorden,
+        pedido.idmodelo.folio,
+        pedido.color,
+    )
+
+    qr_images = []
+    if qr_folder.exists() and qr_folder.is_dir():
+        for image_path in sorted(qr_folder.glob('*.png')):
+            try:
+                with open(image_path, 'rb') as image_file:
+                    encoded = base64.b64encode(image_file.read()).decode('utf-8')
+                qr_images.append({
+                    'name': image_path.name,
+                    'data': encoded,
+                })
+            except Exception:
+                continue
+
+    if not qr_images:
+        messages.warning(request, 'No se encontraron imágenes QR para este pedido.')
+        return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
+
+    return render(request, 'administrador/catalogos/imprimirQrs.html', {
+        'pedido': pedido,
+        'qr_images': qr_images,
+        'orden_pk': orden_pk,
+    })
+
+
+@login_required
+def lotes_abrir_carpeta_qrs(request, orden_pk, pk):
+    try:
+        pedido = Pedido.objects.select_related('idordenpedido', 'idmodelo').get(pk=pk, idordenpedido_id=orden_pk)
+    except Pedido.DoesNotExist:
+        return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
+
+    qr_folder = get_pedido_qr_folder(
+        pedido.idordenpedido.numeroorden,
+        pedido.idmodelo.folio,
+        pedido.color,
+    )
+
+    if not qr_folder.exists() or not qr_folder.is_dir():
+        return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
+
+    try:
+        os.startfile(str(qr_folder))
+    except Exception:
+        pass
+
+    return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
 
     #CRUD EMPLEADOS
 class ListaEmpleados(ListView):
@@ -474,10 +626,38 @@ class ActualizarCliente(UpdateView):
 
 #VISTAS EMPLEADOS
 
+def _validar_flujo_lote(lote, area_type):
+    area = area_type.lower()
+
+    tiene_tejido = bool(getattr(lote, 'idemptejido', None) or getattr(lote, 'fechatermtejido', None))
+    tiene_plancha_pre = bool(getattr(lote, 'idempplanchapre', None) or getattr(lote, 'fechatermplanchapre', None))
+    tiene_plancha_post = bool(getattr(lote, 'idempplanchapost', None) or getattr(lote, 'fechatermplanchapost', None))
+    tiene_plancha_completa = tiene_plancha_pre and tiene_plancha_post
+    tiene_corte = bool(getattr(lote, 'idempcorte', None) or getattr(lote, 'fechatermcorte', None))
+
+    if area == 'plancha' and not tiene_tejido:
+        return 'No se puede registrar Plancha si primero no está registrado Tejido.'
+
+    if area == 'corte':
+        if not tiene_tejido:
+            return 'No se puede registrar Corte si primero no está registrado Tejido.'
+        if not tiene_plancha_completa:
+            return 'No se puede registrar Corte si Plancha no tiene Pre y Post completos.'
+
+    if area == 'empaquetado':
+        if not tiene_tejido:
+            return 'No se puede registrar Empaque si primero no está registrado Tejido.'
+        if not tiene_plancha_completa:
+            return 'No se puede registrar Empaque si Plancha no tiene Pre y Post completos.'
+        if not tiene_corte:
+            return 'No se puede registrar Empaque si primero no está registrado Corte.'
+
+    return None
+
 def registrar_lote_empleado(request, area_type):
     """
     Vista genérica para registrar un empleado y máquina en un lote usando QR.
-    area_type puede ser 'corte', 'tejido' o 'plancha'
+    area_type puede ser 'corte', 'tejido', 'plancha' o 'empaquetado'
     """
     from django.utils import timezone
     
@@ -485,7 +665,8 @@ def registrar_lote_empleado(request, area_type):
     area_titles = {
         'corte': 'Corte',
         'tejido': 'Tejido',
-        'plancha': 'Plancha'
+        'plancha': 'Plancha',
+        'empaquetado': 'Empaquetado',
     }
     
     area_capitalizada = area_titles.get(area_type.lower(), area_type)
@@ -500,6 +681,7 @@ def registrar_lote_empleado(request, area_type):
                 empleado = form.cleaned_data['empleado']
                 maquina = form.cleaned_data['maquina']
                 qr_image = form.cleaned_data['qr_image']
+                plancha_etapa = form.cleaned_data.get('plancha_etapa')
                 
                 # Decodificar el QR
                 qr_data = decode_qr_from_image(qr_image)
@@ -508,6 +690,11 @@ def registrar_lote_empleado(request, area_type):
                     try:
                         lote_id = int(qr_data)
                         lote = Lote.objects.get(idlote=lote_id)
+
+                        mensaje_flujo = _validar_flujo_lote(lote, area_type)
+                        if mensaje_flujo:
+                            mensaje_error = mensaje_flujo
+                            raise ValueError(mensaje_error)
                         
                         # Actualizar el lote con el empleado, máquina y la fecha según el área
                         now = timezone.now()
@@ -521,14 +708,30 @@ def registrar_lote_empleado(request, area_type):
                             lote.idmqutejido = maquina
                             lote.fechatermtejido = now
                         elif area_type.lower() == 'plancha':
-                            lote.idempplancha = empleado
                             lote.idmaqplancha = maquina
-                            lote.fechatermplancha = now
+                            if plancha_etapa == 'pre':
+                                lote.idempplanchapre = empleado
+                                lote.fechatermplanchapre = now
+                            elif plancha_etapa == 'post':
+                                lote.idempplanchapost = empleado
+                                lote.fechatermplanchapost = now
+                            else:
+                                mensaje_error = 'Selecciona si el registro es Pre-Plancha o Post-Plancha'
+                                raise ValueError(mensaje_error)
+                        elif area_type.lower() == 'empaquetado':
+                            lote.fechaempa = now
                         
                         lote.save()
-                        mensaje_exito = f"Empleado {empleado.nombre} y máquina {maquina} registrados correctamente en el lote {lote_id}"
+                        if area_type.lower() == 'plancha':
+                            etapa_texto = 'Pre-Plancha' if plancha_etapa == 'pre' else 'Post-Plancha'
+                            mensaje_exito = f"Empleado {empleado.nombre} y máquina {maquina} registrados en {etapa_texto} del lote {lote_id}"
+                        elif area_type.lower() == 'empaquetado':
+                            mensaje_exito = f"Empaque registrado correctamente en el lote {lote_id}"
+                        else:
+                            mensaje_exito = f"Empleado {empleado.nombre} y máquina {maquina} registrados correctamente en el lote {lote_id}"
                     except ValueError:
-                        mensaje_error = "El QR no contiene un ID de lote válido"
+                        if not mensaje_error:
+                            mensaje_error = "El QR no contiene un ID de lote válido"
                     except Lote.DoesNotExist:
                         mensaje_error = f"No se encontró el lote con ID {qr_data}"
                 else:
@@ -558,7 +761,96 @@ def corte(request):
     return registrar_lote_empleado(request, 'corte')
 
 def empaquetado(request):
-    return render(request, 'empleados/empaquetado.html')
+    mensaje_error = None
+    mensaje_exito = None
+
+    ordenes = Ordendepedido.objects.select_related('idcliente').order_by('-idordendepedido')
+    pedidos = Pedido.objects.select_related('idordenpedido', 'idmodelo').order_by('-idpedido')
+
+    selected_orden_id = request.POST.get('orden_id') or request.GET.get('orden_id') or ''
+    selected_pedido_id = request.POST.get('pedido_id') or ''
+
+    if request.method == 'POST':
+        if not selected_orden_id or not selected_pedido_id:
+            mensaje_error = 'Selecciona una orden y un pedido para registrar empaquetado.'
+        else:
+            try:
+                pedido = Pedido.objects.select_related('idordenpedido', 'idmodelo').get(
+                    idpedido=selected_pedido_id,
+                    idordenpedido_id=selected_orden_id,
+                )
+                lotes_qs = Lote.objects.filter(idpedido=pedido)
+
+                if not lotes_qs.exists():
+                    mensaje_error = 'El pedido seleccionado no tiene lotes para empaquetar.'
+                else:
+                    lotes_bloqueados = []
+                    for lote in lotes_qs:
+                        error_flujo = _validar_flujo_lote(lote, 'empaquetado')
+                        if error_flujo:
+                            lotes_bloqueados.append(lote.idlote)
+
+                    if lotes_bloqueados:
+                        mensaje_error = (
+                            'No se puede registrar Empaque porque hay lotes sin etapas previas completas. '
+                            f'Lotes bloqueados: {", ".join(str(lid) for lid in lotes_bloqueados)}.'
+                        )
+                    else:
+                        now = timezone.now()
+                        total_actualizados = lotes_qs.update(fechaempa=now)
+                        pedido.fechafin = now
+                        pedido.save(update_fields=['fechafin'])
+                        _actualizar_fecha_fin_orden(pedido.idordenpedido_id)
+                        mensaje_exito = (
+                            f'Se registró empaquetado para {total_actualizados} lote(s) '
+                            f'del pedido {pedido.idpedido}. El pedido quedó finalizado.'
+                        )
+            except Pedido.DoesNotExist:
+                mensaje_error = 'La combinación de orden y pedido no es válida.'
+            except Exception as exc:
+                mensaje_error = f'Error al registrar empaquetado: {exc}'
+
+    context = {
+        'area': 'Empaquetado',
+        'ordenes': ordenes,
+        'pedidos': pedidos,
+        'selected_orden_id': str(selected_orden_id),
+        'selected_pedido_id': str(selected_pedido_id),
+        'mensaje_error': mensaje_error,
+        'mensaje_exito': mensaje_exito,
+    }
+    return render(request, 'empleados/empaquetado.html', context)
 
 def reportes(request):
     return render(request, 'administrador/reportes.html')
+
+
+@login_required
+@user_passes_test(lambda user: user.is_staff)
+def cargar_datos_prueba(request):
+    if request.method != 'POST':
+        return redirect('homeAdmin')
+
+    try:
+        resultado = insertar_datos_prueba_temporales()
+        total_pedidos = len(resultado.get('pedidos', []))
+        total_lotes = sum(cantidad_lotes for _, cantidad_lotes in resultado.get('pedidos', []))
+        total_clientes = len(resultado.get('clientes', []))
+        total_modelos = len(resultado.get('modelos', []))
+        total_empleados = len(resultado.get('empleados', []))
+        total_maquinas = len(resultado.get('maquinas', []))
+        total_ordenes = len(resultado.get('ordenes', []))
+        total_comentarios = len(resultado.get('comentarios', []))
+        messages.success(
+            request,
+            (
+                f"Datos de prueba insertados correctamente: "
+                f"{total_clientes} clientes, {total_modelos} modelos, {total_empleados} empleados, "
+                f"{total_maquinas} máquinas, {total_ordenes} órdenes, {total_pedidos} pedidos, "
+                f"{total_lotes} lotes con QR y {total_comentarios} comentarios."
+            ),
+        )
+    except Exception as exc:
+        messages.error(request, f"Error al insertar datos de prueba: {exc}")
+
+    return redirect('homeAdmin')

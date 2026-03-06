@@ -22,10 +22,13 @@
         <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-        <button type="submit" class="login-nav forms">Guardar</button>
-        {% if object %}
-        <a href="{% url 'eliminarOrden' orden_pk=object.pk %}" class="btn btn-danger" style="background-color: #dc3545; color: white; padding: 8px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 10px;">Eliminar</a>
-        {% endif %}
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          {% if object %}
+            <a href="{% url 'eliminarOrden' orden_pk=object.pk %}" class="btn btn-danger">Eliminar</a>
+          {% endif %}
+          <a href="{% url 'homeAdmin' %}" class="btn-cancel">Cancelar</a>
+        </div>
 
 </form>
 
@@ -33,7 +36,4 @@
 
 {% endblock %}
 
-{% block regresar %}
-
-<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i>Cancelar</a></li>
-{% endblock %}
+{% block regresar %}{% endblock %}

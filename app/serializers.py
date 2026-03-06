@@ -41,7 +41,7 @@ class OrdendepedidoSerializer(serializers.ModelSerializer):
         model = Ordendepedido
         fields = [
             'idordendepedido', 'numeroorden', 'cliente', 'cliente_id',
-            'fechainicio', 'fechafin'
+            'fechainicio', 'fechaprevista', 'fechafin'
         ]
 
 
@@ -76,7 +76,8 @@ class PedidoSerializer(serializers.ModelSerializer):
 
 class LoteSerializer(serializers.ModelSerializer):
     emp_tejido = EmpleadoSerializer(source='idemptejido', read_only=True)
-    emp_plancha = EmpleadoSerializer(source='idempplancha', read_only=True)
+    emp_plancha_pre = EmpleadoSerializer(source='idempplanchapre', read_only=True)
+    emp_plancha_post = EmpleadoSerializer(source='idempplanchapost', read_only=True)
     emp_corte = EmpleadoSerializer(source='idempcorte', read_only=True)
 
     maq_tejido = MaquinaSerializer(source='idmqutejido', read_only=True)
@@ -86,8 +87,11 @@ class LoteSerializer(serializers.ModelSerializer):
     emp_tejido_id = serializers.PrimaryKeyRelatedField(
         source='idemptejido', queryset=Empleado.objects.all(), write_only=True, required=False
     )
-    emp_plancha_id = serializers.PrimaryKeyRelatedField(
-        source='idempplancha', queryset=Empleado.objects.all(), write_only=True, required=False
+    emp_plancha_pre_id = serializers.PrimaryKeyRelatedField(
+        source='idempplanchapre', queryset=Empleado.objects.all(), write_only=True, required=False
+    )
+    emp_plancha_post_id = serializers.PrimaryKeyRelatedField(
+        source='idempplanchapost', queryset=Empleado.objects.all(), write_only=True, required=False
     )
     emp_corte_id = serializers.PrimaryKeyRelatedField(
         source='idempcorte', queryset=Empleado.objects.all(), write_only=True, required=False

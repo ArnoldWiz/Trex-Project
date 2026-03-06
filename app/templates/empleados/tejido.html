@@ -84,6 +84,33 @@
         .muted {
             color: #666;
         }
+        .machine-selector {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .machine-pill {
+            display: inline-flex;
+            padding: 0.5rem 0.9rem;
+            border: 1px solid #ddd;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #444;
+            user-select: none;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+        }
+        .machine-pill.active {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
+        .machine-native-select {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -109,8 +136,7 @@
 
 <main class="page">
     <section class="center-area">
-        <div id="subtitle">{{ area }} - Registrar Empleado y Máquina por QR</div>
-        <div class="muted">Selecciona un empleado, una máquina y sube la imagen del QR del lote</div>
+        <div id="subtitle">TEJIDO</div>
 
         {% if mensaje_error %}
             <div class="alert alert-error">{{ mensaje_error }}</div>
@@ -135,7 +161,16 @@
 
             <div class="form-group">
                 <label for="id_maquina">Máquina:</label>
-                {{ form.maquina }}
+                <div class="machine-selector" id="machine_selector">
+                    {% for value, label in form.maquina.field.choices %}
+                        {% if value %}
+                            <div class="machine-pill" data-value="{{ value }}">{{ label }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="machine-native-select">
+                    {{ form.maquina }}
+                </div>
                 {% if form.maquina.errors %}
                     <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
                         {{ form.maquina.errors.0 }}
@@ -158,5 +193,29 @@
     </section>
 </main>
 
-<footer class="site-footer">Trex</footer>
+<script>
+    (function () {
+        var select = document.getElementById('id_maquina');
+        var pills = document.querySelectorAll('#machine_selector .machine-pill');
+        if (!select || !pills.length) return;
+
+        function syncFromSelect() {
+            var current = String(select.value || '');
+            pills.forEach(function (pill) {
+                pill.classList.toggle('active', String(pill.getAttribute('data-value')) === current);
+            });
+        }
+
+        pills.forEach(function (pill) {
+            pill.addEventListener('click', function () {
+                var value = pill.getAttribute('data-value');
+                select.value = value;
+                syncFromSelect();
+            });
+        });
+
+        syncFromSelect();
+    })();
+</script>
+
 </body>

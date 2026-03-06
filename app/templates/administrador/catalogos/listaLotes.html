@@ -5,10 +5,49 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+<style>
+  .lotes-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .lotes-actions .action-btn {
+    min-width: 240px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    background: #ffffff;
+    color: #2A388F;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+    transition: box-shadow .25s, transform .25s, background-color .25s;
+  }
+  .lotes-actions .action-btn:hover {
+    background-color: #2A388F;
+    transform: scale(1.05) translateY(-5px);
+    color: #FAFAFA;
+    box-shadow: 0 3px 10px #BF1E2E;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <section class="center-area full-width">
+
+  {% if messages %}
+    <div style="margin-bottom: 1rem;">
+      {% for message in messages %}
+        <div style="padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 0.5rem; background: {% if message.tags == 'error' %}#f8d7da{% elif message.tags == 'warning' %}#fff3cd{% else %}#d4edda{% endif %}; color: {% if message.tags == 'error' %}#721c24{% elif message.tags == 'warning' %}#856404{% else %}#155724{% endif %}; border: 1px solid {% if message.tags == 'error' %}#f5c6cb{% elif message.tags == 'warning' %}#ffeeba{% else %}#c3e6cb{% endif %};">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   <div id="subtitle">
     Lotes del Pedido:
@@ -69,41 +108,17 @@
     <div class="stats-card">
       <h3>Resumen</h3>
       <ul>
-        <li>Corte: {{ resumen_lotes.corte }}/{{ resumen_lotes.total }}</li>
         <li>Tejido: {{ resumen_lotes.tejido }}/{{ resumen_lotes.total }}</li>
         <li>Plancha: {{ resumen_lotes.plancha }}/{{ resumen_lotes.total }}</li>
+        <li>Corte: {{ resumen_lotes.corte }}/{{ resumen_lotes.total }}</li>        
         <li>Empaque: {{ resumen_lotes.empaque }}/{{ resumen_lotes.total }}</li>
       </ul>
     </div>
   </div>
 
-  <div class="lotes-dashboard">
-    {% for lote in lotes %}
-      <div class="lote-card">
-
-        <div class="lote-header">
-          Lote {{ forloop.counter }}/{{ lotes|length }}
-        </div>
-
-        <div class="lote-body">
-          <p><strong>Cantidad:</strong> {{ lote.cantidad }}</p>
-        </div>
-
-        <div class="qr-area">
-          <div class="qr-placeholder">
-            QR
-          </div>
-
-          <div class="lote-actions">
-            <button class="btn-qr">Ver QR</button>
-            <button class="btn-qr download">Descargar</button>
-          </div>
-        </div>
-
-      </div>
-    {% empty %}
-      <p>No hay lotes para este pedido.</p>
-    {% endfor %}
+  <div class="lotes-actions">
+    <a class="action-btn" href="{% url 'listaLotesImprimirQrs' orden_pk=orden_pk pk=pedido_pk %}">Imprimir QRs</a>
+    <a class="action-btn" href="{% url 'listaLotesAbrirCarpetaQrs' orden_pk=orden_pk pk=pedido_pk %}">Ir a carpeta de QRs</a>
   </div>
 
 </section>

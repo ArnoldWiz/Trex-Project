@@ -122,16 +122,6 @@ def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
     cantidad_str = str(pedido.cantidad)
     talla_str = str(pedido.talla)
     
-    empl_tejido = lote_obj.idemptejido
-    maq_tejido = lote_obj.idmqutejido
-    empl_plancha = lote_obj.idempplancha
-    maq_plancha = lote_obj.idmaqplancha
-    
-    turno_str = f"{empl_tejido.nombre}" if empl_tejido else "___"
-    operador_str = f"{empl_tejido.apellidos}" if empl_tejido else "___"
-    maq_tejido_str = f"{maq_tejido.numero}" if maq_tejido else "___"
-    maq_plancha_str = f"{maq_plancha.numero}" if maq_plancha else "___"
-    
     order_num = orden.numeroorden
     lote_id = lote_obj.idlote
 
@@ -173,15 +163,11 @@ def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
     y += 28
     
     # Talla, Maq tejido, Turno
-    draw.text((x_text, y), f"Talla: {talla_str}   Máq tejido: # {maq_tejido_str}   Turno: {turno_str}", font=font_small, fill=(0, 0, 0))
+    draw.text((x_text, y), f"Talla: {talla_str}", font=font_small, fill=(0, 0, 0))
     y += 28
     
     # Color, Operador
-    draw.text((x_text, y), f"Color: {color_str:<25} Operador: {operador_str}", font=font_small, fill=(0, 0, 0))
-    y += 28
-    
-    # Plancha
-    draw.text((x_text, y), f"Plancha #: {maq_plancha_str}", font=font_small, fill=(0, 0, 0))
+    draw.text((x_text, y), f"Color: {color_str:<25}", font=font_small, fill=(0, 0, 0))
     y += 28
     
     # Lote info
@@ -205,6 +191,17 @@ def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
     out_path = out_dir / filename
     img.save(out_path, format='PNG')
     return str(out_path)
+
+
+def get_pedido_qr_folder(order_number: str, folio: str, color: str):
+    """
+    Return absolute path for the QR folder of a specific pedido.
+    Folder pattern: BASE_DIR/QRs/NumeroOrden/Folio-Color
+    """
+    base_dir = Path(getattr(settings, 'BASE_DIR', Path(__file__).resolve().parent.parent))
+    order_safe = _safe_name(str(order_number))
+    folio_color_safe = _safe_name(f"{folio}-{color}")
+    return base_dir / 'QRs' / order_safe / folio_color_safe
 def decode_qr_from_image(image_file):
     """
     Decodifica un QR de una imagen (PIL Image o archivo).

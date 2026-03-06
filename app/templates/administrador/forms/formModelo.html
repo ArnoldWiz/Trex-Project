@@ -20,9 +20,11 @@
         {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+  {% include 'administrador/forms/_catalogo_fields.html' %}
+      <div class="form-actions">
         <button type="submit" class="btn btn-success">Guardar</button>
-      <div class="login-nav"><a href="{% url 'modelos' %}">Cancelar</a></div>
+        <a href="{% url 'modelos' %}" class="btn-cancel">Cancelar</a>
+      </div>
 </form>
     </div>
 
