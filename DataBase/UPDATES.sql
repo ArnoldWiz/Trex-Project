@@ -72,11 +72,6 @@ USE `TREX`;
 ALTER TABLE `ordendepedido`
   ADD COLUMN `FechaPrevista` DATETIME NULL AFTER `FechaInicio`;
 
--- 2) Inicializar FechaPrevista en datos existentes
-UPDATE `ordendepedido`
-SET `FechaPrevista` = `FechaInicio`
-WHERE `FechaPrevista` IS NULL;
-
 -- 3) Permitir FechaFin nula para manejar flujo por etapas
 ALTER TABLE `ordendepedido`
   MODIFY COLUMN `FechaFin` DATETIME NULL;
