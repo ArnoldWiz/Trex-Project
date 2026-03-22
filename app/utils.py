@@ -7,6 +7,64 @@ def _safe_name(s: str) -> str:
     # simple sanitizer for folder names
     return ''.join(c for c in s if c.isalnum() or c in (' ', '-', '_')).strip().replace(' ', '_')
 
+
+def build_prefixed_qr_value(prefix: str, entity_id) -> str:
+    """Build prefixed QR values like E123 or L456."""
+    pref = str(prefix or '').strip().upper()
+    if pref not in ('E', 'L'):
+        raise ValueError('El prefijo QR debe ser E o L.')
+
+    entity_id_str = str(entity_id or '').strip()
+    if not entity_id_str.isdigit():
+        raise ValueError('El ID del QR debe ser numerico.')
+
+    return f"{pref}{entity_id_str}"
+
+
+def parse_prefixed_qr_value(raw_value: str):
+    """
+    Parse QR values in format E123/L456.
+    Also accepts legacy numeric-only values for backward compatibility.
+
+    Returns tuple: (prefix, parsed_id)
+      - prefix is 'E', 'L' or None for legacy values
+      - parsed_id is int
+    """
+    value = str(raw_value or '').strip().upper()
+    if not value:
+        raise ValueError('El QR esta vacio.')
+
+    if value.isdigit():
+        return None, int(value)
+
+    prefix = value[:1]
+    suffix = value[1:].strip()
+
+    if suffix.startswith(':') or suffix.startswith('-'):
+        suffix = suffix[1:].strip()
+
+    if prefix not in ('E', 'L'):
+        raise ValueError('El QR debe iniciar con E (empleado) o L (lote).')
+
+    if not suffix.isdigit():
+        raise ValueError('El QR no contiene un ID valido.')
+
+    return prefix, int(suffix)
+
+
+def parse_qr_id_for_prefix(raw_value: str, expected_prefix: str) -> int:
+    """Validate expected prefix and return parsed numeric id."""
+    expected = str(expected_prefix or '').strip().upper()
+    if expected not in ('E', 'L'):
+        raise ValueError('Prefijo esperado invalido.')
+
+    prefix, parsed_id = parse_prefixed_qr_value(raw_value)
+    if prefix and prefix != expected:
+        label = 'empleado' if expected == 'E' else 'lote'
+        raise ValueError(f'Se esperaba un QR de {label}.')
+
+    return parsed_id
+
 def delete_orden_qr_folder(order_number: str):
     """
     Delete entire QR folder for an order.
@@ -173,8 +231,8 @@ def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
     # Lote info
     draw.text((x_text, y), f"Lote: {lote_number}/{total_lotes}", font=font_large, fill=(0, 0, 0))
 
-    # generate QR for lote_id
-    qr_data = str(lote_id)
+    # generate QR for lote_id with prefixed format (L{id})
+    qr_data = build_prefixed_qr_value('L', lote_id)
     qr = qrcode.QRCode(box_size=10, border=2)
     qr.add_data(qr_data)
     qr.make(fit=True)
@@ -195,6 +253,94 @@ def generate_lote_qr_image(lote_obj, lote_number: int, total_lotes: int):
 
     # save file
     filename = f"lote_{lote_number}.png"
+    out_path = out_dir / filename
+    img.save(out_path, format='PNG')
+    return str(out_path)
+
+
+def get_empleado_qr_folder(area: str):
+    """
+    Return absolute path for employee QR folder.
+    Folder pattern: BASE_DIR/QRs/Empleados/Area
+    """
+    base_dir = Path(getattr(settings, 'BASE_DIR', Path(__file__).resolve().parent.parent))
+    area_safe = _safe_name(str(area or 'SinArea'))
+    return base_dir / 'QRs' / 'Empleados' / area_safe
+
+
+def generate_empleado_qr_image(empleado_obj):
+    """
+    Generate an employee QR card with:
+      - Nombre
+      - Apellidos
+      - Area
+      - ID de empleado
+      - QR grande codificando el ID del empleado
+
+    The image is saved under: BASE_DIR/QRs/Empleados/Area/empleado_<id>_<nombre>.png
+    Returns the absolute path to the saved image.
+    """
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+        import qrcode
+    except Exception:
+        return None
+
+    empleado_id = getattr(empleado_obj, 'idempleado', '')
+    nombre = str(getattr(empleado_obj, 'nombre', '') or '').strip()
+    apellidos = str(getattr(empleado_obj, 'apellidos', '') or '').strip()
+    area = str(getattr(empleado_obj, 'area', '') or '').strip()
+
+    nombre_completo = f"{nombre} {apellidos}".strip() or 'SinNombre'
+    out_dir = get_empleado_qr_folder(area)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    width = 1200
+    height = 700
+    padding = 40
+
+    img = Image.new('RGB', (width, height), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+
+    try:
+        font_title = ImageFont.truetype('arialbd.ttf', 54)
+        font_label = ImageFont.truetype('arial.ttf', 34)
+        font_small = ImageFont.truetype('arial.ttf', 24)
+    except Exception:
+        font_title = ImageFont.load_default()
+        font_label = ImageFont.load_default()
+        font_small = ImageFont.load_default()
+
+    draw.text((padding, padding), 'Empleado TREX', font=font_title, fill=(0, 0, 0))
+    y = padding + 90
+    draw.text((padding, y), f"Nombre: {nombre}", font=font_label, fill=(0, 0, 0))
+    y += 55
+    draw.text((padding, y), f"Apellidos: {apellidos}", font=font_label, fill=(0, 0, 0))
+    y += 55
+    draw.text((padding, y), f"Area: {area}", font=font_label, fill=(0, 0, 0))
+    y += 55
+    draw.text((padding, y), f"ID Empleado: {empleado_id}", font=font_label, fill=(0, 0, 0))
+
+    qr_data = build_prefixed_qr_value('E', empleado_id)
+    qr = qrcode.QRCode(box_size=14, border=2)
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color='black', back_color='white').convert('RGB')
+
+    # Keep the QR large so it can be scanned from farther distance.
+    target_qr_side = min(height - (padding * 2), int(width * 0.56))
+    if hasattr(Image, 'Resampling'):
+        qr_img = qr_img.resize((target_qr_side, target_qr_side), Image.Resampling.NEAREST)
+    else:
+        qr_img = qr_img.resize((target_qr_side, target_qr_side), Image.NEAREST)
+
+    qr_x = width - target_qr_side - padding
+    qr_y = (height - target_qr_side) // 2
+    img.paste(qr_img, (qr_x, qr_y))
+
+    draw.text((qr_x, qr_y + target_qr_side + 8), 'QR ID empleado', font=font_small, fill=(0, 0, 0))
+
+    filename = f"empleado_{empleado_id}_{_safe_name(nombre_completo)}.png"
     out_path = out_dir / filename
     img.save(out_path, format='PNG')
     return str(out_path)

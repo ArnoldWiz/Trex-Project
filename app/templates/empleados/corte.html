@@ -111,6 +111,26 @@
         .machine-native-select {
             display: none;
         }
+        .employee-preview {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            text-align: left;
+            box-sizing: border-box;
+        }
+        .scan-feedback {
+            margin-top: 0.45rem;
+            font-size: 0.88rem;
+            min-height: 1.1rem;
+        }
+        .scan-feedback.error {
+            color: #721c24;
+        }
+        .scan-feedback.info {
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -146,17 +166,33 @@
             <div class="alert alert-success">{{ mensaje_exito }}</div>
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="form-card">
+        <form method="post" class="form-card" id="registro_form">
             {% csrf_token %}
+            {{ form.empleado_qr }}
+            {{ form.lote_qr }}
             
             <div class="form-group">
-                <label for="id_empleado">Empleado:</label>
-                {{ form.empleado }}
-                {% if form.empleado.errors %}
-                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
-                        {{ form.empleado.errors.0 }}
-                    </div>
-                {% endif %}
+                <label for="scanner_input">Escaner QR (Empleado/Lote):</label>
+                <input
+                    id="scanner_input"
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    placeholder="Escanea primero E123 y despues L456"
+                    autofocus
+                />
+                <div id="scan_feedback" class="scan-feedback info">Escanea QR de empleado y luego QR de lote.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Empleado cargado:</label>
+                <div id="empleado_preview" class="employee-preview">
+                    {% if empleado_actual %}
+                        {{ empleado_actual.idempleado }} - {{ empleado_actual.nombre }} {{ empleado_actual.apellidos }}
+                    {% else %}
+                        Sin empleado cargado
+                    {% endif %}
+                </div>
             </div>
 
             <div class="form-group">
@@ -178,23 +214,99 @@
                 {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="id_qr_image">Imagen QR del Lote:</label>
-                {{ form.qr_image }}
-                {% if form.qr_image.errors %}
-                    <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
-                        {{ form.qr_image.errors.0 }}
-                    </div>
-                {% endif %}
-            </div>
-
             <button type="submit" class="login-nav forms">Guardar Registro</button>
         </form>
     </section>
 </main>
 
+{{ empleados_lookup|json_script:"empleados_lookup_data" }}
 <script>
     (function () {
+        var form = document.getElementById('registro_form');
+        var scannerInput = document.getElementById('scanner_input');
+        var empleadoQrInput = document.getElementById('id_empleado_qr');
+        var loteQrInput = document.getElementById('id_lote_qr');
+        var feedback = document.getElementById('scan_feedback');
+        var empleadoPreview = document.getElementById('empleado_preview');
+        var empleadosLookupTag = document.getElementById('empleados_lookup_data');
+        var empleadosLookup = {};
+
+        if (empleadosLookupTag && empleadosLookupTag.textContent) {
+            try {
+                empleadosLookup = JSON.parse(empleadosLookupTag.textContent);
+            } catch (e) {
+                empleadosLookup = {};
+            }
+        }
+
+        function parseScan(rawValue) {
+            var value = String(rawValue || '').trim().toUpperCase();
+            if (!value) return null;
+            var match = value.match(/^([EL])\s*[:\-]?\s*(\d+)$/);
+            if (!match) return null;
+            return {
+                prefix: match[1],
+                id: match[2],
+                normalized: match[1] + match[2]
+            };
+        }
+
+        function setFeedback(message, type) {
+            if (!feedback) return;
+            feedback.textContent = message;
+            feedback.classList.remove('error', 'info');
+            feedback.classList.add(type === 'error' ? 'error' : 'info');
+        }
+
+        function showEmpleado(parsed) {
+            var nombre = empleadosLookup[String(parsed.id)];
+            if (!nombre) {
+                setFeedback('No existe un empleado activo con ese QR.', 'error');
+                return false;
+            }
+            if (empleadoPreview) {
+                empleadoPreview.textContent = parsed.id + ' - ' + nombre;
+            }
+            empleadoQrInput.value = parsed.normalized;
+            loteQrInput.value = '';
+            setFeedback('Empleado cargado. Ahora escanea QR de lote.', 'info');
+            return true;
+        }
+
+        function procesarEscaneo() {
+            if (!scannerInput) return;
+            var parsed = parseScan(scannerInput.value);
+            scannerInput.value = '';
+
+            if (!parsed) {
+                setFeedback('QR invalido. Usa formato E123 o L456.', 'error');
+                return;
+            }
+
+            if (parsed.prefix === 'E') {
+                showEmpleado(parsed);
+                return;
+            }
+
+            if (!empleadoQrInput.value) {
+                setFeedback('Primero escanea un QR de empleado.', 'error');
+                return;
+            }
+
+            loteQrInput.value = parsed.normalized;
+            setFeedback('Lote detectado. Guardando registro...', 'info');
+            form.submit();
+        }
+
+        if (scannerInput) {
+            scannerInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    procesarEscaneo();
+                }
+            });
+        }
+
         var select = document.getElementById('id_maquina');
         var pills = document.querySelectorAll('#machine_selector .machine-pill');
         if (!select || !pills.length) return;

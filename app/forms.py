@@ -138,22 +138,22 @@ class PedidoForm(forms.ModelForm):
         }
 
 class LoteEmpleadoForm(forms.Form):
-    """Form para registrar un empleado y máquina en un lote mediante QR"""
-    empleado = forms.ModelChoiceField(
-        queryset=Empleado.objects.none(),
-        widget=forms.Select(attrs={'class':'form-control'}),
-        empty_label="Selecciona un empleado",
-        label="Empleado"
+    """Form para registrar un empleado y maquina en un lote mediante lector QR"""
+    empleado_qr = forms.CharField(
+        required=True,
+        widget=forms.HiddenInput(),
+        label='QR Empleado'
+    )
+    lote_qr = forms.CharField(
+        required=True,
+        widget=forms.HiddenInput(),
+        label='QR Lote'
     )
     maquina = forms.ModelChoiceField(
         queryset=Maquina.objects.none(),
         widget=forms.Select(attrs={'class':'form-control'}),
         empty_label="Selecciona una máquina",
         label="Máquina"
-    )
-    qr_image = forms.ImageField(
-        widget=forms.FileInput(attrs={'class':'form-control', 'accept':'image/*'}),
-        label="Imagen QR del Lote"
     )
     plancha_etapa = forms.ChoiceField(
         choices=[('pre', 'Pre-Plancha'), ('post', 'Post-Plancha')],
@@ -167,8 +167,6 @@ class LoteEmpleadoForm(forms.Form):
         super().__init__(*args, **kwargs)
         
         if area:
-            # Filtrar empleados y máquinas por área
-            self.fields['empleado'].queryset = Empleado.objects.filter(estatus=1)
             if area.lower() == 'empaquetado':
                 self.fields['maquina'].queryset = Maquina.objects.filter(estatus=1)
                 self.fields['maquina'].required = False

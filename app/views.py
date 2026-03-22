@@ -12,8 +12,9 @@ from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from app.utils import (
     generate_lote_qr_image,
+    generate_empleado_qr_image,
     delete_lote_qr_images,
-    decode_qr_from_image,
+    parse_qr_id_for_prefix,
     delete_orden_qr_folder,
     get_pedido_qr_folder,
 )
@@ -547,6 +548,14 @@ class CrearEmpleado(CreateView):
     form_class = EmpleadoForm
     success_url = '/administrador/empleados/'
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        try:
+            generate_empleado_qr_image(self.object)
+        except Exception as e:
+            print(f"Error generando QR de empleado {self.object.idempleado}: {e}")
+        return response
+
 class ActualizarEmpleado(UpdateView):
     model = Empleado
     template_name = 'administrador/forms/formEmpleado.html'
@@ -673,79 +682,115 @@ def registrar_lote_empleado(request, area_type):
     
     mensaje_error = None
     mensaje_exito = None
+    empleado_actual = None
     
     if request.method == 'POST':
-        form = LoteEmpleadoForm(request.POST, request.FILES, area=area_capitalizada)
+        form = LoteEmpleadoForm(request.POST, area=area_capitalizada)
         if form.is_valid():
+            empleado_id = None
+            lote_id = None
             try:
-                empleado = form.cleaned_data['empleado']
+                empleado_qr = form.cleaned_data['empleado_qr']
+                lote_qr = form.cleaned_data['lote_qr']
                 maquina = form.cleaned_data['maquina']
-                qr_image = form.cleaned_data['qr_image']
                 plancha_etapa = form.cleaned_data.get('plancha_etapa')
-                
-                # Decodificar el QR
-                qr_data = decode_qr_from_image(qr_image)
-                
-                if qr_data:
-                    try:
-                        lote_id = int(qr_data)
-                        lote = Lote.objects.get(idlote=lote_id)
 
-                        mensaje_flujo = _validar_flujo_lote(lote, area_type)
-                        if mensaje_flujo:
-                            mensaje_error = mensaje_flujo
-                            raise ValueError(mensaje_error)
-                        
-                        # Actualizar el lote con el empleado, máquina y la fecha según el área
-                        now = timezone.now()
-                        
-                        if area_type.lower() == 'corte':
-                            lote.idempcorte = empleado
-                            lote.idmaqcorte = maquina
-                            lote.fechatermcorte = now
-                        elif area_type.lower() == 'tejido':
-                            lote.idemptejido = empleado
-                            lote.idmqutejido = maquina
-                            lote.fechatermtejido = now
-                        elif area_type.lower() == 'plancha':
-                            lote.idmaqplancha = maquina
-                            if plancha_etapa == 'pre':
-                                lote.idempplanchapre = empleado
-                                lote.fechatermplanchapre = now
-                            elif plancha_etapa == 'post':
-                                lote.idempplanchapost = empleado
-                                lote.fechatermplanchapost = now
-                            else:
-                                mensaje_error = 'Selecciona si el registro es Pre-Plancha o Post-Plancha'
-                                raise ValueError(mensaje_error)
-                        elif area_type.lower() == 'empaquetado':
-                            lote.fechaempa = now
-                        
-                        lote.save()
-                        if area_type.lower() == 'plancha':
-                            etapa_texto = 'Pre-Plancha' if plancha_etapa == 'pre' else 'Post-Plancha'
-                            mensaje_exito = f"Empleado {empleado.nombre} y máquina {maquina} registrados en {etapa_texto} del lote {lote_id}"
-                        elif area_type.lower() == 'empaquetado':
-                            mensaje_exito = f"Empaque registrado correctamente en el lote {lote_id}"
-                        else:
-                            mensaje_exito = f"Empleado {empleado.nombre} y máquina {maquina} registrados correctamente en el lote {lote_id}"
-                    except ValueError:
-                        if not mensaje_error:
-                            mensaje_error = "El QR no contiene un ID de lote válido"
-                    except Lote.DoesNotExist:
-                        mensaje_error = f"No se encontró el lote con ID {qr_data}"
+                empleado_id = parse_qr_id_for_prefix(empleado_qr, 'E')
+                lote_id = parse_qr_id_for_prefix(lote_qr, 'L')
+
+                empleado = Empleado.objects.get(idempleado=empleado_id, estatus=1)
+                empleado_actual = empleado
+                lote = Lote.objects.get(idlote=lote_id)
+
+                mensaje_flujo = _validar_flujo_lote(lote, area_type)
+                if mensaje_flujo:
+                    mensaje_error = mensaje_flujo
+                    raise ValueError(mensaje_error)
+
+                # Actualizar el lote con el empleado, maquina y la fecha segun el area
+                now = timezone.now()
+
+                if area_type.lower() == 'corte':
+                    lote.idempcorte = empleado
+                    lote.idmaqcorte = maquina
+                    lote.fechatermcorte = now
+                elif area_type.lower() == 'tejido':
+                    lote.idemptejido = empleado
+                    lote.idmqutejido = maquina
+                    lote.fechatermtejido = now
+                elif area_type.lower() == 'plancha':
+                    lote.idmaqplancha = maquina
+                    if plancha_etapa == 'pre':
+                        lote.idempplanchapre = empleado
+                        lote.fechatermplanchapre = now
+                    elif plancha_etapa == 'post':
+                        lote.idempplanchapost = empleado
+                        lote.fechatermplanchapost = now
+                    else:
+                        mensaje_error = 'Selecciona si el registro es Pre-Plancha o Post-Plancha'
+                        raise ValueError(mensaje_error)
+                elif area_type.lower() == 'empaquetado':
+                    lote.fechaempa = now
+
+                lote.save()
+                if area_type.lower() == 'plancha':
+                    etapa_texto = 'Pre-Plancha' if plancha_etapa == 'pre' else 'Post-Plancha'
+                    mensaje_exito = f"Empleado {empleado.nombre} y maquina {maquina} registrados en {etapa_texto} del lote {lote_id}"
+                elif area_type.lower() == 'empaquetado':
+                    mensaje_exito = f"Empaque registrado correctamente en el lote {lote_id}"
                 else:
-                    mensaje_error = "No se pudo decodificar el QR. Verifica que la imagen sea clara."
+                    mensaje_exito = f"Empleado {empleado.nombre} y maquina {maquina} registrados correctamente en el lote {lote_id}"
+            except ValueError as exc:
+                mensaje_error = str(exc)
+            except Empleado.DoesNotExist:
+                if empleado_id is None:
+                    mensaje_error = 'No se encontro el empleado leido en el QR.'
+                else:
+                    mensaje_error = f'No se encontro un empleado activo con ID {empleado_id}.'
+            except Lote.DoesNotExist:
+                if lote_id is None:
+                    mensaje_error = 'No se encontro el lote leido en el QR.'
+                else:
+                    mensaje_error = f'No se encontro el lote con ID {lote_id}.'
             except Exception as e:
                 mensaje_error = f"Error al procesar el formulario: {str(e)}"
+        else:
+            if form.errors.get('empleado_qr'):
+                mensaje_error = 'Primero escanea un QR de empleado.'
+            elif form.errors.get('lote_qr'):
+                mensaje_error = 'Escanea un QR de lote para guardar.'
+            elif form.errors.get('maquina'):
+                mensaje_error = form.errors['maquina'][0]
+            elif form.errors.get('plancha_etapa'):
+                mensaje_error = form.errors['plancha_etapa'][0]
+            else:
+                mensaje_error = 'Completa los datos requeridos para guardar el registro.'
     else:
         form = LoteEmpleadoForm(area=area_capitalizada)
+
+    empleados_lookup = {
+        str(empleado.idempleado): f"{empleado.nombre} {empleado.apellidos}".strip()
+        for empleado in Empleado.objects.filter(estatus=1).order_by('idempleado')
+    }
+
+    if empleado_actual is None:
+        empleado_qr_val = ''
+        if getattr(form, 'is_bound', False):
+            empleado_qr_val = str(form.data.get('empleado_qr', '')).strip()
+        if empleado_qr_val:
+            try:
+                empleado_id = parse_qr_id_for_prefix(empleado_qr_val, 'E')
+                empleado_actual = Empleado.objects.filter(idempleado=empleado_id).first()
+            except ValueError:
+                empleado_actual = None
     
     context = {
         'form': form,
         'area': area_capitalizada,
         'mensaje_error': mensaje_error,
         'mensaje_exito': mensaje_exito,
+        'empleados_lookup': empleados_lookup,
+        'empleado_actual': empleado_actual,
     }
     
     template_name = f'empleados/{area_type.lower()}.html'
