@@ -19,7 +19,6 @@
             <th>ID</th>
             <th>Folio</th>
             <th>Modelo</th>
-            <th>Cantidad de Hilo</th>
             <th>Acciones</th>
         </tr>
           </thead>
@@ -29,7 +28,6 @@
             <td>{{ modelo.idmodelo }}</td>
             <td>{{ modelo.folio }}</td>
             <td>{{ modelo.modelo }}</td>
-            <td>{{ modelo.cantidadhilo }}</td>
             <td>
                 <a href="{% url 'actualizarModelo' modelo.idmodelo %}" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
                 {% comment %} <a href="{% url 'eliminarModelo' modelo.idmodelo %}" class="btn btn-sm btn-danger">Eliminar</a> {% endcomment %}

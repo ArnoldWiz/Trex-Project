@@ -1,0 +1,37 @@
+/* Estilos para lista de ordenes */
+
+.center-area.full-width {
+    padding: 0.5rem;
+}
+
+.contenedor {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.custom-table {
+    margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    #subtitle {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .custom-table i {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .custom-table th,
+    .custom-table td {
+        padding: 0.4rem 0.3rem;
+    }
+}

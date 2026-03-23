@@ -5,35 +5,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
-<style>
-  .lotes-actions {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 22px;
-    flex-wrap: wrap;
-  }
-  .lotes-actions .action-btn {
-    min-width: 240px;
-    padding: 14px 22px;
-    border-radius: 12px;
-    border: none;
-    background: #ffffff;
-    color: #2A388F;
-    font-size: 1.2rem;
-    font-weight: 700;
-    text-align: center;
-    text-decoration: none;
-    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
-    transition: box-shadow .25s, transform .25s, background-color .25s;
-  }
-  .lotes-actions .action-btn:hover {
-    background-color: #2A388F;
-    transform: scale(1.05) translateY(-5px);
-    color: #FAFAFA;
-    box-shadow: 0 3px 10px #BF1E2E;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/administrador/listaLotes.css' %}">
 {% endblock %}
 
 {% block content %}

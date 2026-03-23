@@ -54,19 +54,25 @@ class MaquinaForm(CatalogoEstatusCreateMixin, forms.ModelForm):
 class ModeloForm(CatalogoEstatusCreateMixin, forms.ModelForm):
     class Meta:
         model = Modelo
-        fields = ['folio', 'modelo', 'cantidadhilo', 'estatus']
+        fields = ['folio', 'modelo', 'estatus']
         labels = {
             'folio': 'Folio',
             'modelo': 'Modelo',
-            'cantidadhilo': 'Cantidad de Hilo',
             'estatus': 'Estatus',
         }
         widgets = {
             'folio': forms.TextInput(attrs={'class':'form-control','placeholder':'Folio'}),
             'modelo': forms.TextInput(attrs={'class':'form-control','placeholder':'Modelo'}),
-            'cantidadhilo': forms.NumberInput(attrs={'class':'form-control','placeholder':'Cantidad de Hilo'}),
             'estatus': forms.Select(attrs={'class':'form-control'}, choices=[(1, 'Activo'), (0, 'Inactivo')]),
         }
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if getattr(instance, 'cantidadhilo', None) in (None, ''):
+            instance.cantidadhilo = 0
+        if commit:
+            instance.save()
+        return instance
 
 class ClienteForm(CatalogoEstatusCreateMixin, forms.ModelForm):
     class Meta:
@@ -116,6 +122,19 @@ class PedidoForm(forms.ModelForm):
     idmodelo = ModeloChoiceField(queryset=Modelo.objects.all(),
                                  widget=forms.Select(attrs={'class':'form-control'}),
                                  label='Modelo')
+    division_lote = forms.IntegerField(
+        required=True,
+        min_value=1,
+        initial=10,
+        label='Dividir lotes entre',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Tamaño de lote (ej. 10)'})
+    )
+    redondear_lote = forms.BooleanField(
+        required=False,
+        initial=True,
+        label='Redondear residuo (1-4 suma, 5-9 nuevo lote)',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
 
     class Meta:
         model = Pedido
@@ -155,11 +174,12 @@ class LoteEmpleadoForm(forms.Form):
         empty_label="Selecciona una máquina",
         label="Máquina"
     )
-    plancha_etapa = forms.ChoiceField(
-        choices=[('pre', 'Pre-Plancha'), ('post', 'Post-Plancha')],
+    empleado_pre = forms.ModelChoiceField(
+        queryset=Empleado.objects.none(),
+        widget=forms.Select(attrs={'class':'form-control'}),
+        empty_label="Selecciona empleado para Pre-Plancha",
+        label="Empleado Pre-Plancha",
         required=False,
-        label="Etapa de Plancha",
-        widget=forms.RadioSelect
     )
     
     def __init__(self, *args, **kwargs):
@@ -176,6 +196,7 @@ class LoteEmpleadoForm(forms.Form):
                 self.fields['maquina'].required = True
 
         if area and area.lower() == 'plancha':
-            self.fields['plancha_etapa'].required = True
+            self.fields['empleado_pre'].queryset = Empleado.objects.filter(estatus=1).order_by('idempleado')
+            self.fields['empleado_pre'].required = True
         else:
-            self.fields.pop('plancha_etapa', None)
+            self.fields.pop('empleado_pre', None)

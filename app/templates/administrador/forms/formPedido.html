@@ -1,27 +1,44 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Registrar Pedido{% endblock %}
+{% block title %}
+  Registrar Pedido
+{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+  <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}" />
 {% endblock %}
 {% block content %}
   <section class="center-area">
-        {% if object %}
-    <div id="subtitle">Editar Pedido</div>
-{% else %}
-    <div id="subtitle">Agregar Pedido</div>
-{% endif %}  
-      <div class="contenedor">
-        {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-          <div class="form-group">
-            <label for="display_totallotes">Total Lotes</label>
-            <input type="text" id="display_totallotes" class="form-control" value="{{ initial_totallotes }}" disabled />
-          </div>
+    {% if object %}
+      <div id="subtitle">Editar Pedido</div>
+    {% else %}
+      <div id="subtitle">Agregar Pedido</div>
+    {% endif %}
+    <div class="contenedor">
+      {% comment %} <a href="{% url 'formModelo' %}" class="btn btn-primary mb-3">Agregar Modelo</a> {% endcomment %}
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          {% if field.name != 'redondear_lote' %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="form-group">
+          <label for="id_redondear_lote">Redondear</label>
+          <input type="checkbox" id="id_redondear_lote" name="redondear_lote" checked />
+        </div>
+        <div class="form-group">
+          <label for="display_totallotes">Total Lotes</label>
+          <input type="text" id="display_totallotes" class="form-control" value="{{ initial_totallotes }}" disabled />
+          <small id="preview_lotes_cantidades" style="display:block; margin-top:0.4rem; color:#555;"></small>
+        </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-success">Guardar</button>
           {% if object %}
@@ -29,47 +46,79 @@
           {% endif %}
           <a href="{% url 'listaPedidos' orden_pk=orden_pk %}" class="btn-cancel">Cancelar</a>
         </div>
-</form>
+      </form>
     </div>
-
   </section>
 
   <script>
-    (function(){
-      function computeAndShow(){
-        var cantidadEl = document.querySelector('[name="cantidad"]');
-        var displayEl = document.getElementById('display_totallotes');
-        if(!cantidadEl || !displayEl) return;
-        var v = parseInt(cantidadEl.value, 10);
-        if(isNaN(v) || v <= 0){
-          displayEl.value = 0;
-          return;
+    ;(function () {
+      function computeAndShow() {
+        var cantidadEl = document.querySelector('[name="cantidad"]')
+        var divisionEl = document.querySelector('[name="division_lote"]')
+        var redondearEl = document.getElementById('id_redondear_lote')
+        var displayEl = document.getElementById('display_totallotes')
+        var previewEl = document.getElementById('preview_lotes_cantidades')
+        if (!cantidadEl || !divisionEl || !displayEl || !previewEl || !redondearEl) return
+        var v = parseInt(cantidadEl.value, 10)
+        var d = parseInt(divisionEl.value, 10)
+        var redondear = redondearEl.checked
+        if (isNaN(v) || v <= 0 || isNaN(d) || d <= 0) {
+          displayEl.value = 0
+          previewEl.textContent = ''
+          return
         }
-        var base = Math.floor(v / 10);
-        var residuo = v % 10;
-        var tot = 0;
-
-        if(base === 0){
-          tot = 1;
-        } else if(residuo === 0){
-          tot = base;
-        } else if(residuo >= 1 && residuo <= 4){
-          tot = base;
+        var base = Math.floor(v / d)
+        var residuo = v % d
+        var tot = 0
+        var lotes = []
+    
+        if (base === 0) {
+          tot = 1
+          lotes = [v]
+        } else if (residuo === 0) {
+          tot = base
+          for (var i = 0; i < base; i++) {
+            lotes.push(d)
+          }
         } else {
-          tot = base + 1;
+          if (redondear) {
+            if (residuo >= 1 && residuo <= 4) {
+              tot = base
+              for (var j = 0; j < base; j++) {
+                lotes.push(d)
+              }
+              lotes[lotes.length - 1] = lotes[lotes.length - 1] + residuo
+            } else {
+              tot = base + 1
+              for (var k = 0; k < base; k++) {
+                lotes.push(d)
+              }
+              lotes.push(residuo)
+            }
+          } else {
+            tot = base + 1
+            for (var m = 0; m < base; m++) {
+              lotes.push(d)
+            }
+            lotes.push(residuo)
+          }
         }
-
-        displayEl.value = tot;
+    
+        displayEl.value = tot
+        previewEl.textContent = 'Cantidades por lote: ' + lotes.join(', ')
       }
-      document.addEventListener('DOMContentLoaded', function(){
-        var cantidadEl = document.querySelector('[name="cantidad"]');
-        if(cantidadEl){
-          cantidadEl.addEventListener('input', computeAndShow);
+      document.addEventListener('DOMContentLoaded', function () {
+        var cantidadEl = document.querySelector('[name="cantidad"]')
+        var divisionEl = document.querySelector('[name="division_lote"]')
+        var redondearEl = document.getElementById('id_redondear_lote')
+        if (cantidadEl && divisionEl && redondearEl) {
+          cantidadEl.addEventListener('input', computeAndShow)
+          divisionEl.addEventListener('input', computeAndShow)
+          redondearEl.addEventListener('change', computeAndShow)
           // initialize
-          computeAndShow();
+          computeAndShow()
         }
-      });
-    })();
+      })
+    })()
   </script>
-
 {% endblock %}

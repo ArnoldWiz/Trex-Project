@@ -68,30 +68,117 @@ def lotes(request):
     return render(request, 'administrador/lotes.html')
 
 
-def _calcular_lotes_por_cantidad(cantidad_total):
+def _calcular_lotes_por_cantidad(cantidad_total, division_lote=10, redondear=True):
     cantidad_total = int(cantidad_total or 0)
+    division = int(division_lote or 10)
+    redondear_bool = bool(redondear)
     if cantidad_total <= 0:
         return []
+    if division <= 0:
+        raise ValueError('La division del lote debe ser mayor a 0.')
 
     lotes = []
-    lotes_base = cantidad_total // 10
-    residuo = cantidad_total % 10
+    lotes_base = cantidad_total // division
+    residuo = cantidad_total % division
 
     if lotes_base == 0:
         return [cantidad_total]
 
-    lotes.extend([10] * lotes_base)
+    lotes.extend([division] * lotes_base)
 
     if residuo == 0:
         return lotes
 
-    if 1 <= residuo <= 4:
-        lotes[-1] += residuo
+    if redondear_bool:
+        if 1 <= residuo <= 4:
+            lotes[-1] += residuo
+        else:
+            lotes.append(residuo)
     else:
         lotes.append(residuo)
 
     return lotes
 
+
+def _obtener_registros_recientes_area(area_type: str, limite: int = 10):
+    area = (area_type or '').lower()
+    config = {
+        'tejido': {
+            'fecha_field': 'fechatermtejido',
+            'empleado_field': 'idemptejido',
+        },
+        'plancha': {
+            'fecha_field': 'fechatermplanchapost',
+            'empleado_field': 'idempplanchapost',
+        },
+        'corte': {
+            'fecha_field': 'fechatermcorte',
+            'empleado_field': 'idempcorte',
+        },
+    }
+
+    area_config = config.get(area)
+    if not area_config:
+        return []
+
+    fecha_field = area_config['fecha_field']
+    empleado_field = area_config['empleado_field']
+    filtros = {
+        f'{fecha_field}__isnull': False,
+        f'{empleado_field}__isnull': False,
+    }
+
+    lotes = list(
+        Lote.objects
+        .filter(**filtros)
+        .select_related('idpedido', 'idpedido__idordenpedido', 'idpedido__idmodelo', empleado_field)
+        .order_by(f'-{fecha_field}')[:limite]
+    )
+
+    if not lotes:
+        return []
+
+    pedido_ids = {lote.idpedido_id for lote in lotes}
+    lotes_por_pedido = {
+        pedido_id: list(
+            Lote.objects
+            .filter(idpedido_id=pedido_id)
+            .order_by('idlote')
+            .values_list('idlote', flat=True)
+        )
+        for pedido_id in pedido_ids
+    }
+
+    registros = []
+    for lote in lotes:
+        pedido = lote.idpedido
+        orden = getattr(pedido, 'idordenpedido', None)
+        empleado = getattr(lote, empleado_field, None)
+        fecha_registro = getattr(lote, fecha_field, None)
+
+        lotes_del_pedido = lotes_por_pedido.get(lote.idpedido_id, [])
+        lote_total = len(lotes_del_pedido)
+        lote_posicion = 0
+        try:
+            lote_posicion = lotes_del_pedido.index(lote.idlote) + 1
+        except ValueError:
+            lote_posicion = 0
+
+        nombre_empleado = ''
+        if empleado:
+            nombre_empleado = f"{empleado.nombre} {empleado.apellidos}".strip()
+
+        registros.append({
+            'numero_orden': getattr(orden, 'numeroorden', ''),
+            'modelo_nombre': getattr(pedido.idmodelo, 'folio', '') if pedido.idmodelo else '',
+            'color': getattr(pedido, 'color', ''),
+            'lote_posicion': lote_posicion,
+            'lote_total': lote_total,
+            'empleado_nombre': nombre_empleado,
+            'fecha_registro': fecha_registro,
+        })
+
+    return registros
 
 def _actualizar_fecha_fin_orden(orden_id):
     try:
@@ -279,7 +366,9 @@ class CrearPedido(CreateView):
         try:
             cantidad = form.cleaned_data.get('cantidad') or 0
             cantidad_val = int(float(cantidad))
-            lotes_por_cantidad = _calcular_lotes_por_cantidad(cantidad_val)
+            division_lote = form.cleaned_data.get('division_lote') or 10
+            redondear = form.cleaned_data.get('redondear_lote', True)
+            lotes_por_cantidad = _calcular_lotes_por_cantidad(cantidad_val, division_lote, redondear)
             self.object.totallotes = len(lotes_por_cantidad)
         except Exception:
             # fallback: set 0
@@ -347,7 +436,9 @@ class ActualizarPedido(UpdateView):
         try:
             cantidad = form.cleaned_data.get('cantidad') or 0
             cantidad_val = int(float(cantidad))
-            lotes_por_cantidad = _calcular_lotes_por_cantidad(cantidad_val)
+            division_lote = form.cleaned_data.get('division_lote') or 10
+            redondear = form.cleaned_data.get('redondear_lote', True)
+            lotes_por_cantidad = _calcular_lotes_por_cantidad(cantidad_val, division_lote, redondear)
             self.object.totallotes = len(lotes_por_cantidad)
         except Exception:
             self.object.totallotes = 0
@@ -693,7 +784,7 @@ def registrar_lote_empleado(request, area_type):
                 empleado_qr = form.cleaned_data['empleado_qr']
                 lote_qr = form.cleaned_data['lote_qr']
                 maquina = form.cleaned_data['maquina']
-                plancha_etapa = form.cleaned_data.get('plancha_etapa')
+                empleado_pre = form.cleaned_data.get('empleado_pre')
 
                 empleado_id = parse_qr_id_for_prefix(empleado_qr, 'E')
                 lote_id = parse_qr_id_for_prefix(lote_qr, 'L')
@@ -720,26 +811,25 @@ def registrar_lote_empleado(request, area_type):
                     lote.fechatermtejido = now
                 elif area_type.lower() == 'plancha':
                     lote.idmaqplancha = maquina
-                    if plancha_etapa == 'pre':
-                        lote.idempplanchapre = empleado
-                        lote.fechatermplanchapre = now
-                    elif plancha_etapa == 'post':
-                        lote.idempplanchapost = empleado
-                        lote.fechatermplanchapost = now
-                    else:
-                        mensaje_error = 'Selecciona si el registro es Pre-Plancha o Post-Plancha'
+                    if not empleado_pre:
+                        mensaje_error = 'Selecciona un empleado para Pre-Plancha.'
                         raise ValueError(mensaje_error)
+                    lote.idempplanchapre = empleado_pre
+                    lote.fechatermplanchapre = now
+                    lote.idempplanchapost = empleado
+                    lote.fechatermplanchapost = now
                 elif area_type.lower() == 'empaquetado':
                     lote.fechaempa = now
 
                 lote.save()
                 if area_type.lower() == 'plancha':
-                    etapa_texto = 'Pre-Plancha' if plancha_etapa == 'pre' else 'Post-Plancha'
-                    mensaje_exito = f"Empleado {empleado.nombre} y maquina {maquina} registrados en {etapa_texto} del lote {lote_id}"
+                    mensaje_exito = (
+                        f"Lote {lote_id} guardado en {maquina} a nombre de {empleado.nombre}"
+                    )
                 elif area_type.lower() == 'empaquetado':
-                    mensaje_exito = f"Empaque registrado correctamente en el lote {lote_id}"
+                    mensaje_exito = f"Lote {lote_id} guardado correctamente"
                 else:
-                    mensaje_exito = f"Empleado {empleado.nombre} y maquina {maquina} registrados correctamente en el lote {lote_id}"
+                    mensaje_exito = f"Lote {lote_id} guardado en {maquina} a nombre de {empleado.nombre}"
             except ValueError as exc:
                 mensaje_error = str(exc)
             except Empleado.DoesNotExist:
@@ -756,13 +846,13 @@ def registrar_lote_empleado(request, area_type):
                 mensaje_error = f"Error al procesar el formulario: {str(e)}"
         else:
             if form.errors.get('empleado_qr'):
-                mensaje_error = 'Primero escanea un QR de empleado.'
+                mensaje_error = 'No hay nombre de empleado cargado. Escanea primero un QR de empleado.'
             elif form.errors.get('lote_qr'):
                 mensaje_error = 'Escanea un QR de lote para guardar.'
             elif form.errors.get('maquina'):
                 mensaje_error = form.errors['maquina'][0]
-            elif form.errors.get('plancha_etapa'):
-                mensaje_error = form.errors['plancha_etapa'][0]
+            elif form.errors.get('empleado_pre'):
+                mensaje_error = form.errors['empleado_pre'][0]
             else:
                 mensaje_error = 'Completa los datos requeridos para guardar el registro.'
     else:
@@ -791,6 +881,7 @@ def registrar_lote_empleado(request, area_type):
         'mensaje_exito': mensaje_exito,
         'empleados_lookup': empleados_lookup,
         'empleado_actual': empleado_actual,
+        'registros_recientes': _obtener_registros_recientes_area(area_type, 10),
     }
     
     template_name = f'empleados/{area_type.lower()}.html'

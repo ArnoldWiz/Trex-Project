@@ -6,132 +6,9 @@
     <title>{{ area }} - Trex</title>
     <link rel="stylesheet" href="{% static 'css/genericas/base.css' %}" />
     <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
+    <link rel="stylesheet" href="{% static 'css/empleados/empleado_forms.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Pathway+Gothic+One&display=swap" rel="stylesheet" />
-    <style>
-        .form-card {
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            max-width: 500px;
-            margin: 0rem auto;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .form-group {
-            margin-bottom: 0rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .submit-btn:hover {
-            background-color: #218838;
-        }
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: 500;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .center-area {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-        #subtitle {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        .muted {
-            color: #666;
-        }
-        .machine-selector {
-            margin-top: 0.75rem;
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .machine-pill {
-            display: inline-flex;
-            padding: 0.5rem 0.9rem;
-            border: 1px solid #ddd;
-            border-radius: 999px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #444;
-            user-select: none;
-            transition: all 0.2s ease;
-            background-color: #f8f9fa;
-        }
-        .machine-pill.active {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: #fff;
-        }
-        .machine-native-select {
-            display: none;
-        }
-        .employee-preview {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f8f9fa;
-            text-align: left;
-            box-sizing: border-box;
-        }
-        .scan-feedback {
-            margin-top: 0.45rem;
-            font-size: 0.88rem;
-            min-height: 1.1rem;
-        }
-        .scan-feedback.error {
-            color: #721c24;
-        }
-        .scan-feedback.info {
-            color: #666;
-        }
-    </style>
 </head>
 <body>
 <nav class="navbar">
@@ -158,13 +35,7 @@
     <section class="center-area">
         <div id="subtitle">CORTE</div>
 
-        {% if mensaje_error %}
-            <div class="alert alert-error">{{ mensaje_error }}</div>
-        {% endif %}
-
-        {% if mensaje_exito %}
-            <div class="alert alert-success">{{ mensaje_exito }}</div>
-        {% endif %}
+        
 
         <form method="post" class="form-card" id="registro_form">
             {% csrf_token %}
@@ -172,26 +43,20 @@
             {{ form.lote_qr }}
             
             <div class="form-group">
-                <label for="scanner_input">Escaner QR (Empleado/Lote):</label>
-                <input
-                    id="scanner_input"
-                    type="text"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Escanea primero E123 y despues L456"
-                    autofocus
-                />
-                <div id="scan_feedback" class="scan-feedback info">Escanea QR de empleado y luego QR de lote.</div>
+                <div id="scan_feedback" class="scan-feedback info">{% if empleado_actual %}Escanea QR de lote.{% else %}Escanea QR de empleado y luego QR de lote.{% endif %}</div>
             </div>
 
             <div class="form-group">
                 <label>Empleado cargado:</label>
-                <div id="empleado_preview" class="employee-preview">
-                    {% if empleado_actual %}
-                        {{ empleado_actual.idempleado }} - {{ empleado_actual.nombre }} {{ empleado_actual.apellidos }}
-                    {% else %}
-                        Sin empleado cargado
-                    {% endif %}
+                <div class="employee-preview-row">
+                    <div id="empleado_preview" class="employee-preview">
+                        {% if empleado_actual %}
+                            {{ empleado_actual.idempleado }} - {{ empleado_actual.nombre }} {{ empleado_actual.apellidos }}
+                        {% else %}
+                            Sin empleado cargado
+                        {% endif %}
+                    </div>
+                    <button type="button" id="btn_limpiar_empleado" class="clear-employee-btn">Limpiar</button>
                 </div>
             </div>
 
@@ -207,6 +72,9 @@
                 <div class="machine-native-select">
                     {{ form.maquina }}
                 </div>
+                <div id="machine_error" style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem; display: none;">
+                    Debes seleccionar una máquina para registrar el lote.
+                </div>
                 {% if form.maquina.errors %}
                     <div style="color: #721c24; font-size: 0.875rem; margin-top: 0.25rem;">
                         {{ form.maquina.errors.0 }}
@@ -214,8 +82,53 @@
                 {% endif %}
             </div>
 
-            <button type="submit" class="login-nav forms">Guardar Registro</button>
+            <button type="submit" class="login-nav forms" id="submit_btn" style="display: none;">Guardar Registro</button>
+            <div id="success_message" class="alert alert-success" style="display: none; margin-top: 1rem;">
+                <span id="success_text">Lote registrado correctamente</span>
+            </div>
         </form>
+
+        {% if mensaje_error %}
+            <div class="alert alert-error">{{ mensaje_error }}</div>
+        {% endif %}
+
+        {% if mensaje_exito %}
+            <div class="alert alert-success">{{ mensaje_exito }}</div>
+        {% endif %}
+
+        <div class="recent-table-card">
+            <h3>Últimos 10 registros de Corte</h3>
+            {% if registros_recientes %}
+                <div class="recent-table-wrapper">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Orden</th>
+                                <th>Modelo</th>
+                                <th>Color</th>
+                                <th>Lote</th>
+                                <th>Empleado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in registros_recientes %}
+                                <tr>
+                                    <td>{{ registro.numero_orden }}</td>
+                                    <td>{{ registro.modelo_nombre }}</td>
+                                    <td>{{ registro.color }}</td>
+                                    <td>{{ registro.lote_posicion }}/{{ registro.lote_total }}</td>
+                                    <td>{{ registro.empleado_nombre }}</td>
+                                    <td>{{ registro.fecha_registro|date:'d/m/Y H:i' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="recent-empty">Aún no hay registros de corte.</p>
+            {% endif %}
+        </div>
     </section>
 </main>
 
@@ -223,13 +136,18 @@
 <script>
     (function () {
         var form = document.getElementById('registro_form');
-        var scannerInput = document.getElementById('scanner_input');
         var empleadoQrInput = document.getElementById('id_empleado_qr');
         var loteQrInput = document.getElementById('id_lote_qr');
         var feedback = document.getElementById('scan_feedback');
         var empleadoPreview = document.getElementById('empleado_preview');
+        var limpiarEmpleadoBtn = document.getElementById('btn_limpiar_empleado');
         var empleadosLookupTag = document.getElementById('empleados_lookup_data');
+        var submitBtn = document.getElementById('submit_btn');
+        var successMessage = document.getElementById('success_message');
+        var machineError = document.getElementById('machine_error');
         var empleadosLookup = {};
+        var scannerBuffer = '';
+        var lastKeyTimestamp = 0;
 
         if (empleadosLookupTag && empleadosLookupTag.textContent) {
             try {
@@ -258,6 +176,15 @@
             feedback.classList.add(type === 'error' ? 'error' : 'info');
         }
 
+        function clearEmpleado() {
+            empleadoQrInput.value = '';
+            loteQrInput.value = '';
+            if (empleadoPreview) {
+                empleadoPreview.textContent = 'Sin empleado cargado';
+            }
+            setFeedback('Empleado limpiado. Escanea un QR de empleado.', 'info');
+        }
+
         function showEmpleado(parsed) {
             var nombre = empleadosLookup[String(parsed.id)];
             if (!nombre) {
@@ -273,10 +200,8 @@
             return true;
         }
 
-        function procesarEscaneo() {
-            if (!scannerInput) return;
-            var parsed = parseScan(scannerInput.value);
-            scannerInput.value = '';
+        function procesarEscaneo(rawScan) {
+            var parsed = parseScan(rawScan);
 
             if (!parsed) {
                 setFeedback('QR invalido. Usa formato E123 o L456.', 'error');
@@ -289,44 +214,110 @@
             }
 
             if (!empleadoQrInput.value) {
-                setFeedback('Primero escanea un QR de empleado.', 'error');
+                setFeedback('No hay empleado cargado. Escanea primero un QR de empleado.', 'error');
                 return;
             }
 
+            var select = document.getElementById('id_maquina');
+            if (!select.value) {
+                setFeedback('Debes seleccionar una máquina antes de guardar.', 'error');
+                if (machineError) machineError.style.display = 'block';
+                return;
+            }
+            
+            if (machineError) machineError.style.display = 'none';
             loteQrInput.value = parsed.normalized;
-            setFeedback('Lote detectado. Guardando registro...', 'info');
+            setFeedback('Lote detectado. Validando datos...', 'info');
             form.submit();
         }
 
-        if (scannerInput) {
-            scannerInput.addEventListener('keydown', function (event) {
-                if (event.key === 'Enter') {
+        document.addEventListener('keydown', function (event) {
+            if (event.ctrlKey || event.altKey || event.metaKey) return;
+
+            if (event.key === 'Enter') {
+                if (scannerBuffer.trim()) {
                     event.preventDefault();
-                    procesarEscaneo();
+                    procesarEscaneo(scannerBuffer);
                 }
+                scannerBuffer = '';
+                lastKeyTimestamp = 0;
+                return;
+            }
+
+            if (event.key.length !== 1) return;
+
+            var now = Date.now();
+            if (now - lastKeyTimestamp > 300) {
+                scannerBuffer = '';
+            }
+            scannerBuffer += event.key;
+            lastKeyTimestamp = now;
+        });
+
+        if (limpiarEmpleadoBtn) {
+            limpiarEmpleadoBtn.addEventListener('click', function () {
+                clearEmpleado();
             });
         }
 
         var select = document.getElementById('id_maquina');
         var pills = document.querySelectorAll('#machine_selector .machine-pill');
-        if (!select || !pills.length) return;
+        if (select && pills.length) {
+            function syncFromSelect() {
+                var current = String(select.value || '');
+                pills.forEach(function (pill) {
+                    pill.classList.toggle('active', String(pill.getAttribute('data-value')) === current);
+                });
+                if (machineError && current) {
+                    machineError.style.display = 'none';
+                }
+            }
 
-        function syncFromSelect() {
-            var current = String(select.value || '');
             pills.forEach(function (pill) {
-                pill.classList.toggle('active', String(pill.getAttribute('data-value')) === current);
+                pill.addEventListener('click', function () {
+                    var value = pill.getAttribute('data-value');
+                    select.value = value;
+                    syncFromSelect();
+                    if (machineError) machineError.style.display = 'none';
+                });
             });
+
+            syncFromSelect();
         }
 
-        pills.forEach(function (pill) {
-            pill.addEventListener('click', function () {
-                var value = pill.getAttribute('data-value');
-                select.value = value;
-                syncFromSelect();
+        if (submitBtn && successMessage && form) {
+            form.addEventListener('submit', function(e) {
+                var loteValue = loteQrInput.value;
+                var empleadoText = empleadoPreview.textContent;
+                var select = document.getElementById('id_maquina');
+                var maquinaOption = select.options[select.selectedIndex];
+                var maquinaText = maquinaOption ? maquinaOption.text : '';
+                var empleadoNombre = empleadoText.includes(' - ') ? empleadoText.split(' - ')[1] : '';
+                
+                var successText = document.getElementById('success_text');
+                if (loteValue && empleadoNombre && maquinaText) {
+                    successText.textContent = `Lote ${loteValue} guardado en ${maquinaText} a nombre de ${empleadoNombre}`;
+                }
+                
+                submitBtn.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+                setTimeout(function() {
+                    clearEmpleado();
+                    loteQrInput.value = '';
+                    if (select) {
+                        select.value = '';
+                        if (pills.length) {
+                            pills.forEach(function (pill) {
+                                pill.classList.toggle('active', false);
+                            });
+                        }
+                    }
+                    submitBtn.style.display = 'none';
+                    successMessage.style.display = 'none';
+                }, 1500);
             });
-        });
-
-        syncFromSelect();
+        }
     })();
 </script>
 
