@@ -3,14 +3,16 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
-import os
 import base64
+import os
 from django.utils import timezone
 from app.models import *
 from django.db.models import Count, Q, Max
 from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from app.utils import (
+    LABEL_HEIGHT_MM,
+    LABEL_WIDTH_MM,
     generate_lote_qr_image,
     generate_empleado_qr_image,
     delete_lote_qr_images,
@@ -566,10 +568,17 @@ class ListaLotes(ListView):
         return ctx
 
 
+# =====================================================================
+#  IMPRIMIR QRs — Vista previa con boton manual de impresion
+# =====================================================================
+
 @login_required
 def lotes_imprimir_qrs(request, orden_pk, pk):
+    """Renderiza una vista previa de QRs para imprimirlos manualmente."""
     try:
-        pedido = Pedido.objects.select_related('idordenpedido', 'idmodelo').get(pk=pk, idordenpedido_id=orden_pk)
+        pedido = Pedido.objects.select_related('idordenpedido', 'idmodelo').get(
+            pk=pk, idordenpedido_id=orden_pk
+        )
     except Pedido.DoesNotExist:
         messages.error(request, 'No se encontró el pedido para imprimir QRs.')
         return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
@@ -580,28 +589,32 @@ def lotes_imprimir_qrs(request, orden_pk, pk):
         pedido.color,
     )
 
-    qr_images = []
-    if qr_folder.exists() and qr_folder.is_dir():
-        for image_path in sorted(qr_folder.glob('*.png')):
-            try:
-                with open(image_path, 'rb') as image_file:
-                    encoded = base64.b64encode(image_file.read()).decode('utf-8')
-                qr_images.append({
-                    'name': image_path.name,
-                    'data': encoded,
-                })
-            except Exception:
-                continue
-
-    if not qr_images:
+    if not qr_folder.exists() or not qr_folder.is_dir():
         messages.warning(request, 'No se encontraron imágenes QR para este pedido.')
         return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
 
-    return render(request, 'administrador/catalogos/imprimirQrs.html', {
-        'pedido': pedido,
-        'qr_images': qr_images,
-        'orden_pk': orden_pk,
-    })
+    image_paths = sorted(qr_folder.glob('*.png'))
+    if not image_paths:
+        messages.warning(request, 'No se encontraron imágenes QR para este pedido.')
+        return redirect('listaLotes', orden_pk=orden_pk, pk=pk)
+
+    qr_images = []
+    for image_path in image_paths:
+        with open(image_path, 'rb') as image_file:
+            image_b64 = base64.b64encode(image_file.read()).decode('ascii')
+        qr_images.append({'name': image_path.name, 'data': image_b64})
+
+    return render(
+        request,
+        'administrador/catalogos/imprimirQrs.html',
+        {
+            'pedido': pedido,
+            'orden_pk': orden_pk,
+            'qr_images': qr_images,
+            'label_width_mm': LABEL_WIDTH_MM,
+            'label_height_mm': LABEL_HEIGHT_MM,
+        },
+    )
 
 
 @login_required
@@ -644,7 +657,7 @@ class CrearEmpleado(CreateView):
         try:
             generate_empleado_qr_image(self.object)
         except Exception as e:
-            print(f"Error generando QR de empleado {self.object.idempleado}: {e}")
+            print(f"Error generando QR de empleado {self.object.idemplead   o}: {e}")
         return response
 
 class ActualizarEmpleado(UpdateView):
