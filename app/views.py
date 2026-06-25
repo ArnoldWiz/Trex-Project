@@ -657,7 +657,7 @@ class CrearEmpleado(CreateView):
         try:
             generate_empleado_qr_image(self.object)
         except Exception as e:
-            print(f"Error generando QR de empleado {self.object.idemplead   o}: {e}")
+            print(f"Error generando QR de empleado {self.object.idempleado}: {e}")
         return response
 
 class ActualizarEmpleado(UpdateView):
