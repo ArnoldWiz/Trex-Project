@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte - Tiempo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/reportes.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="reporte-tiempo" style="padding:1rem">
+  <h2>Reporte — Tiempo (Lotes)</h2>
+  <style>
+    table.table { width:100%; border-collapse: separate; border-spacing: 8px 6px; }
+    table.table th, table.table td { padding: 8px 12px; vertical-align: top; }
+    .filtros-reporte label { display:flex; gap:.4rem; align-items:center; }
+    .table-responsive { overflow-x:auto; }
+  </style>
+  <form method="get" class="filtros-reporte" style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+    <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
+    <label>Desde: <input type="date" name="fecha_from" value="{{ filters.fecha_from }}"></label>
+    <label>Hasta: <input type="date" name="fecha_to" value="{{ filters.fecha_to }}"></label>
+    <label>Estado:
+      <select name="estado">
+        <option value="todo" {% if filters.estado == 'todo' %}selected{% endif %}>Todo</option>
+        <option value="completado" {% if filters.estado == 'completado' %}selected{% endif %}>Completados</option>
+        <option value="pendiente" {% if filters.estado == 'pendiente' %}selected{% endif %}>Pendientes</option>
+      </select>
+    </label>
+    <label>Orden: <input type="text" name="orden" placeholder="Número de orden" value="{{ filters.orden }}"></label>
+    <button class="btn btn-primary" type="submit">Aplicar</button>
+    <a class="btn btn-secondary" href="{% url 'reportes_tiempo' %}">Limpiar</a>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=idlote&dir={% if filters.sort == 'idlote' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">ID Lote {% if filters.sort == 'idlote' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=idpedido&dir={% if filters.sort == 'idpedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">ID Pedido {% if filters.sort == 'idpedido' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=orden&dir={% if filters.sort == 'orden' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Orden {% if filters.sort == 'orden' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=cliente&dir={% if filters.sort == 'cliente' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Cliente {% if filters.sort == 'cliente' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=cantidad&dir={% if filters.sort == 'cantidad' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Cantidad {% if filters.sort == 'cantidad' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=tejido&dir={% if filters.sort == 'tejido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Tejido {% if filters.sort == 'tejido' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=plancha&dir={% if filters.sort == 'plancha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Plancha Pre/Post {% if filters.sort == 'plancha' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=corte&dir={% if filters.sort == 'corte' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Corte {% if filters.sort == 'corte' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?fecha_from={{ filters.fecha_from }}&fecha_to={{ filters.fecha_to }}&estado={{ filters.estado }}&orden={{ filters.orden }}&idlote={{ filters.idlote }}&sort=empaque&dir={% if filters.sort == 'empaque' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Empaque {% if filters.sort == 'empaque' %}({{ filters.dir }}){% endif %}</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lote in lotes %}
+        <tr>
+          <td>{{ lote.idlote }}</td>
+          <td>{{ lote.idpedido.idpedido }}</td>
+          <td>{{ lote.idpedido.idordenpedido.numeroorden }}</td>
+          <td>{{ lote.idpedido.idordenpedido.idcliente.nombre }}</td>
+          <td>{{ lote.cantidad }}</td>
+          <td>{{ lote.fechatermtejido }}</td>
+          <td>{{ lote.fechatermplanchapost }}</td>
+          <td>{{ lote.fechatermcorte }}</td>
+          <td>{{ lote.fechaempa }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9">No hay lotes que coincidan con los filtros.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <div class="pagination">
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_previous %}
+      <a href="?{% if filters.fecha_from %}fecha_from={{ filters.fecha_from }}&{% endif %}{% if filters.fecha_to %}fecha_to={{ filters.fecha_to }}&{% endif %}{% if filters.estado %}estado={{ filters.estado }}&{% endif %}{% if filters.orden %}orden={{ filters.orden }}&{% endif %}{% if filters.idlote %}idlote={{ filters.idlote }}&{% endif %}{% if filters.sort %}sort={{ filters.sort }}&{% endif %}{% if filters.dir %}dir={{ filters.dir }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <a href="?{% if filters.fecha_from %}fecha_from={{ filters.fecha_from }}&{% endif %}{% if filters.fecha_to %}fecha_to={{ filters.fecha_to }}&{% endif %}{% if filters.estado %}estado={{ filters.estado }}&{% endif %}{% if filters.orden %}orden={{ filters.orden }}&{% endif %}{% if filters.idlote %}idlote={{ filters.idlote }}&{% endif %}{% if filters.sort %}sort={{ filters.sort }}&{% endif %}{% if filters.dir %}dir={{ filters.dir }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+{% block regresar %}
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% endblock %}

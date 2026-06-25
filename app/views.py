@@ -737,6 +737,79 @@ class ActualizarCliente(UpdateView):
         ctx = super().get_context_data(**kwargs)
         return ctx
 
+
+# Reportes - Tiempo (lista de lotes con filtros)
+class ListaTiempo(ListView):
+    model = Lote
+    template_name = 'administrador/tiempo_lista_lotes.html'
+    context_object_name = 'lotes'
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = Lote.objects.select_related('idpedido__idordenpedido', 'idpedido__idordenpedido__idcliente')
+        params = self.request.GET
+        fecha_from = params.get('fecha_from')
+        fecha_to = params.get('fecha_to')
+        estado = params.get('estado')
+        orden = params.get('orden')
+        idlote = params.get('idlote')
+        sort = params.get('sort')
+        direction = params.get('dir')
+
+        if fecha_from:
+            qs = qs.filter(fechaempa__date__gte=fecha_from)
+        if fecha_to:
+            qs = qs.filter(fechaempa__date__lte=fecha_to)
+        if estado == 'completado':
+            qs = qs.filter(fechaempa__isnull=False)
+        elif estado == 'pendiente':
+            qs = qs.filter(fechaempa__isnull=True)
+        if orden:
+            qs = qs.filter(idpedido__idordenpedido__numeroorden__icontains=orden)
+        if idlote:
+            try:
+                qs = qs.filter(idlote=int(idlote))
+            except ValueError:
+                qs = qs.filter(idlote__icontains=idlote)
+
+        # Ordenamiento seguro: mapear campos permitidos a nombres de modelo
+        sort_map = {
+            'idlote': 'idlote',
+            'idpedido': 'idpedido__idpedido',
+            'orden': 'idpedido__idordenpedido__numeroorden',
+            'cliente': 'idpedido__idordenpedido__idcliente__nombre',
+            'cantidad': 'cantidad',
+            'tejido': 'fechatermtejido',
+            'plancha': 'fechatermplanchapost',
+            'corte': 'fechatermcorte',
+            'empaque': 'fechaempa',
+        }
+
+        order_field = sort_map.get(sort, '-idlote')
+        if sort in sort_map:
+            if direction == 'asc':
+                qs = qs.order_by(sort_map[sort])
+            else:
+                qs = qs.order_by('-' + sort_map[sort])
+        else:
+            qs = qs.order_by('-idlote')
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        params = self.request.GET
+        ctx['filters'] = {
+            'fecha_from': params.get('fecha_from', ''),
+            'fecha_to': params.get('fecha_to', ''),
+            'estado': params.get('estado', 'todo'),
+            'orden': params.get('orden', ''),
+            'idlote': params.get('idlote', ''),
+            'sort': params.get('sort', ''),
+            'dir': params.get('dir', ''),
+        }
+        return ctx
+
 #VISTAS EMPLEADOS
 
 def _validar_flujo_lote(lote, area_type):
