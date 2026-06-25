@@ -4,6 +4,48 @@
 {% block title %}Reportes{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/reportes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="reportes-wrapper">
+  <div class="cards-grid">
+    <div class="card">
+      <h1>TIEMPO</h1>
+      <p>Gestión por tiempo.</p>
+      </a>
+    </div>
+    <div class="card"><a href="{% url 'empleados' %}">
+      <h1>EMPLEADOS</h1>
+      <p>Lista y administración.</p>
+      </a>
+    </div>
+    <div class="card"><a href="{% url 'maquinas' %}">
+      <h1>MÁQUINAS</h1>
+      <p>Control de máquinas.</p>
+      </a>
+    </div>
+    <div class="card">
+      <h1>ÁREAS</h1>
+      <p>Control por áreas.</p>
+    </a>
+    </div>
+    
+  </div>
+</div>
+
+{% endblock %}
+{% block regresar %}
+<li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% endblock %}
+
+
+{% comment %} {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reportes{% endblock %}
+
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/homeAdmin.css' %}">
 
 {% endblock %}
@@ -63,4 +105,4 @@
     const SOLO_LECTURA = true;
 </script>
 <script src="{% static 'js/administrador/reportes.js' %}"></script>
-{% endblock %}
+{% endblock %} {% endcomment %}
