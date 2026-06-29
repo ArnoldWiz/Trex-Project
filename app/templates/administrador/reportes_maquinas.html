@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte - Maquinas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/reportes.css' %}">
+<link rel="stylesheet" href="{% static 'css/administrador/reportes_listados.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="reporte-listado" style="padding:1rem">
+  <h2>Reporte - Maquinas y Lotes</h2>
+
+  <form method="get" class="filtros-reporte" style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="sort" value="{{ filters.sort }}">
+    <input type="hidden" name="dir" value="{{ filters.dir }}">
+    <label>Maquina: <input type="text" name="maquina" placeholder="Buscar por ID, area o numero" value="{{ filters.maquina }}"></label>
+    <label>Area: <input type="text" name="area" placeholder="Ej. Tejido" value="{{ filters.area }}"></label>
+    <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
+    <button class="btn btn-primary" type="submit">Aplicar</button>
+    <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
+    <a class="btn btn-secondary" href="{% url 'reportes_maquinas' %}">Limpiar</a>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=maquina&dir={% if filters.sort == 'maquina' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Maquina {% if filters.sort == 'maquina' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=numero&dir={% if filters.sort == 'numero' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Numero {% if filters.sort == 'numero' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=area&dir={% if filters.sort == 'area' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Area {% if filters.sort == 'area' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=lote&dir={% if filters.sort == 'lote' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Lote {% if filters.sort == 'lote' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=pedido&dir={% if filters.sort == 'pedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Pedido {% if filters.sort == 'pedido' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=orden&dir={% if filters.sort == 'orden' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Orden {% if filters.sort == 'orden' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=fecha&dir={% if filters.sort == 'fecha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Fecha {% if filters.sort == 'fecha' %}({{ filters.dir }}){% endif %}</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for registro in registros %}
+        <tr>
+          <td>{{ registro.maquina_id }}</td>
+          <td>{{ registro.maquina_numero }}</td>
+          <td>{{ registro.area_label }}</td>
+          <td>{{ registro.lote_id }}</td>
+          <td>{{ registro.pedido_id }}</td>
+          <td>{{ registro.orden_numero }}</td>
+          <td>{{ registro.fecha_registro|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No hay registros que coincidan con los filtros.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <div class="pagination">
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_previous %}
+      <a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort={{ filters.sort }}&dir={{ filters.dir }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort={{ filters.sort }}&dir={{ filters.dir }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block regresar %}
+<li><a href="{% url 'reportes' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% endblock %}

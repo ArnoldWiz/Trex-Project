@@ -13,9 +13,12 @@
   <h2>Reporte - Empleados y Lotes</h2>
 
   <form method="get" class="filtros-reporte" style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="sort" value="{{ filters.sort }}">
+    <input type="hidden" name="dir" value="{{ filters.dir }}">
     <label>Empleado: <input type="text" name="empleado" placeholder="Buscar por nombre o ID" value="{{ filters.empleado }}"></label>
     <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
     <button class="btn btn-primary" type="submit">Aplicar</button>
+    <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
     <a class="btn btn-secondary" href="{% url 'reportes_empleados' %}">Limpiar</a>
   </form>
 

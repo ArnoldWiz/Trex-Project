@@ -1,9 +1,11 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 import base64
+import csv
 import os
 from django.utils import timezone
 from app.models import *
@@ -100,6 +102,26 @@ def _calcular_lotes_por_cantidad(cantidad_total, division_lote=10, redondear=Tru
         lotes.append(residuo)
 
     return lotes
+
+
+def _csv_value(value):
+    if value is None:
+        return ''
+    if hasattr(value, 'strftime'):
+        return value.strftime('%Y-%m-%d %H:%M:%S')
+    return str(value)
+
+
+def _build_csv_response(filename, headers, rows):
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    # BOM para que Excel abra acentos correctamente.
+    response.write('\ufeff')
+    writer = csv.writer(response)
+    writer.writerow(headers)
+    for row in rows:
+        writer.writerow([_csv_value(item) for item in row])
+    return response
 
 
 def _obtener_registros_recientes_area(area_type: str, limite: int = 10):
@@ -745,6 +767,30 @@ class ListaTiempo(ListView):
     context_object_name = 'lotes'
     paginate_by = 25
 
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('export') == 'csv':
+            lotes = self.get_queryset()
+            rows = [
+                [
+                    lote.idlote,
+                    lote.idpedido.idpedido if lote.idpedido_id else '',
+                    lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
+                    lote.idpedido.idordenpedido.idcliente.nombre if lote.idpedido_id and lote.idpedido.idordenpedido_id and lote.idpedido.idordenpedido.idcliente_id else '',
+                    lote.cantidad,
+                    lote.fechatermtejido,
+                    lote.fechatermplanchapost,
+                    lote.fechatermcorte,
+                    lote.fechaempa,
+                ]
+                for lote in lotes
+            ]
+            return _build_csv_response(
+                'reporte_tiempo.csv',
+                ['ID Lote', 'ID Pedido', 'Orden', 'Cliente', 'Cantidad', 'Tejido', 'Plancha Pre/Post', 'Corte', 'Empaque'],
+                rows,
+            )
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = Lote.objects.select_related('idpedido__idordenpedido', 'idpedido__idordenpedido__idcliente')
         params = self.request.GET
@@ -815,6 +861,28 @@ class ListaEmpleadosLotes(ListView):
     template_name = 'administrador/reportes_empleados.html'
     context_object_name = 'registros'
     paginate_by = 25
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('export') == 'csv':
+            registros = self.get_queryset()
+            rows = [
+                [
+                    registro.get('empleado_id', ''),
+                    registro.get('empleado_nombre', ''),
+                    registro.get('lote_id', ''),
+                    registro.get('pedido_id', ''),
+                    registro.get('orden_numero', ''),
+                    registro.get('area_label', ''),
+                    registro.get('fecha_registro', ''),
+                ]
+                for registro in registros
+            ]
+            return _build_csv_response(
+                'reporte_empleados.csv',
+                ['ID Empleado', 'Empleado', 'Lote', 'Pedido', 'Orden', 'Area', 'Fecha'],
+                rows,
+            )
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         lotes = (
@@ -894,6 +962,243 @@ class ListaEmpleadosLotes(ListView):
             'empleado': params.get('empleado', ''),
             'idlote': params.get('idlote', ''),
             'sort': params.get('sort', 'empleado'),
+            'dir': params.get('dir', 'asc'),
+        }
+        return ctx
+
+
+class ListaMaquinasLotes(ListView):
+    template_name = 'administrador/reportes_maquinas.html'
+    context_object_name = 'registros'
+    paginate_by = 25
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('export') == 'csv':
+            registros = self.get_queryset()
+            rows = [
+                [
+                    registro.get('maquina_id', ''),
+                    registro.get('maquina_numero', ''),
+                    registro.get('area_label', ''),
+                    registro.get('lote_id', ''),
+                    registro.get('pedido_id', ''),
+                    registro.get('orden_numero', ''),
+                    registro.get('fecha_registro', ''),
+                ]
+                for registro in registros
+            ]
+            return _build_csv_response(
+                'reporte_maquinas.csv',
+                ['ID Maquina', 'Numero', 'Area', 'Lote', 'Pedido', 'Orden', 'Fecha'],
+                rows,
+            )
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        lotes = (
+            Lote.objects
+            .select_related(
+                'idpedido__idordenpedido',
+                'idmqutejido',
+                'idmaqplancha',
+                'idmaqcorte',
+            )
+            .order_by('idlote')
+        )
+
+        maquina_busqueda = (self.request.GET.get('maquina') or '').strip().lower()
+        idlote_busqueda = (self.request.GET.get('idlote') or '').strip()
+        area_busqueda = (self.request.GET.get('area') or '').strip().lower()
+        sort = (self.request.GET.get('sort') or 'maquina').strip()
+        direction = (self.request.GET.get('dir') or 'asc').strip()
+
+        registros = []
+        for lote in lotes:
+            etapas = [
+                ('Tejido', lote.idmqutejido, lote.fechatermtejido),
+                ('Plancha', lote.idmaqplancha, lote.fechatermplanchapost),
+                ('Corte', lote.idmaqcorte, lote.fechatermcorte),
+            ]
+
+            for area_label, maquina_obj, fecha_registro in etapas:
+                if not maquina_obj:
+                    continue
+
+                maquina_texto = f"{maquina_obj.idmaquina} {maquina_obj.area} {maquina_obj.numero}".lower()
+                if maquina_busqueda and maquina_busqueda not in maquina_texto:
+                    continue
+
+                if area_busqueda and area_busqueda not in area_label.lower():
+                    continue
+
+                if idlote_busqueda:
+                    try:
+                        if int(idlote_busqueda) != lote.idlote:
+                            continue
+                    except ValueError:
+                        if idlote_busqueda.lower() not in str(lote.idlote).lower():
+                            continue
+
+                registros.append({
+                    'maquina_id': maquina_obj.idmaquina,
+                    'maquina_area': maquina_obj.area,
+                    'maquina_numero': maquina_obj.numero,
+                    'lote_id': lote.idlote,
+                    'pedido_id': lote.idpedido.idpedido if lote.idpedido_id else '',
+                    'orden_numero': lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
+                    'area_label': area_label,
+                    'fecha_registro': fecha_registro,
+                })
+
+        sort_map = {
+            'maquina': 'maquina_id',
+            'numero': 'maquina_numero',
+            'area': 'area_label',
+            'lote': 'lote_id',
+            'pedido': 'pedido_id',
+            'orden': 'orden_numero',
+            'fecha': 'fecha_registro',
+        }
+        sort_key = sort_map.get(sort, 'maquina_id')
+        reverse = direction != 'asc'
+        registros.sort(key=lambda item: (item.get(sort_key) is None, item.get(sort_key)), reverse=reverse)
+        return registros
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        params = self.request.GET
+        ctx['filters'] = {
+            'maquina': params.get('maquina', ''),
+            'area': params.get('area', ''),
+            'idlote': params.get('idlote', ''),
+            'sort': params.get('sort', 'maquina'),
+            'dir': params.get('dir', 'asc'),
+        }
+        return ctx
+
+
+class ListaAreasLotes(ListView):
+    template_name = 'administrador/reportes_areas.html'
+    context_object_name = 'registros'
+    paginate_by = 25
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('export') == 'csv':
+            registros = self.get_queryset()
+            rows = [
+                [
+                    registro.get('area_label', ''),
+                    registro.get('empleado_id', ''),
+                    registro.get('empleado_nombre', ''),
+                    registro.get('lote_id', ''),
+                    registro.get('maquina_texto', ''),
+                    registro.get('pedido_id', ''),
+                    registro.get('orden_numero', ''),
+                    registro.get('fecha_registro', ''),
+                ]
+                for registro in registros
+            ]
+            return _build_csv_response(
+                'reporte_areas.csv',
+                ['Area', 'ID Empleado', 'Empleado', 'Lote', 'Maquina', 'Pedido', 'Orden', 'Fecha'],
+                rows,
+            )
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        lotes = (
+            Lote.objects
+            .select_related(
+                'idpedido__idordenpedido',
+                'idemptejido',
+                'idempplanchapre',
+                'idempplanchapost',
+                'idempcorte',
+                'idmqutejido',
+                'idmaqplancha',
+                'idmaqcorte',
+            )
+            .order_by('idlote')
+        )
+
+        area_busqueda = (self.request.GET.get('area') or '').strip().lower()
+        empleado_busqueda = (self.request.GET.get('empleado') or '').strip().lower()
+        idlote_busqueda = (self.request.GET.get('idlote') or '').strip()
+        sort = (self.request.GET.get('sort') or 'area').strip()
+        direction = (self.request.GET.get('dir') or 'asc').strip()
+
+        registros = []
+        for lote in lotes:
+            etapas = [
+                ('Tejido', lote.idemptejido, lote.idmqutejido, lote.fechatermtejido),
+                ('Plancha Pre', lote.idempplanchapre, lote.idmaqplancha, lote.fechatermplanchapre),
+                ('Plancha Post', lote.idempplanchapost, lote.idmaqplancha, lote.fechatermplanchapost),
+                ('Corte', lote.idempcorte, lote.idmaqcorte, lote.fechatermcorte),
+                ('Empaquetado', None, None, lote.fechaempa),
+            ]
+
+            for area_label, empleado_obj, maquina_obj, fecha_registro in etapas:
+                if fecha_registro is None and empleado_obj is None and maquina_obj is None:
+                    continue
+
+                if area_busqueda and area_busqueda not in area_label.lower():
+                    continue
+
+                empleado_nombre = ''
+                empleado_id = ''
+                if empleado_obj:
+                    empleado_id = empleado_obj.idempleado
+                    empleado_nombre = f"{empleado_obj.nombre} {empleado_obj.apellidos}".strip()
+
+                if empleado_busqueda:
+                    texto_empleado = f"{empleado_id} {empleado_nombre}".lower()
+                    if empleado_busqueda not in texto_empleado:
+                        continue
+
+                if idlote_busqueda:
+                    try:
+                        if int(idlote_busqueda) != lote.idlote:
+                            continue
+                    except ValueError:
+                        if idlote_busqueda.lower() not in str(lote.idlote).lower():
+                            continue
+
+                maquina_texto = ''
+                if maquina_obj:
+                    maquina_texto = f"{maquina_obj.idmaquina} ({maquina_obj.area} #{maquina_obj.numero})"
+
+                registros.append({
+                    'area_label': area_label,
+                    'empleado_id': empleado_id,
+                    'empleado_nombre': empleado_nombre,
+                    'maquina_texto': maquina_texto,
+                    'lote_id': lote.idlote,
+                    'pedido_id': lote.idpedido.idpedido if lote.idpedido_id else '',
+                    'orden_numero': lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
+                    'fecha_registro': fecha_registro,
+                })
+
+        sort_map = {
+            'area': 'area_label',
+            'empleado': 'empleado_nombre',
+            'lote': 'lote_id',
+            'pedido': 'pedido_id',
+            'orden': 'orden_numero',
+            'fecha': 'fecha_registro',
+        }
+        sort_key = sort_map.get(sort, 'area_label')
+        reverse = direction != 'asc'
+        registros.sort(key=lambda item: (item.get(sort_key) is None, item.get(sort_key)), reverse=reverse)
+        return registros
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        params = self.request.GET
+        ctx['filters'] = {
+            'area': params.get('area', ''),
+            'empleado': params.get('empleado', ''),
+            'idlote': params.get('idlote', ''),
+            'sort': params.get('sort', 'area'),
             'dir': params.get('dir', 'asc'),
         }
         return ctx

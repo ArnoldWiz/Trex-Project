@@ -17,6 +17,8 @@
     .table-responsive { overflow-x:auto; }
   </style>
   <form method="get" class="filtros-reporte" style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="sort" value="{{ filters.sort }}">
+    <input type="hidden" name="dir" value="{{ filters.dir }}">
     <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
     <label>Desde: <input type="date" name="fecha_from" value="{{ filters.fecha_from }}"></label>
     <label>Hasta: <input type="date" name="fecha_to" value="{{ filters.fecha_to }}"></label>
@@ -29,6 +31,7 @@
     </label>
     <label>Orden: <input type="text" name="orden" placeholder="Número de orden" value="{{ filters.orden }}"></label>
     <button class="btn btn-primary" type="submit">Aplicar</button>
+    <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
     <a class="btn btn-secondary" href="{% url 'reportes_tiempo' %}">Limpiar</a>
   </form>
 

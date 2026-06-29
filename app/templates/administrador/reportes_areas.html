@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reporte - Areas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/administrador/reportes.css' %}">
+<link rel="stylesheet" href="{% static 'css/administrador/reportes_listados.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="reporte-listado" style="padding:1rem">
+  <h2>Reporte - Areas</h2>
+
+  <form method="get" class="filtros-reporte" style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="sort" value="{{ filters.sort }}">
+    <input type="hidden" name="dir" value="{{ filters.dir }}">
+    <label>Area: <input type="text" name="area" placeholder="Buscar area" value="{{ filters.area }}"></label>
+    <label>Empleado: <input type="text" name="empleado" placeholder="Buscar empleado" value="{{ filters.empleado }}"></label>
+    <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
+    <button class="btn btn-primary" type="submit">Aplicar</button>
+    <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
+    <a class="btn btn-secondary" href="{% url 'reportes_areas' %}">Limpiar</a>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=area&dir={% if filters.sort == 'area' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Area {% if filters.sort == 'area' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=empleado&dir={% if filters.sort == 'empleado' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Empleado {% if filters.sort == 'empleado' %}({{ filters.dir }}){% endif %}</a></th>
+          <th>Lote</th>
+          <th>Maquina</th>
+          <th><a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=pedido&dir={% if filters.sort == 'pedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Pedido {% if filters.sort == 'pedido' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=orden&dir={% if filters.sort == 'orden' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Orden {% if filters.sort == 'orden' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=fecha&dir={% if filters.sort == 'fecha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Fecha {% if filters.sort == 'fecha' %}({{ filters.dir }}){% endif %}</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for registro in registros %}
+        <tr>
+          <td>{{ registro.area_label }}</td>
+          <td>{% if registro.empleado_id %}{{ registro.empleado_id }} - {{ registro.empleado_nombre }}{% else %}-{% endif %}</td>
+          <td>{{ registro.lote_id }}</td>
+          <td>{{ registro.maquina_texto|default:"-" }}</td>
+          <td>{{ registro.pedido_id }}</td>
+          <td>{{ registro.orden_numero }}</td>
+          <td>{{ registro.fecha_registro|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No hay registros que coincidan con los filtros.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <div class="pagination">
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_previous %}
+      <a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort={{ filters.sort }}&dir={{ filters.dir }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <a href="?area={{ filters.area|urlencode }}&empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort={{ filters.sort }}&dir={{ filters.dir }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block regresar %}
+<li><a href="{% url 'reportes' %}"><i class="fa-solid fa-folder-open"></i> Regresar</a></li>
+{% endblock %}

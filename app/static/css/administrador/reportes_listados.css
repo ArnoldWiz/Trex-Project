@@ -1,0 +1,129 @@
+.reporte-listado {
+  --bg: #f6f8fb;
+  --panel: #ffffff;
+  --border: #d9e2ec;
+  --text: #102a43;
+  --muted: #627d98;
+  --accent: #1d4ed8;
+  --accent-soft: rgba(29, 78, 216, 0.08);
+  --accent-strong: #0f3db8;
+  color: var(--text);
+  background: linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
+  border: 1px solid #dde6ef;
+  border-radius: 1rem;
+  box-shadow: 0 0.4rem 1.2rem rgba(15, 23, 42, 0.06);
+}
+
+.reporte-listado h2 {
+  margin: 0 0 1rem;
+  color: var(--text);
+}
+
+.reporte-listado .filtros-reporte {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 0.15rem 0.6rem rgba(15, 23, 42, 0.04);
+}
+
+.reporte-listado .filtros-reporte label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.reporte-listado .filtros-reporte input {
+  min-width: 13rem;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.55rem;
+  color: var(--text);
+  padding: 0.55rem 0.75rem;
+}
+
+.reporte-listado .filtros-reporte input::placeholder {
+  color: #94a3b8;
+}
+
+.reporte-listado .btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.reporte-listado .btn-primary:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.reporte-listado .btn-secondary {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: var(--text);
+}
+
+.reporte-listado .btn-secondary:hover {
+  background: #dbe4ee;
+  border-color: #b8c7d6;
+}
+
+.reporte-listado .table-responsive {
+  margin-top: 1rem;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 0.15rem 0.6rem rgba(15, 23, 42, 0.04);
+}
+
+.reporte-listado table.table {
+  margin-bottom: 0;
+  background: var(--panel);
+}
+
+.reporte-listado table.table thead th {
+  background: #f1f5f9;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+}
+
+.reporte-listado table.table thead th a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.reporte-listado table.table thead th a:hover {
+  color: var(--accent);
+}
+
+.reporte-listado table.table tbody td {
+  color: var(--text);
+  border-top: 1px solid #edf2f7;
+}
+
+.reporte-listado table.table tbody tr:nth-child(even) {
+  background: #f8fbff;
+}
+
+.reporte-listado table.table tbody tr:hover {
+  background: var(--accent-soft);
+}
+
+.reporte-listado .pagination {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--muted);
+}
+
+.reporte-listado .pagination a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reporte-listado .pagination a:hover {
+  text-decoration: underline;
+}
