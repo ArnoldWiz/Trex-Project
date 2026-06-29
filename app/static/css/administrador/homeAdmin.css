@@ -8,7 +8,6 @@
 body {
   font-family: 'Arial', sans-serif;  background-color: rgb(235, 237, 238);
   color: #333;
-  padding-right: 78px;
 }
 
 /* Asegurar que navbar no sea afectado */
@@ -18,6 +17,10 @@ body {
   right: 0;
   width: 100%;
   z-index: 1000;
+}
+
+.sidebar {
+  display: none !important;
 }
 
 /* --- Contenedor Principal (Layout) --- */
@@ -132,7 +135,7 @@ body {
 }
 
 .menu-opt p {
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #2A388F;
   text-align: center;

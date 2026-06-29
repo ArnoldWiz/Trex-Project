@@ -154,47 +154,32 @@ button{
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
-.sidebar {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 78px; 
-  height: 100vh;
-  background-color: rgb(235, 237, 238);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 90px;
-  box-shadow: -2px 0 8px #2A388F;
-  z-index: 900;
+.reg {
+  width: 200px;
+  padding-top: 20px;
 }
-.sidebar ul {
+
+.reg li {
   list-style: none;
-  margin: 0;
-  padding: 7.5rem 0;
-  width: 100%;
-}
-.sidebar li {
+  list-style-type: none;
   width: 100%;
   text-align: center;
-  margin: 15px 0;
-  padding-bottom: 50px;
-  height: 13px;
+  padding-bottom: 20px;
+  height: auto;
 }
-.sidebar a {
+.navbar .reg ul li a {
   color: #222;
-  text-decoration: none;
-  font-size: 1rem;
+  text-decoration: none !important;
+  font-size: 1.3rem;
   display: block;
   padding: 12px 0;
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.sidebar i {
+.reg i {
   display: block;
   color: #BF1E2E;
-  font-size: 1rem;
+  font-size: 1.3rem;
   margin-bottom: 5px;
 }
 
