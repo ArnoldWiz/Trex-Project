@@ -810,6 +810,94 @@ class ListaTiempo(ListView):
         }
         return ctx
 
+
+class ListaEmpleadosLotes(ListView):
+    template_name = 'administrador/reportes_empleados.html'
+    context_object_name = 'registros'
+    paginate_by = 25
+
+    def get_queryset(self):
+        lotes = (
+            Lote.objects
+            .select_related(
+                'idpedido__idordenpedido',
+                'idpedido__idordenpedido__idcliente',
+                'idemptejido',
+                'idempplanchapre',
+                'idempplanchapost',
+                'idempcorte',
+            )
+            .order_by('idlote')
+        )
+
+        empleado_busqueda = (self.request.GET.get('empleado') or '').strip().lower()
+        idlote_busqueda = (self.request.GET.get('idlote') or '').strip()
+        sort = (self.request.GET.get('sort') or 'empleado').strip()
+        direction = (self.request.GET.get('dir') or 'asc').strip()
+
+        registros = []
+        for lote in lotes:
+            etapas = [
+                ('tejido', 'Tejido', lote.idemptejido, lote.fechatermtejido),
+                ('plancha_pre', 'Plancha Pre', lote.idempplanchapre, lote.fechatermplanchapre),
+                ('plancha_post', 'Plancha Post', lote.idempplanchapost, lote.fechatermplanchapost),
+                ('corte', 'Corte', lote.idempcorte, lote.fechatermcorte),
+            ]
+
+            for etapa_codigo, etapa_label, empleado_obj, fecha_registro in etapas:
+                if not empleado_obj:
+                    continue
+
+                nombre_empleado = f"{empleado_obj.nombre} {empleado_obj.apellidos}".strip()
+                if empleado_busqueda:
+                    texto_busqueda = f"{empleado_obj.idempleado} {nombre_empleado}".lower()
+                    if empleado_busqueda not in texto_busqueda:
+                        continue
+
+                if idlote_busqueda:
+                    try:
+                        if int(idlote_busqueda) != lote.idlote:
+                            continue
+                    except ValueError:
+                        if idlote_busqueda.lower() not in str(lote.idlote).lower():
+                            continue
+
+                registros.append({
+                    'empleado_id': empleado_obj.idempleado,
+                    'empleado_nombre': nombre_empleado,
+                    'lote_id': lote.idlote,
+                    'pedido_id': lote.idpedido.idpedido if lote.idpedido_id else '',
+                    'orden_numero': lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
+                    'cliente_nombre': lote.idpedido.idordenpedido.idcliente.nombre if lote.idpedido_id and lote.idpedido.idordenpedido_id and lote.idpedido.idordenpedido.idcliente_id else '',
+                    'area_codigo': etapa_codigo,
+                    'area_label': etapa_label,
+                    'fecha_registro': fecha_registro,
+                })
+
+        sort_map = {
+            'empleado': 'empleado_nombre',
+            'lote': 'lote_id',
+            'pedido': 'pedido_id',
+            'orden': 'orden_numero',
+            'area': 'area_label',
+            'fecha': 'fecha_registro',
+        }
+        sort_key = sort_map.get(sort, 'empleado_nombre')
+        reverse = direction != 'asc'
+        registros.sort(key=lambda item: (item.get(sort_key) is None, item.get(sort_key)), reverse=reverse)
+        return registros
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        params = self.request.GET
+        ctx['filters'] = {
+            'empleado': params.get('empleado', ''),
+            'idlote': params.get('idlote', ''),
+            'sort': params.get('sort', 'empleado'),
+            'dir': params.get('dir', 'asc'),
+        }
+        return ctx
+
 #VISTAS EMPLEADOS
 
 def _validar_flujo_lote(lote, area_type):

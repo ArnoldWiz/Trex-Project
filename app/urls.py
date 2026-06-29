@@ -48,6 +48,7 @@ urlpatterns = [
     path('administrador/lotes/', lotes, name='lotes'),
     path('administrador/reportes/', reportes, name='reportes'),
     path('administrador/reportes/tiempo/', ListaTiempo.as_view(), name='reportes_tiempo'),
+    path('administrador/reportes/empleados/', ListaEmpleadosLotes.as_view(), name='reportes_empleados'),
 
 
     

@@ -14,11 +14,11 @@
 }
 
 .card {
-  background: #fff;
-  border: 0.1rem solid #e2e5e9;
+  background: #ffffff;
+  border: 0.1rem solid #dbe3ea;
   border-radius: 1.2rem;
   padding: 1.6rem 1.75rem 2rem;
-  box-shadow: 0 0.2rem 0.6rem #bf1e2e;
+  box-shadow: 0 0.2rem 0.7rem rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -35,8 +35,8 @@
 }
 
 .card:hover {
-  border-color: #d0d4d9;
-  box-shadow: 0 0.25rem 0.75rem rgb(255, 172, 215), 0 0.1rem 0.25rem rgba(0, 0, 0, 0.06);
+  border-color: #b8c6d3;
+  box-shadow: 0 0.35rem 1rem rgba(59, 130, 246, 0.12), 0 0.1rem 0.25rem rgba(15, 23, 42, 0.08);
   transform: translateY(-0.2rem);
   cursor: pointer;
 }
@@ -57,7 +57,7 @@
   margin: 0 0 0.75rem;
   font-size: 3vh;
   line-height: 1.4;
-  color: #4d5156;
+  color: #52606d;
 }
 
 .card-link {
@@ -66,14 +66,14 @@
   font-size: 0.9rem;
   font-weight: 500;
   text-decoration: none;
-  color: #1a73e8;
+  color: #1d4ed8;
   padding: 0.4rem 0.6rem;
   border-radius: 0.4rem;
   transition: background 0.2s;
 }
 
 .card-link:hover {
-  background: rgba(26, 115, 232, 0.08);
+  background: rgba(29, 78, 216, 0.08);
 }
 
 @media (max-width: 40rem) {
@@ -92,10 +92,10 @@
 .card {
   min-height: 13rem;
   background: #fff !important;
-  border: 0.1rem solid #e2e5e9 !important;
+  border: 0.1rem solid #dbe3ea !important;
   border-radius: 1.2rem !important;
   padding: 1.3rem 1.75rem 2rem !important;
-  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.08), 0 0 0 0.1rem rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 0.2rem 0.7rem rgba(15, 23, 42, 0.08), 0 0 0 0.1rem rgba(15, 23, 42, 0.03) !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 0.70rem !important;
