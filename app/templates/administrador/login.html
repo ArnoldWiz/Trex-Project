@@ -12,19 +12,16 @@
   <body>
   <nav class="navbar">
     <div class="navbar-container">
-    <div class="navbar-logo">
-      <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+      <div class="navbar-logo">
+        <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+      </div >
     </div>
-
-
+    <div class="reg">
+        <ul>
+          <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
+        </ul>
     </div>
   </nav>
-
-  <div class="sidebar">
-    <ul>
-        <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Regresar</a></li>
-    </ul>
-</div>
 
 <main class="page">
   <section class="center-area">

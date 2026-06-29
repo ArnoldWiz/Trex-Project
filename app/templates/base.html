@@ -17,18 +17,6 @@
 
   <nav class="navbar">
     <div class="navbar-container">
-      <div class="navbar-logo">
-        <a href="{% url 'homeAdmin' %}">
-          <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
-        </a>
-      </div>
-
-      <div class="juntar">
-  <div class="login-nav">
-    <ul>
-      <li><a href="{% url 'home' %}">Cerrar Sesión</a></li>
-    </ul>
-  </div>
 
       <ul class="nav-links">
         <li class="menu-item">
@@ -47,22 +35,27 @@
           </ul>
         </li>
       </ul>
-    </div>
+
+      <div class="navbar-logo">
+        <a href="{% url 'homeAdmin' %}">
+          <img src="{% static 'images/LOGO_TREX.jpg' %}" alt="Logo">
+        </a>
+      </div>
+      <div class="login-nav">
+        <ul>
+          <li><a href="{% url 'home' %}">Cerrar Sesión</a></li>
+        </ul>
+      </div>
   </nav>
-
   <div class="sidebar">
-  <ul>
-    {% block regresar %}{% endblock %}
-  </ul>
-  
-  {% block optBarra %}{% endblock %}
-</div>
-
-
+    <ul>
+      {% block regresar %}{% endblock %}
+    </ul>
+    {% block optBarra %}{% endblock %}
+  </div>
   <main class="page">
     {% block content %}{% endblock %}
   </main>
-
   {% block extra_js %}{% endblock %}
 </body>
 </html>
