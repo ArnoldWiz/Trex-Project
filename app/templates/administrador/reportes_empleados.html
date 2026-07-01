@@ -19,33 +19,41 @@
     <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
     <button class="btn btn-primary" type="submit">Aplicar</button>
     <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
-    <a class="btn btn-secondary" href="{% url 'reportes_empleados' %}">Limpiar</a>
+    <button class="btn btn-secondary" type="button" onclick="window.location.href='{% url 'reportes_empleados' %}'">Limpiar</button>
   </form>
 
   <div class="table-responsive">
-    <table class="table table-striped">
+    <table class="table table-striped" style="text-align:center;">
       <thead>
         <tr>
-          <th><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=empleado&dir={% if filters.sort == 'empleado' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Empleado {% if filters.sort == 'empleado' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=lote&dir={% if filters.sort == 'lote' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Lote {% if filters.sort == 'lote' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=pedido&dir={% if filters.sort == 'pedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Pedido {% if filters.sort == 'pedido' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=orden&dir={% if filters.sort == 'orden' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Orden {% if filters.sort == 'orden' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=area&dir={% if filters.sort == 'area' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Área {% if filters.sort == 'area' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=fecha&dir={% if filters.sort == 'fecha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Fecha {% if filters.sort == 'fecha' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;">ID Empleado</th>
+          <th style="text-align:center !important;"><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=empleado&dir={% if filters.sort == 'empleado' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Nombre Empleado {% if filters.sort == 'empleado' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;"><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=lote&dir={% if filters.sort == 'lote' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Lote # {% if filters.sort == 'lote' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;"><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=pedido&dir={% if filters.sort == 'pedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Pedido (Modelo - Color) {% if filters.sort == 'pedido' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;"><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=orden&dir={% if filters.sort == 'orden' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Orden {% if filters.sort == 'orden' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;"><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=area&dir={% if filters.sort == 'area' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Área {% if filters.sort == 'area' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;"><a href="?empleado={{ filters.empleado|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=fecha&dir={% if filters.sort == 'fecha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Hora {% if filters.sort == 'fecha' %}({{ filters.dir }}){% endif %}</a></th>
+          <th style="text-align:center !important;">Día</th>
+          <th style="text-align:center !important;">Mes</th>
+          <th style="text-align:center !important;">Año</th>
         </tr>
       </thead>
       <tbody>
         {% for registro in registros %}
         <tr>
-          <td>{{ registro.empleado_id }} - {{ registro.empleado_nombre }}</td>
-          <td>{{ registro.lote_id }}</td>
-          <td>{{ registro.pedido_id }}</td>
-          <td>{{ registro.orden_numero }}</td>
-          <td>{{ registro.area_label }}</td>
-          <td>{{ registro.fecha_registro|default:"-" }}</td>
+          <td style="text-align:center !important;">{{ registro.empleado_id }}</td>
+          <td style="text-align:center !important;">{{ registro.empleado_nombre }}</td>
+          <td style="text-align:center !important;">{{ registro.lote_numero|default:"-" }}</td>
+          <td style="text-align:center !important;">{{ registro.pedido_display|default:"-" }}</td>
+          <td style="text-align:center !important;">{{ registro.orden_numero }}</td>
+          <td style="text-align:center !important;">{{ registro.area_label }}</td>
+          <td style="text-align:center !important;">{{ registro.fecha_hora|default:"-" }}</td>
+          <td style="text-align:center !important;">{{ registro.fecha_dia|default:"-" }}</td>
+          <td style="text-align:center !important;">{{ registro.fecha_mes|default:"-" }}</td>
+          <td style="text-align:center !important;">{{ registro.fecha_anio|default:"-" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="6">No hay registros que coincidan con los filtros.</td></tr>
+        <tr><td colspan="10" style="text-align:center !important;">No hay registros que coincidan con los filtros.</td></tr>
         {% endfor %}
       </tbody>
     </table>
