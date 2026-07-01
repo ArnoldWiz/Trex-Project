@@ -6,6 +6,20 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/reportes.css' %}">
 <link rel="stylesheet" href="{% static 'css/administrador/reportes_listados.css' %}">
+<style>
+  .reporte-listado .table-responsive table,
+  .reporte-listado .table-responsive th,
+  .reporte-listado .table-responsive td {
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+
+  .reporte-listado .table-responsive th a {
+    display: inline-block;
+    width: 100%;
+    text-align: center !important;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -20,7 +34,7 @@
     <label>ID Lote: <input type="text" name="idlote" placeholder="Buscar ID lote" value="{{ filters.idlote }}"></label>
     <button class="btn btn-primary" type="submit">Aplicar</button>
     <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
-    <a class="btn btn-secondary" href="{% url 'reportes_maquinas' %}">Limpiar</a>
+    <button class="btn btn-secondary" type="button" onclick="window.location.href='{% url 'reportes_maquinas' %}'">Limpiar</button>
   </form>
 
   <div class="table-responsive">
@@ -30,10 +44,13 @@
           <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=maquina&dir={% if filters.sort == 'maquina' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Maquina {% if filters.sort == 'maquina' %}({{ filters.dir }}){% endif %}</a></th>
           <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=numero&dir={% if filters.sort == 'numero' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Numero {% if filters.sort == 'numero' %}({{ filters.dir }}){% endif %}</a></th>
           <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=area&dir={% if filters.sort == 'area' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Area {% if filters.sort == 'area' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=lote&dir={% if filters.sort == 'lote' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Lote {% if filters.sort == 'lote' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=pedido&dir={% if filters.sort == 'pedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Pedido {% if filters.sort == 'pedido' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=lote&dir={% if filters.sort == 'lote' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Lote # {% if filters.sort == 'lote' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=pedido&dir={% if filters.sort == 'pedido' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Pedido (Modelo - Color) {% if filters.sort == 'pedido' %}({{ filters.dir }}){% endif %}</a></th>
           <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=orden&dir={% if filters.sort == 'orden' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Orden {% if filters.sort == 'orden' %}({{ filters.dir }}){% endif %}</a></th>
-          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=fecha&dir={% if filters.sort == 'fecha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Fecha {% if filters.sort == 'fecha' %}({{ filters.dir }}){% endif %}</a></th>
+          <th><a href="?maquina={{ filters.maquina|urlencode }}&area={{ filters.area|urlencode }}&idlote={{ filters.idlote|urlencode }}&sort=fecha&dir={% if filters.sort == 'fecha' and filters.dir == 'asc' %}desc{% else %}asc{% endif %}">Hora {% if filters.sort == 'fecha' %}({{ filters.dir }}){% endif %}</a></th>
+          <th>Día</th>
+          <th>Mes</th>
+          <th>Año</th>
         </tr>
       </thead>
       <tbody>
@@ -42,13 +59,16 @@
           <td>{{ registro.maquina_id }}</td>
           <td>{{ registro.maquina_numero }}</td>
           <td>{{ registro.area_label }}</td>
-          <td>{{ registro.lote_id }}</td>
-          <td>{{ registro.pedido_id }}</td>
+          <td>{{ registro.lote_numero|default:"-" }}</td>
+          <td>{{ registro.pedido_display|default:"-" }}</td>
           <td>{{ registro.orden_numero }}</td>
-          <td>{{ registro.fecha_registro|default:"-" }}</td>
+          <td>{{ registro.fecha_hora|default:"-" }}</td>
+          <td>{{ registro.fecha_dia|default:"-" }}</td>
+          <td>{{ registro.fecha_mes|default:"-" }}</td>
+          <td>{{ registro.fecha_anio|default:"-" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="7">No hay registros que coincidan con los filtros.</td></tr>
+        <tr><td colspan="10">No hay registros que coincidan con los filtros.</td></tr>
         {% endfor %}
       </tbody>
     </table>

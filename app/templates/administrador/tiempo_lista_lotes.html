@@ -5,17 +5,26 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/reportes.css' %}">
+<link rel="stylesheet" href="{% static 'css/administrador/reportes_listados.css' %}">
+<style>
+  .reporte-listado .table-responsive table,
+  .reporte-listado .table-responsive th,
+  .reporte-listado .table-responsive td {
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+
+  .reporte-listado .table-responsive th a {
+    display: inline-block;
+    width: 100%;
+    text-align: center !important;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<section class="reporte-tiempo" style="padding:1rem">
-  <h2>Reporte — Tiempo (Lotes)</h2>
-  <style>
-    table.table { width:100%; border-collapse: separate; border-spacing: 8px 6px; }
-    table.table th, table.table td { padding: 8px 12px; vertical-align: top; }
-    .filtros-reporte label { display:flex; gap:.4rem; align-items:center; }
-    .table-responsive { overflow-x:auto; }
-  </style>
+<section class="reporte-listado" style="padding:1rem">
+  <h2>Reporte - Tiempo (Lotes)</h2>
   <form method="get" class="filtros-reporte" style="margin-bottom:1rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
     <input type="hidden" name="sort" value="{{ filters.sort }}">
     <input type="hidden" name="dir" value="{{ filters.dir }}">
@@ -32,7 +41,7 @@
     <label>Orden: <input type="text" name="orden" placeholder="Número de orden" value="{{ filters.orden }}"></label>
     <button class="btn btn-primary" type="submit">Aplicar</button>
     <button class="btn btn-secondary" type="submit" name="export" value="csv">Exportar CSV</button>
-    <a class="btn btn-secondary" href="{% url 'reportes_tiempo' %}">Limpiar</a>
+    <button class="btn btn-secondary" type="button" onclick="window.location.href='{% url 'reportes_tiempo' %}'">Limpiar</button>
   </form>
 
   <div class="table-responsive">

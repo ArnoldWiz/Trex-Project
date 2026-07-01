@@ -869,17 +869,20 @@ class ListaEmpleadosLotes(ListView):
                 [
                     registro.get('empleado_id', ''),
                     registro.get('empleado_nombre', ''),
-                    registro.get('lote_id', ''),
-                    registro.get('pedido_id', ''),
+                    registro.get('lote_numero', ''),
+                    registro.get('pedido_display', ''),
                     registro.get('orden_numero', ''),
                     registro.get('area_label', ''),
-                    registro.get('fecha_registro', ''),
+                    registro.get('fecha_hora', ''),
+                    registro.get('fecha_dia', ''),
+                    registro.get('fecha_mes', ''),
+                    registro.get('fecha_anio', ''),
                 ]
                 for registro in registros
             ]
             return _build_csv_response(
                 'reporte_empleados.csv',
-                ['ID Empleado', 'Empleado', 'Lote', 'Pedido', 'Orden', 'Area', 'Fecha'],
+                ['ID Empleado', 'Empleado', 'Lote', 'Pedido', 'Orden', 'Area', 'Hora', 'Dia', 'Mes', 'Anio'],
                 rows,
             )
         return super().get(request, *args, **kwargs)
@@ -890,6 +893,7 @@ class ListaEmpleadosLotes(ListView):
             .select_related(
                 'idpedido__idordenpedido',
                 'idpedido__idordenpedido__idcliente',
+                'idpedido__idmodelo',
                 'idemptejido',
                 'idempplanchapre',
                 'idempplanchapost',
@@ -897,6 +901,15 @@ class ListaEmpleadosLotes(ListView):
             )
             .order_by('idlote')
         )
+        lotes = list(lotes)
+
+        lotes_por_pedido = {}
+        for lote in lotes:
+            if not lote.idpedido_id:
+                continue
+            lotes_por_pedido.setdefault(lote.idpedido_id, []).append(lote.idlote)
+        for pedido_id in lotes_por_pedido:
+            lotes_por_pedido[pedido_id].sort()
 
         empleado_busqueda = (self.request.GET.get('empleado') or '').strip().lower()
         idlote_busqueda = (self.request.GET.get('idlote') or '').strip()
@@ -930,22 +943,60 @@ class ListaEmpleadosLotes(ListView):
                         if idlote_busqueda.lower() not in str(lote.idlote).lower():
                             continue
 
+                lotes_del_pedido = lotes_por_pedido.get(lote.idpedido_id, [])
+                lote_total = len(lotes_del_pedido)
+                try:
+                    lote_posicion = lotes_del_pedido.index(lote.idlote) + 1
+                except ValueError:
+                    lote_posicion = ''
+
+                lote_numero = ''
+                if lote_posicion and lote_total:
+                    lote_numero = f"{lote_posicion}/{lote_total}"
+
+                pedido_obj = lote.idpedido if lote.idpedido_id else None
+                modelo_nombre = ''
+                color_pedido = ''
+                if pedido_obj and pedido_obj.idmodelo_id:
+                    modelo_nombre = getattr(pedido_obj.idmodelo, 'modelo', '') or getattr(pedido_obj.idmodelo, 'folio', '')
+                if pedido_obj:
+                    color_pedido = getattr(pedido_obj, 'color', '')
+                pedido_display = f"{modelo_nombre} - {color_pedido}".strip(' -')
+
+                fecha_hora = ''
+                fecha_dia = ''
+                fecha_mes = ''
+                fecha_anio = ''
+                if fecha_registro:
+                    fecha_hora = fecha_registro.strftime('%H:%M')
+                    fecha_dia = fecha_registro.strftime('%d')
+                    fecha_mes = fecha_registro.strftime('%m')
+                    fecha_anio = fecha_registro.strftime('%Y')
+
                 registros.append({
                     'empleado_id': empleado_obj.idempleado,
                     'empleado_nombre': nombre_empleado,
                     'lote_id': lote.idlote,
+                    'lote_posicion': lote_posicion,
+                    'lote_total': lote_total,
+                    'lote_numero': lote_numero,
                     'pedido_id': lote.idpedido.idpedido if lote.idpedido_id else '',
+                    'pedido_display': pedido_display,
                     'orden_numero': lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
                     'cliente_nombre': lote.idpedido.idordenpedido.idcliente.nombre if lote.idpedido_id and lote.idpedido.idordenpedido_id and lote.idpedido.idordenpedido.idcliente_id else '',
                     'area_codigo': etapa_codigo,
                     'area_label': etapa_label,
                     'fecha_registro': fecha_registro,
+                    'fecha_hora': fecha_hora,
+                    'fecha_dia': fecha_dia,
+                    'fecha_mes': fecha_mes,
+                    'fecha_anio': fecha_anio,
                 })
 
         sort_map = {
             'empleado': 'empleado_nombre',
-            'lote': 'lote_id',
-            'pedido': 'pedido_id',
+            'lote': 'lote_posicion',
+            'pedido': 'pedido_display',
             'orden': 'orden_numero',
             'area': 'area_label',
             'fecha': 'fecha_registro',
@@ -980,16 +1031,19 @@ class ListaMaquinasLotes(ListView):
                     registro.get('maquina_id', ''),
                     registro.get('maquina_numero', ''),
                     registro.get('area_label', ''),
-                    registro.get('lote_id', ''),
-                    registro.get('pedido_id', ''),
+                    registro.get('lote_numero', ''),
+                    registro.get('pedido_display', ''),
                     registro.get('orden_numero', ''),
-                    registro.get('fecha_registro', ''),
+                    registro.get('fecha_hora', ''),
+                    registro.get('fecha_dia', ''),
+                    registro.get('fecha_mes', ''),
+                    registro.get('fecha_anio', ''),
                 ]
                 for registro in registros
             ]
             return _build_csv_response(
                 'reporte_maquinas.csv',
-                ['ID Maquina', 'Numero', 'Area', 'Lote', 'Pedido', 'Orden', 'Fecha'],
+                ['ID Maquina', 'Numero', 'Area', 'Lote', 'Pedido', 'Orden', 'Hora', 'Dia', 'Mes', 'Anio'],
                 rows,
             )
         return super().get(request, *args, **kwargs)
@@ -999,12 +1053,22 @@ class ListaMaquinasLotes(ListView):
             Lote.objects
             .select_related(
                 'idpedido__idordenpedido',
+                'idpedido__idmodelo',
                 'idmqutejido',
                 'idmaqplancha',
                 'idmaqcorte',
             )
             .order_by('idlote')
         )
+        lotes = list(lotes)
+
+        lotes_por_pedido = {}
+        for lote in lotes:
+            if not lote.idpedido_id:
+                continue
+            lotes_por_pedido.setdefault(lote.idpedido_id, []).append(lote.idlote)
+        for pedido_id in lotes_por_pedido:
+            lotes_por_pedido[pedido_id].sort()
 
         maquina_busqueda = (self.request.GET.get('maquina') or '').strip().lower()
         idlote_busqueda = (self.request.GET.get('idlote') or '').strip()
@@ -1039,23 +1103,61 @@ class ListaMaquinasLotes(ListView):
                         if idlote_busqueda.lower() not in str(lote.idlote).lower():
                             continue
 
+                lotes_del_pedido = lotes_por_pedido.get(lote.idpedido_id, [])
+                lote_total = len(lotes_del_pedido)
+                try:
+                    lote_posicion = lotes_del_pedido.index(lote.idlote) + 1
+                except ValueError:
+                    lote_posicion = ''
+
+                lote_numero = ''
+                if lote_posicion and lote_total:
+                    lote_numero = f"{lote_posicion}/{lote_total}"
+
+                pedido_obj = lote.idpedido if lote.idpedido_id else None
+                modelo_nombre = ''
+                color_pedido = ''
+                if pedido_obj and pedido_obj.idmodelo_id:
+                    modelo_nombre = getattr(pedido_obj.idmodelo, 'modelo', '') or getattr(pedido_obj.idmodelo, 'folio', '')
+                if pedido_obj:
+                    color_pedido = getattr(pedido_obj, 'color', '')
+                pedido_display = f"{modelo_nombre} - {color_pedido}".strip(' -')
+
+                fecha_hora = ''
+                fecha_dia = ''
+                fecha_mes = ''
+                fecha_anio = ''
+                if fecha_registro:
+                    fecha_hora = fecha_registro.strftime('%H:%M')
+                    fecha_dia = fecha_registro.strftime('%d')
+                    fecha_mes = fecha_registro.strftime('%m')
+                    fecha_anio = fecha_registro.strftime('%Y')
+
                 registros.append({
                     'maquina_id': maquina_obj.idmaquina,
                     'maquina_area': maquina_obj.area,
                     'maquina_numero': maquina_obj.numero,
                     'lote_id': lote.idlote,
+                    'lote_posicion': lote_posicion,
+                    'lote_total': lote_total,
+                    'lote_numero': lote_numero,
                     'pedido_id': lote.idpedido.idpedido if lote.idpedido_id else '',
+                    'pedido_display': pedido_display,
                     'orden_numero': lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
                     'area_label': area_label,
                     'fecha_registro': fecha_registro,
+                    'fecha_hora': fecha_hora,
+                    'fecha_dia': fecha_dia,
+                    'fecha_mes': fecha_mes,
+                    'fecha_anio': fecha_anio,
                 })
 
         sort_map = {
             'maquina': 'maquina_id',
             'numero': 'maquina_numero',
             'area': 'area_label',
-            'lote': 'lote_id',
-            'pedido': 'pedido_id',
+            'lote': 'lote_posicion',
+            'pedido': 'pedido_display',
             'orden': 'orden_numero',
             'fecha': 'fecha_registro',
         }
@@ -1090,17 +1192,20 @@ class ListaAreasLotes(ListView):
                     registro.get('area_label', ''),
                     registro.get('empleado_id', ''),
                     registro.get('empleado_nombre', ''),
-                    registro.get('lote_id', ''),
+                    registro.get('lote_numero', ''),
                     registro.get('maquina_texto', ''),
-                    registro.get('pedido_id', ''),
+                    registro.get('pedido_display', ''),
                     registro.get('orden_numero', ''),
-                    registro.get('fecha_registro', ''),
+                    registro.get('fecha_hora', ''),
+                    registro.get('fecha_dia', ''),
+                    registro.get('fecha_mes', ''),
+                    registro.get('fecha_anio', ''),
                 ]
                 for registro in registros
             ]
             return _build_csv_response(
                 'reporte_areas.csv',
-                ['Area', 'ID Empleado', 'Empleado', 'Lote', 'Maquina', 'Pedido', 'Orden', 'Fecha'],
+                ['Area', 'ID Empleado', 'Empleado', 'Lote', 'Maquina', 'Pedido', 'Orden', 'Hora', 'Dia', 'Mes', 'Anio'],
                 rows,
             )
         return super().get(request, *args, **kwargs)
@@ -1110,6 +1215,7 @@ class ListaAreasLotes(ListView):
             Lote.objects
             .select_related(
                 'idpedido__idordenpedido',
+                'idpedido__idmodelo',
                 'idemptejido',
                 'idempplanchapre',
                 'idempplanchapost',
@@ -1120,6 +1226,15 @@ class ListaAreasLotes(ListView):
             )
             .order_by('idlote')
         )
+        lotes = list(lotes)
+
+        lotes_por_pedido = {}
+        for lote in lotes:
+            if not lote.idpedido_id:
+                continue
+            lotes_por_pedido.setdefault(lote.idpedido_id, []).append(lote.idlote)
+        for pedido_id in lotes_por_pedido:
+            lotes_por_pedido[pedido_id].sort()
 
         area_busqueda = (self.request.GET.get('area') or '').strip().lower()
         empleado_busqueda = (self.request.GET.get('empleado') or '').strip().lower()
@@ -1163,6 +1278,36 @@ class ListaAreasLotes(ListView):
                         if idlote_busqueda.lower() not in str(lote.idlote).lower():
                             continue
 
+                lotes_del_pedido = lotes_por_pedido.get(lote.idpedido_id, [])
+                lote_total = len(lotes_del_pedido)
+                try:
+                    lote_posicion = lotes_del_pedido.index(lote.idlote) + 1
+                except ValueError:
+                    lote_posicion = ''
+
+                lote_numero = ''
+                if lote_posicion and lote_total:
+                    lote_numero = f"{lote_posicion}/{lote_total}"
+
+                pedido_obj = lote.idpedido if lote.idpedido_id else None
+                modelo_nombre = ''
+                color_pedido = ''
+                if pedido_obj and pedido_obj.idmodelo_id:
+                    modelo_nombre = getattr(pedido_obj.idmodelo, 'modelo', '') or getattr(pedido_obj.idmodelo, 'folio', '')
+                if pedido_obj:
+                    color_pedido = getattr(pedido_obj, 'color', '')
+                pedido_display = f"{modelo_nombre} - {color_pedido}".strip(' -')
+
+                fecha_hora = ''
+                fecha_dia = ''
+                fecha_mes = ''
+                fecha_anio = ''
+                if fecha_registro:
+                    fecha_hora = fecha_registro.strftime('%H:%M')
+                    fecha_dia = fecha_registro.strftime('%d')
+                    fecha_mes = fecha_registro.strftime('%m')
+                    fecha_anio = fecha_registro.strftime('%Y')
+
                 maquina_texto = ''
                 if maquina_obj:
                     maquina_texto = f"{maquina_obj.idmaquina} ({maquina_obj.area} #{maquina_obj.numero})"
@@ -1173,16 +1318,24 @@ class ListaAreasLotes(ListView):
                     'empleado_nombre': empleado_nombre,
                     'maquina_texto': maquina_texto,
                     'lote_id': lote.idlote,
+                    'lote_posicion': lote_posicion,
+                    'lote_total': lote_total,
+                    'lote_numero': lote_numero,
                     'pedido_id': lote.idpedido.idpedido if lote.idpedido_id else '',
+                    'pedido_display': pedido_display,
                     'orden_numero': lote.idpedido.idordenpedido.numeroorden if lote.idpedido_id and lote.idpedido.idordenpedido_id else '',
                     'fecha_registro': fecha_registro,
+                    'fecha_hora': fecha_hora,
+                    'fecha_dia': fecha_dia,
+                    'fecha_mes': fecha_mes,
+                    'fecha_anio': fecha_anio,
                 })
 
         sort_map = {
             'area': 'area_label',
             'empleado': 'empleado_nombre',
-            'lote': 'lote_id',
-            'pedido': 'pedido_id',
+            'lote': 'lote_posicion',
+            'pedido': 'pedido_display',
             'orden': 'orden_numero',
             'fecha': 'fecha_registro',
         }

@@ -80,11 +80,18 @@
   background: var(--panel);
 }
 
+.reporte-listado .table.table > :not(caption) > * > * {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
 .reporte-listado table.table thead th {
   background: #f1f5f9;
   color: var(--text);
   border-bottom: 1px solid var(--border);
   font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .reporte-listado table.table thead th a {
@@ -99,6 +106,8 @@
 .reporte-listado table.table tbody td {
   color: var(--text);
   border-top: 1px solid #edf2f7;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .reporte-listado table.table tbody tr:nth-child(even) {
