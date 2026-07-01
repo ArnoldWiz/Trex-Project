@@ -1,3 +1,6 @@
+.sidebar{
+    display: none;
+}
 .custom-table {
   width: 100%;
   max-width: none;
@@ -53,7 +56,6 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-
 
 
 @media (max-width: 768px) {
@@ -116,7 +118,7 @@
 }
 
 /* Responsive adjustments for center-area based on screen size */
-@media (max-width: 1650px) {
+@media (max-width: 1024px) {
   .center-area,
   .center-area.full-width {
     width: calc(100% - 80px);
