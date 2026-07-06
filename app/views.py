@@ -1,6 +1,6 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.clickjacking import xframe_options_sameorigin
@@ -9,7 +9,7 @@ import csv
 import os
 from django.utils import timezone
 from app.models import *
-from django.db.models import Count, Q, Max
+from django.db.models import Count, Q, Max, F
 from django.db import transaction
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from app.utils import (
@@ -53,17 +53,60 @@ def login(request):
 def catalogos(request):
     return render(request, 'administrador/catalogos.html')
 
-def homeAdmin(request):
+def _get_ordenes_prioritarias_con_avance():
     ordenes_prioritarias = (
         Ordendepedido.objects
         .select_related('idcliente')
-        .filter(fechafin__isnull=True)
         .annotate(
             total_pedidos=Count('pedido'),
             pedidos_completados=Count('pedido', filter=Q(pedido__fechafin__isnull=False)),
         )
+        .filter(fechafin__isnull=True)
+        .exclude(total_pedidos=F('pedidos_completados'), total_pedidos__gt=0)
     )
+
+    for orden in ordenes_prioritarias:
+        total_pedidos = orden.total_pedidos or 0
+        orden.porcentaje_avance = round((orden.pedidos_completados / total_pedidos * 100) if total_pedidos else 0, 1)
+    return ordenes_prioritarias
+
+
+def homeAdmin(request):
+    ordenes_prioritarias = _get_ordenes_prioritarias_con_avance()
     return render(request, 'administrador/homeAdmin.html', {'ordenes_prioritarias': ordenes_prioritarias})
+
+
+def progreso_home_admin(request):
+    ordenes_prioritarias = _get_ordenes_prioritarias_con_avance()
+    data = [
+        {
+            'numero_orden': str(orden.numeroorden),
+            'completados': orden.pedidos_completados or 0,
+            'total': orden.total_pedidos or 0,
+            'porcentaje': orden.porcentaje_avance,
+        }
+        for orden in ordenes_prioritarias
+    ]
+    return JsonResponse({'ordenes': data})
+
+
+@login_required
+def resumen_lotes_pedido(request, orden_pk, pk):
+    try:
+        Pedido.objects.get(pk=pk, idordenpedido_id=orden_pk)
+    except Pedido.DoesNotExist:
+        return JsonResponse({'error': 'Pedido no encontrado.'}, status=404)
+
+    lotes_qs = Lote.objects.filter(idpedido_id=pk)
+    resumen_lotes = {
+        'total': lotes_qs.count(),
+        'corte': lotes_qs.filter(idempcorte__isnull=False).count(),
+        'tejido': lotes_qs.filter(idemptejido__isnull=False).count(),
+        'plancha': lotes_qs.filter(idempplanchapre__isnull=False, idempplanchapost__isnull=False).count(),
+        'empaque': lotes_qs.filter(fechaempa__isnull=False).count(),
+    }
+    return JsonResponse({'resumen_lotes': resumen_lotes})
+
 
 #TEMPORALES
 def pedidoEspecifico(request):

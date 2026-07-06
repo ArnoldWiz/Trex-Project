@@ -25,35 +25,63 @@
     display: flex;
     gap: 15px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: none;
 }
 
 .btn-danger {
-    background-color: #dc3545;
+    background-color: #BF1E2E;
     color: white;
     border: none;
     padding: 10px 25px;
-    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+
+
+    border-radius: 15px;
+   
+    display: inline-block;
+  transition: all 0.25s ease;
+
+  margin: 5px 0;
+
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+    background-color: #BF1E2E;
 }
 
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-    border: none;
+.btn-cancel {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  
+    color: #222;
+  border: 0.5px solid #8A2E8D!important;
     padding: 10px 25px;
-    border-radius: 5px;
+  
+    border-radius: 15px;
     cursor: pointer;
     font-size: 16px;
     text-decoration: none;
+
     display: inline-block;
+  transition: all 0.25s ease;
+
+  font-weight: 700;
+  margin: 5px 0;
+
 }
 
-.btn-secondary:hover {
-    background-color: #5a6268;
+.btn-cancel:hover {
+  background: #f6ecf7 !important;
+}
+
+
+form{
+    max-width: none;
+    width: 1000px;
+    margin: none;
+    padding: 1rem;
+    border: none;
+    gap: 0.5rem;
+    background: none !important;
+
 }

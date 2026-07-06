@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Lista de Ordenes{% endblock %}
+{% block title %}Lista de Órdenes{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
@@ -10,8 +10,9 @@
 
 {% block content %}
   
+
   <section class="center-area full-width">
-    <div id="subtitle">Lista De Ordenes</div>
+    <div id="subtitle">Lista De Órdenes</div>
       <div class="contenedor">
         <!-- Contenido temporal de la base de datos -->
         <table class="custom-table">
@@ -71,5 +72,5 @@
 {% block regresar %}
 
 <li><a href="{% url 'homeAdmin' %}"><i class="fa-solid fa-arrow-rotate-left"></i> Regresar</a></li>
-<li><a href="{% url 'ordenesTerminadas' %}"><i class="fa-solid fa-folder-open"></i>Ordenes Terminadas</a></li> 
+<li><a href="{% url 'ordenesTerminadas' %}"><i class="fa-solid fa-folder-open"></i>Órdenes Terminadas</a></li> 
 {% endblock %}

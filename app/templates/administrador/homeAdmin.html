@@ -21,6 +21,30 @@
   <section class="center-area">
     <div class="left-panel">
       <div class="contenedor">
+
+        <div class="progreso-ordenes">
+    {% for orden in ordenes_prioritarias %}
+    <div class="item-progreso" data-orden="{{ orden.numeroorden }}">
+
+        <div class="contenido-progreso">
+
+
+            <div class="grafica-avance"
+                 style="--percent: {{ orden.porcentaje_avance }}%; --fill-color: {% if orden.porcentaje_avance >= 80 %}#2ECC71{% elif orden.porcentaje_avance >= 50 %}#F39C12{% else %}#E74C3C{% endif %};">
+            </div>
+
+            <div class="item-progreso-header">
+                <span>Orden {{ orden.numeroorden }}</span>
+            </div>
+
+        </div>
+
+    </div>
+    {% empty %}
+        <p class="sin-ordenes">No hay órdenes prioritarias disponibles.</p>
+    {% endfor %}
+</div>
+        </div>
         <div id="subtitle">Ordenes Prioritarias</div>
         <table class="custom-table">
           <thead>
@@ -34,7 +58,7 @@
           </thead>
           <tbody>
             {% for orden in ordenes_prioritarias %}
-            <tr>
+            <tr data-orden="{{ orden.numeroorden }}">
               <td>{{ orden.numeroorden }}</td>
               <td>{{ orden.idcliente.nombre }}</td>
               <td>{{ orden.fechainicio|date:"d/m/Y H:i" }}</td>
@@ -45,10 +69,10 @@
                   N/A
                 {% endif %}
               </td>
-              <td>{{ orden.pedidos_completados }}/{{ orden.total_pedidos }}</td>
+              <td class="avance-orden">{{ orden.pedidos_completados }}/{{ orden.total_pedidos }}</td>
             </tr>
             {% empty %}
-            <tr>
+            <tr class="no-orders-row">
               <td colspan="5">No hay órdenes prioritarias disponibles.</td>
             </tr>
             {% endfor %}
@@ -66,5 +90,83 @@
       </div>
     </div>
   </section>
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const progressUrl = '{% url "progresoHomeAdmin" %}';
+
+    const getColor = (percent) => {
+      if (percent >= 80) return '#BF1E2E';
+      if (percent >= 50) return '#8A2E8D';
+      return '#FF4D79';
+    };
+
+   
+
+    const updateProgressBars = () => {
+      fetch(progressUrl)
+        .then(response => response.json())
+        .then(data => {
+          const ordenes = data.ordenes || [];
+          const ordenesActivas = ordenes.map(orden => String(orden.numero_orden));
+
+          document.querySelectorAll('.progreso-ordenes .item-progreso').forEach(item => {
+            if (!ordenesActivas.includes(item.dataset.orden)) {
+              item.remove();
+            }
+          });
+
+          document.querySelectorAll('table.custom-table tbody tr[data-orden]').forEach(row => {
+            if (!ordenesActivas.includes(row.dataset.orden)) {
+              row.remove();
+            }
+          });
+
+          ordenes.forEach(orden => {
+            const progressItem = document.querySelector(`.progreso-ordenes .item-progreso[data-orden="${orden.numero_orden}"]`);
+            if (progressItem) {
+              const grafica = progressItem.querySelector('.grafica-avance');
+              const porcentaje = progressItem.querySelector('.progreso-porcentaje');
+              const cuenta = progressItem.querySelector('.progreso-cuenta');
+              const color = getColor(orden.porcentaje);
+              if (grafica) {
+                grafica.style.setProperty('--percent', `${orden.porcentaje}%`);
+                grafica.style.setProperty('--fill-color', color);
+              }
+              if (porcentaje) porcentaje.textContent = `${orden.porcentaje}%`;
+              if (cuenta) cuenta.textContent = `${orden.completados}/${orden.total}`;
+            }
+
+            const row = document.querySelector(`table.custom-table tbody tr[data-orden="${orden.numero_orden}"]`);
+            if (row) {
+              const avance = row.querySelector('.avance-orden');
+              if (avance) avance.textContent = `${orden.completados}/${orden.total}`;
+            }
+          });
+
+          const tbody = document.querySelector('table.custom-table tbody');
+          if (tbody) {
+            if (ordenesActivas.length === 0) {
+              if (!tbody.querySelector('.no-orders-row')) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.classList.add('no-orders-row');
+                emptyRow.innerHTML = '<td colspan="5">No hay órdenes prioritarias disponibles.</td>';
+                tbody.appendChild(emptyRow);
+              }
+            } else {
+              const emptyRow = tbody.querySelector('.no-orders-row');
+              if (emptyRow) emptyRow.remove();
+            }
+          }
+        })
+        .catch(() => {});
+    };
+
+    updateProgressBars();
+    setInterval(updateProgressBars, 5000);
+  });
+</script>
+{% endblock %}
 
 {% endblock %}

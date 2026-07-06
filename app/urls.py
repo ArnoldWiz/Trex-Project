@@ -10,6 +10,7 @@ urlpatterns = [
     #ADMINISTRADOR
     path('administrador/login/', login, name='login'),
     path('administrador/homeAdmin/', homeAdmin, name='homeAdmin'),
+    path('administrador/homeAdmin/progreso/', progreso_home_admin, name='progresoHomeAdmin'),
     path('administrador/cargar-datos-prueba/', cargar_datos_prueba, name='cargarDatosPrueba'),
     path('administrador/catalogos/', catalogos, name='catalogos'),
         #CRUD EMPLEADOS
@@ -41,6 +42,7 @@ urlpatterns = [
     path('administrador/ordenes/<int:orden_pk>/pedidos/eliminar/<int:pk>/', EliminarPedido.as_view(), name='eliminarPedido'),
         #LOTES
     path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pk>/lotes/", ListaLotes.as_view(), name="listaLotes"),
+    path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pk>/lotes/resumen/", resumen_lotes_pedido, name="resumenLotesPedido"),
     path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pk>/lotes/imprimir-qrs/", lotes_imprimir_qrs, name="listaLotesImprimirQrs"),
     path("administrador/ordenes/<int:orden_pk>/pedidos/<int:pk>/lotes/abrir-carpeta-qrs/", lotes_abrir_carpeta_qrs, name="listaLotesAbrirCarpetaQrs"),
 

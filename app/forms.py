@@ -112,6 +112,19 @@ class OrdenForm(forms.ModelForm):
             'fechainicio': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
             'fechaprevista': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
         }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        fechainicio = cleaned_data.get('fechainicio')
+        fechaprevista = cleaned_data.get('fechaprevista')
+        
+        if fechainicio and fechaprevista:
+            if fechaprevista <= fechainicio:
+                raise forms.ValidationError(
+                    'La fecha prevista debe ser posterior a la fecha de inicio.'
+                )
+        
+        return cleaned_data
 
 class PedidoForm(forms.ModelForm):
     # show Modelo.folio in the select instead of the default __str__
@@ -155,6 +168,19 @@ class PedidoForm(forms.ModelForm):
             'fechainicio': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
             'fechaprevista': forms.DateTimeInput(attrs={'class':'form-control','type':'datetime-local'}),
         }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        fechainicio = cleaned_data.get('fechainicio')
+        fechaprevista = cleaned_data.get('fechaprevista')
+        
+        if fechainicio and fechaprevista:
+            if fechaprevista <= fechainicio:
+                raise forms.ValidationError(
+                    'La fecha prevista debe ser posterior a la fecha de inicio.'
+                )
+        
+        return cleaned_data
 
 class LoteEmpleadoForm(forms.Form):
     """Form para registrar un empleado y maquina en un lote mediante lector QR"""

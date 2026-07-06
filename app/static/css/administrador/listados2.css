@@ -376,18 +376,34 @@ button.btn.btn-success:hover {
   color: #fff !important;
   border: none !important;
 }
+.btn-cancel {
+  background: #fff !important;
+  color: #222 !important;
+  border: 1px solid #842e8d !important;
+}
+.btn-cancel:hover {
+  background: #f6ecf7 !important;
+}
 
 .form-actions .btn-cancel {
   background: #fff !important;
   color: #222 !important;
   border: 1px solid #842e8d !important;
+   border-radius: 15px;
 }
 
 .form-actions .btn-cancel:hover {
   background: #f6ecf7 !important;
 }
 
-
+.btn.btn-success{
+ border-radius: 15px !important;
+  padding: 8px 8px;
+  display: inline-block;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  margin: 5px 0;
+}
 .dashboard-top {
   width: 90%;
   max-width: 1100px;

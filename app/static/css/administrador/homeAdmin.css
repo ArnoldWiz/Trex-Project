@@ -279,3 +279,84 @@ body {
     .btn-solucionar { background-color: #ffc107; border: none; border-radius: 4px; }
     .btn-eliminar { background-color: #dc3545; color: white; border: none; border-radius: 4px; }
     .solucionado { text-decoration: line-through; background-color: #e9ecef; }
+
+
+    /* CONTENEDOR GENERAL --------------------------------------------------------------------   */
+.progreso-ordenes{
+    width:100%;
+    height:300px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:15px;
+    padding:15px;
+}
+
+.item-progreso{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    width:60px;
+}
+
+.progreso-porcentaje{
+    margin-bottom:10px;
+    font-weight:bold;
+}
+
+.grafica-avance{
+    width:60px;
+    height:220px;
+
+    background:#e5e5e5;
+    border-radius:8px;
+
+    position:relative;
+        flex-shrink:0;      /* nunca cambia de tamaño */
+    overflow:hidden;
+}
+
+
+.grafica-avance::before{
+    content:"";
+
+    position:absolute;
+    left:0;
+    bottom:0;
+
+    width:100%;
+    height:var(--percent);
+
+    background: var(--fill-color, #2A388F);
+
+    transition:all .5s ease;
+}
+.numero-orden{
+    margin-top:10px;
+    width:50px;
+    min-height:55px;
+    text-align:center;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    line-height:1.2;
+}
+
+.contenido-progreso{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.item-progreso-header{
+    margin-top:10px;
+    width:50px;
+    height:48px;        /* <- aquí está la clave */
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    text-align:center;
+    line-height:1.2;
+    word-break:break-word;
+}

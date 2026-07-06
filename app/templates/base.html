@@ -22,11 +22,10 @@
         <li class="menu-item">
           <i class="fa-solid fa-bars"></i>
           <ul class="dropdown">
-            <li><a href="{% url 'homeAdmin' %}">Inicio</a></li>
-            <li><a href="{% url 'listaOrdenes' %}">Pedidos</a></li>
-            <li><a href="{% url 'ordenesTerminadas' %}">Órdenes Terminadas</a></li>
-            <li><a href="{% url 'reportes' %}">Reportes</a></li>
-            <li><a href="{% url 'catalogos' %}">Catálogos</a></li>
+            <li><a href="{% url 'listaOrdenes' %}">LISTA DE ORDENES</a></li>
+            <li><a href="{% url 'crearOrden' %}">REGISTRAR ORDEN</a></li>
+            <li><a href="{% url 'reportes' %}">REPORTES</a></li>
+            <li><a href="{% url 'catalogos' %}">CATÁLOGOS</a></li>
             {% comment %} <li>
               <form method="post" action="{% url 'cargarDatosPrueba' %}" style="margin:0; padding:0;">
                 {% csrf_token %}

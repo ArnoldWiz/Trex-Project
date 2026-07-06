@@ -84,7 +84,7 @@ nav{
 }
 
 .menu-item:hover{
-  background-color: #BF1E2E;
+  background-color: #2A388F;
   color: white;
   transform: scale(1.05);
 }
@@ -98,7 +98,7 @@ nav{
   list-style: none;
   border-radius: 6px;
   min-width: 170px;
-  box-shadow: 0 3px 10px #BF1E2E;
+  box-shadow: 0 3px 10px #2A388F;
   padding: 10px 0;
   z-index: 10;
 }

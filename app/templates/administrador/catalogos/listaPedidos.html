@@ -61,8 +61,12 @@
 
 
 {% block regresar %}
-<li><a href="{% url 'listaOrdenes' %}"><i class="fa-solid fa-arrow-rotate-left"></i>Regresar</a></li>
-<li><a href="{% url 'crearPedido' orden_pk=orden.pk %}"><i class="fa-solid fa-folder-open"></i>Agregar Pedido</a></li>
+{% if orden and orden.fechafin is None %}
+  <li><a href="{% url 'listaOrdenes' %}"><i class="fa-solid fa-arrow-rotate-left"></i>Regresar</a></li>
+  <li><a href="{% url 'crearPedido' orden_pk=orden.pk %}"><i class="fa-solid fa-folder-open"></i>Agregar Pedido</a></li>
+{% else %}
+  <li><a href="{% url 'ordenesTerminadas' %}"><i class="fa-solid fa-arrow-rotate-left"></i>Regresar</a></li>
+{% endif %}
 {% endblock %}
 
   
