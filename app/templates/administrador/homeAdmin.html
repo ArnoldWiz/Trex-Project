@@ -27,7 +27,11 @@
     <div class="item-progreso" data-orden="{{ orden.numeroorden }}">
 
         <div class="contenido-progreso">
-
+            {% if orden.porcentaje_avance == 100 %}
+            <div class="badge-completado">✓ 100%</div>
+            {% else %}
+            <div class="progreso-porcentaje">{{ orden.porcentaje_avance }}%</div>
+            {% endif %}
 
             <div class="grafica-avance"
                  style="--percent: {{ orden.porcentaje_avance }}%; --fill-color: {% if orden.porcentaje_avance >= 80 %}#2ECC71{% elif orden.porcentaje_avance >= 50 %}#F39C12{% else %}#E74C3C{% endif %};">
@@ -128,13 +132,32 @@
             if (progressItem) {
               const grafica = progressItem.querySelector('.grafica-avance');
               const porcentaje = progressItem.querySelector('.progreso-porcentaje');
+              const badge = progressItem.querySelector('.badge-completado');
               const cuenta = progressItem.querySelector('.progreso-cuenta');
               const color = getColor(orden.porcentaje);
               if (grafica) {
                 grafica.style.setProperty('--percent', `${orden.porcentaje}%`);
                 grafica.style.setProperty('--fill-color', color);
               }
-              if (porcentaje) porcentaje.textContent = `${orden.porcentaje}%`;
+              
+              // Mostrar badge si está al 100%, o el porcentaje si no
+              if (orden.porcentaje === 100) {
+                if (badge) {
+                  badge.style.display = 'inline-block';
+                }
+                if (porcentaje) {
+                  porcentaje.style.display = 'none';
+                }
+              } else {
+                if (badge) {
+                  badge.style.display = 'none';
+                }
+                if (porcentaje) {
+                  porcentaje.style.display = 'block';
+                  porcentaje.textContent = `${orden.porcentaje}%`;
+                }
+              }
+              
               if (cuenta) cuenta.textContent = `${orden.completados}/${orden.total}`;
             }
 

@@ -44,6 +44,13 @@
         <li id="stat-plancha">Plancha: {{ resumen_lotes.plancha }}/{{ resumen_lotes.total }}</li>
         <li id="stat-corte">Corte: {{ resumen_lotes.corte }}/{{ resumen_lotes.total }}</li>        
         <li id="stat-empaque">Empaque: {{ resumen_lotes.empaque }}/{{ resumen_lotes.total }}</li>
+        <li style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+          {% if resumen_lotes.empaque == resumen_lotes.total and resumen_lotes.total > 0 %}
+          <span style="background-color: #2ECC71; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;">✓ 100% Completado</span>
+          {% else %}
+          <span id="progreso-total">Progreso: {{ resumen_lotes.empaque }}/{{ resumen_lotes.total }}</span>
+          {% endif %}
+        </li>
       </ul>
     </div>
   </div>
@@ -101,6 +108,16 @@ document.addEventListener("DOMContentLoaded", function(){
             plugins:{
                 legend:{
                     position:'bottom'
+                },
+                tooltip:{
+                    callbacks:{
+                        label: function(context){
+                            const dataset = context.dataset;
+                            const total = dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
                 }
             }
         }
@@ -120,6 +137,16 @@ document.addEventListener("DOMContentLoaded", function(){
                 document.getElementById('stat-plancha').textContent = `Plancha: ${resumen.plancha}/${resumen.total}`;
                 document.getElementById('stat-corte').textContent = `Corte: ${resumen.corte}/${resumen.total}`;
                 document.getElementById('stat-empaque').textContent = `Empaque: ${resumen.empaque}/${resumen.total}`;
+                
+                // Actualizar estado de completitud
+                const progresoSpan = document.getElementById('progreso-total');
+                if (resumen.empaque === resumen.total && resumen.total > 0) {
+                    if (progresoSpan) {
+                        progresoSpan.innerHTML = '<span style="background-color: #2ECC71; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;">✓ 100% Completado</span>';
+                    }
+                } else if (progresoSpan) {
+                    progresoSpan.textContent = `Progreso: ${resumen.empaque}/${resumen.total}`;
+                }
             })
             .catch(() => {});
     };

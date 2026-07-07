@@ -305,6 +305,18 @@ body {
     font-weight:bold;
 }
 
+.badge-completado{
+    margin-bottom: 10px;
+    font-weight: bold;
+    background-color: #2ECC71;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+}
+
 .grafica-avance{
     width:60px;
     height:220px;
