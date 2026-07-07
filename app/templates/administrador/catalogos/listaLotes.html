@@ -5,16 +5,16 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/administrador/listados.css' %}">
-<link rel="stylesheet" href="{% static 'css/administrador/listaLotes.css' %}">
+
 {% endblock %}
 
 {% block content %}
 <section class="center-area full-width">
 
   {% if messages %}
-    <div style="margin-bottom: 1rem;">
+    <div class="message-container">
       {% for message in messages %}
-        <div style="padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 0.5rem; background: {% if message.tags == 'error' %}#f8d7da{% elif message.tags == 'warning' %}#fff3cd{% else %}#d4edda{% endif %}; color: {% if message.tags == 'error' %}#721c24{% elif message.tags == 'warning' %}#856404{% else %}#155724{% endif %}; border: 1px solid {% if message.tags == 'error' %}#f5c6cb{% elif message.tags == 'warning' %}#ffeeba{% else %}#c3e6cb{% endif %};">
+        <div class="message {% if message.tags %}{{ message.tags }}{% else %}success{% endif %}">
           {{ message }}
         </div>
       {% endfor %}
@@ -70,6 +70,12 @@
 document.addEventListener("DOMContentLoaded", function(){
 
     const ctx = document.getElementById('estadoLotesChart');
+    const tejido = Number("{{ resumen_lotes.tejido|default:0 }}");
+const plancha = Number("{{ resumen_lotes.plancha|default:0 }}");
+const corte = Number("{{ resumen_lotes.corte|default:0 }}");
+const empaque = Number("{{ resumen_lotes.empaque|default:0 }}");
+
+
     const chart = new Chart(ctx,{
         type:'pie',
 
@@ -83,10 +89,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
             datasets:[{
                 data:[
-                    {{ resumen_lotes.tejido }},
-                    {{ resumen_lotes.plancha }},
-                    {{ resumen_lotes.corte }},
-                    {{ resumen_lotes.empaque }}
+                    tejido,
+                    plancha,
+                    corte, 
+                    empaque
                 ],
 
                 /*-------------------------AQUI*/

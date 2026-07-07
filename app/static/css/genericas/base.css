@@ -222,12 +222,15 @@ nav{
 }
 
 #subtitle{
-  color: #2A388F;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: 2px;
-  margin-top: 30px;
-  font-weight: bold;
-  font-size: 2rem;
+    width: 100%;
+    text-align: center;
+    color: #2A388F;
+    text-shadow: 2px 2px 4px rgba(0,0,0,.3);
+    letter-spacing: 2px;
+    margin: 1rem 0;
+    font-weight: bold;
+    font-size: 2rem;
+
 }
 
 .menu-row {

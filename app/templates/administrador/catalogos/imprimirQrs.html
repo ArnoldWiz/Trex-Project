@@ -2,66 +2,22 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Imprimir QRs</title>
-  <style>
-    :root {
-      --label-width-mm: {{ label_width_mm|default:110 }}mm;
-      --label-height-mm: {{ label_height_mm|default:50 }}mm;
-    }
 
-    /* ── Estilos en pantalla ── */
-    .screen-actions {
-      display: flex;
-      gap: 10px;
-      padding: 16px;
-    }
-    .action-btn {
-      padding: 8px 16px;
-      cursor: pointer;
-      text-decoration: none;
-      background: #0078d4;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    /* ── Estilos solo para impresión ── */
-    @media print {
-      .screen-actions { display: none; }
+<title>Imprimir QRs</title>
 
-      html, body {
-        margin: 0;
-        padding: 0;
-      }
+<link rel="stylesheet"
+      href="{% static 'css/genericas/print.css' %}">
 
-      @page {
-        size: var(--label-width-mm) var(--label-height-mm);
-        margin: 0;
-      }
+<style>
+:root{
+    --label-width-mm: {{ label_width_mm|default:110 }}mm;
+    --label-height-mm: {{ label_height_mm|default:50 }}mm;
+}
+</style>
 
-      .qr-print-sheet {
-        page-break-after: always;
-        width: var(--label-width-mm);
-        height: var(--label-height-mm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-      }
-
-      .qr-print-sheet:last-child {
-        page-break-after: avoid;
-      }
-
-      .qr-print-sheet img {
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-      }
-    }
-  </style>
 </head>
 <body>
   <div class="screen-actions">

@@ -89,15 +89,16 @@
 .center-area {
   display: flex;
   align-items: flex-start;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  gap: 3rem;
-  max-width: 100rem;
+  gap: 1.25rem;
+  max-width: 62.5rem;
   border-radius: 30px;
-  margin: 2rem auto 0.6rem;
+  margin: 1.5rem auto 0.6rem;
   width: calc(100% - 100px);
   margin-right: 100px;
 }
+
 
 /* Full-width variant for catalog tables */
 .center-area.full-width {
@@ -139,14 +140,6 @@
   }
 }
 
-.center-area {
-  max-width: 62.5rem;
-  margin: 1.5rem auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-}
 
 .stack {
   width: 100%;
@@ -564,4 +557,178 @@ button.btn.btn-success:hover {
   color: #721c24;
   font-size: 0.85rem;
   margin-top: 0.25rem;
+}
+
+/* Estilos para lista de lotes -                         -------------*/
+
+.lotes-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+}
+
+.lotes-actions .action-btn {
+    min-width: 240px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    background: #ffffff;
+    color: #2A388F;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+    transition: box-shadow .25s, transform .25s, background-color .25s;
+}
+
+.lotes-actions .action-btn:hover {
+    background-color: #2A388F;
+    transform: scale(1.05) translateY(-5px);
+    color: #FAFAFA;
+    box-shadow: 0 3px 10px #BF1E2E;
+}
+
+/* Estilos para mensajes de alerta */
+.message-container {
+  margin-bottom: 1rem;
+}
+
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  border: 1px solid;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.message.warning {
+  background: #fff3cd;
+  color: #856404;
+  border-color: #ffeeba;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+
+.dashboard-top{
+    display:flex;
+    gap:30px;
+    align-items:stretch;
+    margin-top:25px;
+}
+
+.chart-card,
+.stats-card{
+
+    flex:1;
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:15px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+.chart-card h3,
+.stats-card h3{
+
+    text-align:center;
+
+    color:#2A388F;
+
+    margin-bottom:20px;
+
+}
+
+.chart-placeholder{
+
+    position:relative;
+
+    width:100%;
+
+    height:200px;
+
+}
+
+#estadoLotesChart{
+
+    width:100%!important;
+
+    height:100%!important;
+
+}
+
+.stats-card ul{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+.stats-card li{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #ececec;
+
+    font-size:17px;
+
+}
+
+/* Estilos para lista de ordenes */
+
+.center-area.full-width {
+    padding: 0.5rem;
+}
+
+.contenedor {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.custom-table {
+    margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    #subtitle {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .custom-table i {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .custom-table th,
+    .custom-table td {
+        padding: 0.4rem 0.3rem;
+    }
 }
