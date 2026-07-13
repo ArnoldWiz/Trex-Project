@@ -79,6 +79,7 @@ body {
   border-spacing: 0;
   font-size: 0.95rem;
   min-width: 500px;
+  
 }
 
 .custom-table thead {
@@ -193,7 +194,9 @@ body {
   body {
     padding-right: 78px;
   }
-  
+  .page{
+    padding-bottom: 0;
+  }
   .center-area {
     width: 100%;
     flex-direction: column;
@@ -231,6 +234,7 @@ body {
 
   .menu-row {
     grid-template-columns: 1fr;
+    margin-bottom: 0;
   }
 
   .menu-opt:nth-child(1),
@@ -246,6 +250,9 @@ body {
     font-size: 0.85rem;
   }
 
+  .custom-table{
+    margin-bottom: 0;
+  }
     .menu-opt {
     height: 4rem;
   }
@@ -290,6 +297,7 @@ body {
     justify-content:center;
     gap:15px;
     padding:15px;
+    margin-top: 2rem;
 }
 
 .item-progreso{
@@ -297,8 +305,10 @@ body {
     flex-direction:column;
     align-items:center;
     justify-content:flex-end;
-    width:60px;
+    flex:0 0 auto;
+    width:clamp(35px,6vw,60px);
 }
+
 
 .progreso-porcentaje{
     margin-bottom:10px;
@@ -317,9 +327,11 @@ body {
     box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
 }
 
+
+
 .grafica-avance{
-    width:60px;
-    height:220px;
+width:100%;
+    height:clamp(120px,25vw,220px);
 
     background:#e5e5e5;
     border-radius:8px;
@@ -363,6 +375,7 @@ body {
 
 .item-progreso-header{
     margin-top:10px;
+    margin-bottom: 1.5rem;
     width:50px;
     height:48px;        /* <- aquí está la clave */
     display:flex;
@@ -372,6 +385,7 @@ body {
     line-height:1.2;
     word-break:break-word;
 }
+
 
 
 /* ===========================
@@ -412,4 +426,21 @@ body {
     background-color: #d1ecf1;
     color: #0c5460;
     border-color: #bee5eb;
+}
+
+@media (max-width:600px){
+
+    .item-progreso-header{
+        font-size:.7rem;
+    }
+
+    .progreso-ordenes{
+      margin: 1rem;
+    }
+
+    .progreso-porcentaje,
+    .badge-completado{
+        font-size:.7rem;
+    }
+
 }
